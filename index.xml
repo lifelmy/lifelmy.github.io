@@ -5,19 +5,20 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 20 Jun 2021 16:03:23 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 20 Jun 2021 16:01:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>双月计划之Redis 01. 概述与安装</title>
-      <link>https://lifelmy.github.io/post/redis%E5%85%A5%E9%97%A8/</link>
-      <pubDate>Sun, 20 Jun 2021 16:03:23 +0800</pubDate>
+      <title>双月计划之Redis 01--- 概述与安装</title>
+      <link>https://lifelmy.github.io/post/redis_01/</link>
+      <pubDate>Sun, 20 Jun 2021 16:01:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis%E5%85%A5%E9%97%A8/</guid>
+      <guid>https://lifelmy.github.io/post/redis_01/</guid>
       
-        <description>&lt;blockquote&gt;
+        <description>&lt;h2 id=&#34;redis概述&#34;&gt;Redis概述&lt;/h2&gt;
+&lt;blockquote&gt;
 &lt;p&gt;Redis是什么&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;Redis（Remote Dictionary Server )，即远程字典服务，是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。Redis的出现，很大程度补偿了&lt;a href=&#34;https://baike.baidu.com/item/memcached&#34;&gt;memcached&lt;/a&gt;这类key/value存储的不足，在部分场合可以对关系数据库起到很好的补充作用。&lt;/p&gt;
@@ -64,29 +65,32 @@
 &lt;ol&gt;
 &lt;li&gt;下载安装包&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;![image-20210619125413424](/Users/admin/Library/Application Support/typora-user-images/image-20210619125413424.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0b5qu6rj31mc0q8wjb.jpg&#34; alt=&#34;image-20210619125413424&#34;&gt;&lt;/p&gt;
 &lt;p&gt;网络不好的同学可以使用下面的链接: &lt;a href=&#34;https://pan.baidu.com/s/1aokx10S_Yk3YcPwavmXNOg&#34;&gt;https://pan.baidu.com/s/1aokx10S_Yk3YcPwavmXNOg&lt;/a&gt; 提取码: 9kjs&lt;/p&gt;
 &lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;
 &lt;p&gt;安装&lt;/p&gt;
-&lt;p&gt;![image-20210619125446711](/Users/admin/Library/Application Support/typora-user-images/image-20210619125446711.png)&lt;/p&gt;
+&lt;p&gt;按照下面的步骤截图，一步步的安装即可。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0bb8cn4j30dp0ap763.jpg&#34; alt=&#34;image-20210619125446711&#34;&gt;&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;![image-20210619125522305](/Users/admin/Library/Application Support/typora-user-images/image-20210619125522305.png)&lt;/p&gt;
-&lt;p&gt;![image-20210619125531070](/Users/admin/Library/Application Support/typora-user-images/image-20210619125531070.png)&lt;/p&gt;
-&lt;p&gt;![image-20210619125543674](/Users/admin/Library/Application Support/typora-user-images/image-20210619125543674.png)&lt;/p&gt;
-&lt;p&gt;![image-20210619125553100](/Users/admin/Library/Application Support/typora-user-images/image-20210619125553100.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0bkjjapj30dv0at0sq.jpg&#34; alt=&#34;image-20210619125522305&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0bn6pn5j30dv0at749.jpg&#34; alt=&#34;image-20210619125531070&#34;&gt;&lt;/p&gt;
+&lt;p&gt;​&lt;/p&gt;
+&lt;p&gt;​								  这里可以根据自己的需要，将内存调大点，比如1024M。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0bqkgr9j30dv0atdfs.jpg&#34; alt=&#34;image-20210619125543674&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0btdn9qj30dv0atglk.jpg&#34; alt=&#34;image-20210619125553100&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;3&#34;&gt;
 &lt;li&gt;验证可用性&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;我们安装的目录是D:/software/redis，打开这个目录，可以看到安装后的Redis目录结构如下。&lt;/p&gt;
-&lt;p&gt;![image-20210619130107614](/Users/admin/Library/Application Support/typora-user-images/image-20210619130107614.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0bwnelmj30mx0egwes.jpg&#34; alt=&#34;image-20210619130107614&#34;&gt;&lt;/p&gt;
 &lt;p&gt;双击打开&lt;code&gt;redis-server&lt;/code&gt;，启动Redis服务，出现界面一闪而过，这时候打开任务管理器，服务栏可以看到Redis正在运行。&lt;/p&gt;
-&lt;p&gt;![image-20210619134645391](/Users/admin/Library/Application Support/typora-user-images/image-20210619134645391.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0bzwym0j30if08vwf6.jpg&#34; alt=&#34;image-20210619134645391&#34;&gt;&lt;/p&gt;
 &lt;p&gt;如果想让redis-server界面保持在前台的话，可以把服务停止，然后再打开redis-server，就会看到如下界面：&lt;/p&gt;
 &lt;p&gt;&lt;!-- raw HTML omitted --&gt;&lt;/p&gt;
 &lt;p&gt;再打开redis-cli，使用客户端连接Redis。输入&lt;code&gt;PING&lt;/code&gt;命令，看到&lt;code&gt;PONG&lt;/code&gt;响应，证明Redis安装成功并可用。&lt;/p&gt;
-&lt;p&gt;![image-20210619132405070](/Users/admin/Library/Application Support/typora-user-images/image-20210619132405070.png)&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0c7fsr5j30go07eweb.jpg&#34; alt=&#34;image-20210619132405070&#34;&gt;&lt;/p&gt;
 &lt;p&gt;Windows版本的安装虽然比较简单，但是由于维护不是很好，可能会存在一些bug，建议还是使用Linux版本的Redis进行学习。&lt;/p&gt;
 &lt;h2 id=&#34;linux安装&#34;&gt;Linux安装&lt;/h2&gt;
 &lt;p&gt;Linux安装也比较简单，我这里是使用的腾讯云服务器，操作系统为CentOS 7.5 64位，大家可以根据自己的需要购买云服务器学习（阿里云、腾讯云学生认证后比较便宜），或者自己安装虚拟机也可以。&lt;/p&gt;
@@ -126,7 +130,7 @@
 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos src&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./redis-server &lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;![image-20210619140651662](/Users/admin/Library/Application Support/typora-user-images/image-20210619140651662.png)&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0cccjajj323a0u01el.jpg&#34; alt=&#34;image-20210619140651662&#34;&gt;&lt;/p&gt;
 &lt;p&gt;这种运行方式使用的是默认配置文件，redis-server在前台运行，如果想要使用客户端连接的话，需要再开启一个窗口进行连接，比较麻烦，因此我们修改下配置文件，让Redis保持后台运行。&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;ctrl+c&lt;/code&gt; 结束当前进程，进入上一级目录，修改配置文件，步骤如下：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -189,84 +193,9 @@ OK
 127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;exit&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;![image-20210619141500069](/Users/admin/Library/Application Support/typora-user-images/image-20210619141500069.png)&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1grp0chf9vrj31ac0kcqga.jpg&#34; alt=&#34;image-20210619141500069&#34;&gt;&lt;/p&gt;
 &lt;p&gt;好的，到这里我们已经完成了Redis Linux版本的安装，下面可以愉快的学习了。&lt;/p&gt;
-&lt;h2 id=&#34;测试性能&#34;&gt;测试性能&lt;/h2&gt;
-&lt;h2 id=&#34;基础知识&#34;&gt;基础知识&lt;/h2&gt;
-&lt;p&gt;Redis默认有16个数据库,可以使用select进行切换&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# Set the number of databases. The default database is DB 0, you can select&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# a different one on a per-connection basis using SELECT &amp;lt;dbid&amp;gt; where&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# dbid is a number between 0 and &amp;#39;databases&amp;#39;-1&lt;/span&gt;
-databases &lt;span class=&#34;m&#34;&gt;16&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; dbsize   //查看数据库大小
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; 3	// 切换数据库3
-OK
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; zero hero  //设置值
-OK
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; DBSIZE        
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; &lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;   //切换数据库0
-OK
-127.0.0.1:6379&amp;gt; dbsize
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; get zero		// 设置在3号数据库，在数据库0是查不到的
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;nil&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;k&#34;&gt;select&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-OK
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; get zero
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;hero&amp;#34;&lt;/span&gt;
-
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; keys *   // keys *  查看所有key-value
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;zero&amp;#34;&lt;/span&gt;
-
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; FLUSHDB   // 清空数据库
-OK
-127.0.0.1:6379&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;3&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&amp;gt; keys *    // 没有key-value了
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;empty array&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
+</description>
       
     </item>
     
