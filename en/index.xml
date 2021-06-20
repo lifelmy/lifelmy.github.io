@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Jane - A simple theme for Hugo</title>
-    <link>http://localhost:1313/en/</link>
+    <link>https://lifelmy.github.io/en/</link>
     <description>Recent content on Jane - A simple theme for Hugo</description>
     <generator>Hugo -- gohugo.io</generator>
     
-        <atom:link href="http://localhost:1313/en/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://lifelmy.github.io/en/index.xml" rel="self" type="application/rss+xml" />
     
     
   </channel>
