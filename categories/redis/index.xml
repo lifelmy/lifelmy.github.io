@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 20 Jun 2021 16:01:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 26 Jun 2021 21:31:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis配置文件详解</title>
+      <link>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</link>
+      <pubDate>Sat, 26 Jun 2021 21:31:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</guid>
+      <description>前言 当我们买来一台机器时，首先需要看说明书，了解使用方式。同样对于Redis来说，通过查看配置文件，我们也可以大体了解Redis的组成部分和</description>
+    </item>
+    
     <item>
       <title>双月计划之Redis 01--- 概述与安装</title>
       <link>https://lifelmy.github.io/post/redis_01/</link>
