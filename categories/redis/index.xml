@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 06 Jul 2021 08:46:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 11 Jul 2021 16:01:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis基本数据类型学习之Hash</title>
+      <link>https://lifelmy.github.io/post/redis_hash/</link>
+      <pubDate>Sun, 11 Jul 2021 16:01:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_hash/</guid>
+      <description>前言 Redis Hash是 键-值 类型，值类型类似map结构，即 key-{{field1,value1},...,{fieldN，valueN}}，更适</description>
+    </item>
+    
     <item>
       <title>Redis基本类型学习之String</title>
       <link>https://lifelmy.github.io/post/redis_string/</link>
