@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 25 Jul 2021 16:32:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 31 Jul 2021 22:32:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis基本类型学习之Set</title>
+      <link>https://lifelmy.github.io/post/redis_set/</link>
+      <pubDate>Sat, 31 Jul 2021 22:32:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_set/</guid>
+      <description>前言 Set，即集合，与数学中的集合概念一致，不过Redis Set中包含的元素类型是string。Set中元素值是唯一的，不能出现重复的数据。</description>
+    </item>
+    
     <item>
       <title>Redis基本类型学习之List(2)</title>
       <link>https://lifelmy.github.io/post/redis_list_02/</link>
