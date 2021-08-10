@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 31 Jul 2021 22:32:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 10 Aug 2021 21:45:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis基本类型学习之Sorted Set(1)</title>
+      <link>https://lifelmy.github.io/post/redis_sorted_set/</link>
+      <pubDate>Tue, 10 Aug 2021 21:45:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_sorted_set/</guid>
+      <description>前言 Sorted Set，即有序集合，是一种类似于List(集合)和 Hash(哈希)的混合数据类型。与集合一样，有序集合由唯一的、不重复的字符串元素组成</description>
+    </item>
+    
     <item>
       <title>Redis基本类型学习之Set</title>
       <link>https://lifelmy.github.io/post/redis_set/</link>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lifelmy.github.io/post/redis_sorted_set/</loc>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lifelmy.github.io/post/redis_set/</loc>
     <lastmod>2021-07-31T22:32:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -52,42 +59,42 @@
   
   <url>
     <loc>https://lifelmy.github.io/categories/</loc>
-    <lastmod>2021-07-31T22:32:23+08:00</lastmod>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/</loc>
-    <lastmod>2021-07-31T22:32:23+08:00</lastmod>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/post/</loc>
-    <lastmod>2021-07-31T22:32:23+08:00</lastmod>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/redis/</loc>
-    <lastmod>2021-07-31T22:32:23+08:00</lastmod>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/categories/redis/</loc>
-    <lastmod>2021-07-31T22:32:23+08:00</lastmod>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/</loc>
-    <lastmod>2021-07-31T22:32:23+08:00</lastmod>
+    <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
