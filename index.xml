@@ -5,10 +5,685 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 10 Aug 2021 21:45:23 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 15 Aug 2021 22:45:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Redis基本类型学习之Sorted Set(2)</title>
+      <link>https://lifelmy.github.io/post/redis_sorted_set_2/</link>
+      <pubDate>Sun, 15 Aug 2021 22:45:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_sorted_set_2/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;在上篇文章中，我们学习了Redis Sorted Set的基本概念和部分命令。这部分命令较多，预计还需要两篇文章才能学完，每篇文章在10个命令左右。对于这些命令，不需要全部记住，只需要自己动手操作过一遍，有个印象。在真正需要使用时，能够想到有这种操作，然后再去查阅命令即可。&lt;/p&gt;
+&lt;h2 id=&#34;zincrby&#34;&gt;ZINCRBY&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 1.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(log(N)） ，N为有序数组中的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZINCRBY key increment member
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将有序数组中&lt;code&gt;member&lt;/code&gt;对应的&lt;code&gt;score&lt;/code&gt;值，加上&lt;code&gt;increment&lt;/code&gt;；&lt;/li&gt;
+&lt;li&gt;如果有序数组中不存在这个&lt;code&gt;member&lt;/code&gt;元素，那么就新增这个元素，别设置&lt;code&gt;score&lt;/code&gt;值为&lt;code&gt;increment&lt;/code&gt;；&lt;/li&gt;
+&lt;li&gt;如果有序数组不存在，新建有序数组，并添加这个元素；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;score&lt;/code&gt;值可以是整数值或双精度浮点数，也可以是负数，相当于减；&lt;/li&gt;
+&lt;li&gt;如果&lt;code&gt;key&lt;/code&gt;对应的数据类型不是有序数组，返回error；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;字符串：member对应的新score值&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 加1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zincrby myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;s2&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 减2&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zincrby myzset -2 one
+&lt;span class=&#34;s2&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 查看分值&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zscore myzset one
+&lt;span class=&#34;s2&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zrank&#34;&gt;ZRANK&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(log(N)） ，N为有序数组中的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZRANK key member
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;按照分值从低到高的顺序，返回元素在有序数组中的排名；&lt;/li&gt;
+&lt;li&gt;排名（索引）从&lt;code&gt;0&lt;/code&gt;开始，也就是分值最低的元素排名为&lt;code&gt;0&lt;/code&gt;；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：如果&lt;code&gt;member&lt;/code&gt;在有序集合中，返回排名&lt;/p&gt;
+&lt;p&gt;nil：有序数组不存在或者&lt;code&gt;member&lt;/code&gt;不存在，返回nil&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 查看排名&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrank myzset one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrank myzset two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zrevrank&#34;&gt;ZREVRANK&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(log(N)） ，N为有序数组中的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZREVRANK key member
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与&lt;code&gt;ZRANK&lt;/code&gt;相反，&lt;code&gt;ZREVRANK&lt;/code&gt;按照分值从高到低的顺序，返回元素在有序数组中的排名；&lt;/li&gt;
+&lt;li&gt;排名（索引）从&lt;code&gt;0&lt;/code&gt;开始，分值最高的元素排名为&lt;code&gt;0&lt;/code&gt;；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：如果&lt;code&gt;member&lt;/code&gt;在有序集合中，返回排名&lt;/p&gt;
+&lt;p&gt;nil：有序数组不存在或者&lt;code&gt;member&lt;/code&gt;不存在，返回nil&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 查看排名&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrevrank myzset one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrevrank myzset two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zrem&#34;&gt;ZREM&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(M*log(N)），N为有序数组中的元素个数，M为命令提供的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令变化&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;自2.4版本后，可以删除多个元素&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZREM key member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;从有序数组中，移除指定的元素&lt;/li&gt;
+&lt;li&gt;如果元素不存在，忽略该元素&lt;/li&gt;
+&lt;li&gt;如果key存在，但是对应的类型不是有序集合，返回error&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：被移除的元素个数（不包含不存在的元素）&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; three
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 删除两个存在的，和一个不存在的元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrem myzset one two notexists
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 遍历集合&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;three&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zremrangebyrank&#34;&gt;ZREMRANGEBYRANK&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(M+log(N)），N为有序数组中的元素个数，M为要删除的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZREMRANGEBYRANK key start stop
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;移除有序数组中，排序位于&lt;code&gt;start&lt;/code&gt;和&lt;code&gt;stop&lt;/code&gt;之间的元素；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;start&lt;/code&gt;和&lt;code&gt;stop&lt;/code&gt;为正数索引时，都是从&lt;code&gt;0&lt;/code&gt;开始，0表示分值最小的第一个元素，1为第二个元素，以此类推；&lt;/li&gt;
+&lt;li&gt;如果&lt;code&gt;start&lt;/code&gt;和&lt;code&gt;stop&lt;/code&gt;为负数，&lt;code&gt;-1&lt;/code&gt;表示分值最大的最后一个元素，-2表示倒数第二个元素，以此类推；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：被移除的元素个数&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; three
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 移除第二个和第三个元素（索引为1 和 2）&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zremrangebyrank myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zremrangebyscore&#34;&gt;ZREMRANGEBYSCORE&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 1.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(M+log(N)），N为有序数组中的元素个数，M为要删除的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZREMRANGEBYSCORE key min max
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;移除有序数组中，score值介于 &lt;code&gt;min&lt;/code&gt;和&lt;code&gt;max&lt;/code&gt;之间的元素，默认为闭区间[min,max]；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-inf&lt;/code&gt;、&lt;code&gt;+inf&lt;/code&gt;也是合法输入，表示负无穷和正无穷&lt;/li&gt;
+&lt;li&gt;如果想要使用开区间，可以在&lt;code&gt;min&lt;/code&gt;或&lt;code&gt;max&lt;/code&gt;前加一个&#39;&lt;code&gt;(&lt;/code&gt;&#39;&lt;/li&gt;
+&lt;li&gt;区间取值问题可以参考上一篇的 &lt;code&gt;ZRANGEBYSCORE&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：被移除的元素个数&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; one
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; two
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; three
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zadd myzset &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; four
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 删除分值[1,2]之间的元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zremrangebyscore myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 删除负无穷到4（开区间）之间的元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zremrangebyscore myzset -inf &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;four&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zremrangebylex&#34;&gt;ZREMRANGEBYLEX&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.8.9&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(M+log(N)），N为有序数组中的元素个数，M为要删除的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZREMRANGEBYLEX key min max
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当有序集合中所有元素的score值都一样时，使用字符串字典序排序，删除 &lt;code&gt;min&lt;/code&gt;到&lt;code&gt;max&lt;/code&gt;之间的元素&lt;/li&gt;
+&lt;li&gt;此处的min、max，与上篇文章中的&lt;code&gt;ZRANGEBYLEX&lt;/code&gt; 概念相同&lt;/li&gt;
+&lt;li&gt;如果使用相同的&lt;code&gt;min&lt;/code&gt;和&lt;code&gt;max&lt;/code&gt;，&lt;code&gt;ZREMRANGEBYLEX&lt;/code&gt;删除的元素和&lt;code&gt;ZREMRANGEBYLEX&lt;/code&gt;返回的元素相同&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：被移除的元素个数&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; aaaa &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; b &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; c &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; d &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; e
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; foo &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; zap &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; zip &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; ALPHA &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; alpha
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZRANGE myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1
+ 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;ALPHA&amp;#34;&lt;/span&gt;
+ 2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;aaaa&amp;#34;&lt;/span&gt;
+ 3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;alpha&amp;#34;&lt;/span&gt;
+ 4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;b&amp;#34;&lt;/span&gt;
+ 5&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;c&amp;#34;&lt;/span&gt;
+ 6&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;d&amp;#34;&lt;/span&gt;
+ 7&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;e&amp;#34;&lt;/span&gt;
+ 8&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;foo&amp;#34;&lt;/span&gt;
+ 9&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;zap&amp;#34;&lt;/span&gt;
+10&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;zip&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 删除元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZREMRANGEBYLEX myzset &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;alpha &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;omega
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+
+127.0.0.1:6379&amp;gt; ZRANGE myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;ALPHA&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;aaaa&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;zap&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zlexcount&#34;&gt;ZLEXCOUNT&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.8.9&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(log(N)），N为有序数组中的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZLEXCOUNT key min max
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当有序集合中所有元素的score值都一样时，返回字符串字典序排序后 &lt;code&gt;min&lt;/code&gt;到&lt;code&gt;max&lt;/code&gt;之间的元素&lt;/li&gt;
+&lt;li&gt;此处的min、max，与上篇文章中的&lt;code&gt;ZRANGEBYLEX&lt;/code&gt; 概念相同&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;整数：字典序范围内的元素个数&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; a &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; b &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; c &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; d &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; e
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; f &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; g
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 全部区间&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZLEXCOUNT myzset - +
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# [b,f]区间&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZLEXCOUNT myzset &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;b &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;f
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zpopmax&#34;&gt;ZPOPMAX&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 5.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(log(N)*M），N为有序数组中的元素个数，M为弹出的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZPOPMAX key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;count&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;移除并返回前&lt;code&gt;count&lt;/code&gt;个&lt;code&gt;score&lt;/code&gt;较高的元素&lt;/li&gt;
+&lt;li&gt;如果不指定count值，默认为1&lt;/li&gt;
+&lt;li&gt;如果count超过集合长度，不会报错&lt;/li&gt;
+&lt;li&gt;返回结果中，分值最大的元素在第一个，同时会带有分值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;列表：元素列表及其分值&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;two&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;three&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 默认返回1个&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZPOPMAX myzset
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;three&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 超过列表长度时，返回所有元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZPOPMAX myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;two&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zpopmin&#34;&gt;ZPOPMIN&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 5.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(log(N)*M），N为有序数组中的元素个数，M为弹出的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZPOPMIN key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;count&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;移除并返回前&lt;code&gt;count&lt;/code&gt;个&lt;code&gt;score&lt;/code&gt;较&lt;code&gt;低&lt;/code&gt;的元素&lt;/li&gt;
+&lt;li&gt;如果不指定count值，默认为1&lt;/li&gt;
+&lt;li&gt;如果count超过集合长度，不会报错&lt;/li&gt;
+&lt;li&gt;返回结果中，分值最小的元素在第一个，同时会带有分值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;列表：元素列表及其分值&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;two&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;three&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 默认返回1个&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zpopmin myzset
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 超过列表长度时，返回所有元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zpopmin myzset &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;two&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;three&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;zmscore&#34;&gt;ZMSCORE&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 6.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度： O(N），N为命令提供的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ZMSCORE key member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;返回多个元素对应的分值&lt;/li&gt;
+&lt;li&gt;如果该元素在有序数组中不存在，返回nil&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;数组：提供的所有元素对应的分值列表&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZADD myzset &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;two&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ZMSCORE myzset &lt;span class=&#34;s2&#34;&gt;&amp;#34;one&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;two&amp;#34;&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;nofield&amp;#34;&lt;/span&gt;
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;2&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;nil&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了有序集合中的部分相关命令，包括&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ZINCRBY：元素score加上一个值&lt;/li&gt;
+&lt;li&gt;ZRANK、ZREVRANK：获取元素在有序数组中的排名&lt;/li&gt;
+&lt;li&gt;ZREM：删除元素&lt;/li&gt;
+&lt;li&gt;ZREMRANGEBYRANK、ZREMRANGEBYSCORE、ZREMRANGEBYLEX：删除给定区间的元素&lt;/li&gt;
+&lt;li&gt;ZLEXCOUNT：返回指定字典序内的元素个数&lt;/li&gt;
+&lt;li&gt;ZPOPMAX、ZPOPMIN：移除首/尾前count个元素&lt;/li&gt;
+&lt;li&gt;ZMSCORE：返回多个元素的分值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Redis基本类型学习之Sorted Set(1)</title>
