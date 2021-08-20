@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 17 Aug 2021 14:39:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 20 Aug 2021 11:38:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis Bitmap 学习和使用</title>
+      <link>https://lifelmy.github.io/post/redis_bitmap/</link>
+      <pubDate>Fri, 20 Aug 2021 11:38:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_bitmap/</guid>
+      <description>前言 Bitmap，即位图，是一串连续的二进制数组（0和1），可以通过偏移量（offset）定位元素。BitMap通过最小的单位bit来进行0</description>
+    </item>
+    
     <item>
       <title>Redis基本类型学习之Sorted Set(3)</title>
       <link>https://lifelmy.github.io/post/redis_sorted_set_3/</link>
