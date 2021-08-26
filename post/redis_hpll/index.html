@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Redis HyperLogLog 命令学习及原理浅析 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/redis_hpll/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Redis HyperLogLog 命令学习及原理浅析" />
+<meta property="og:description" content="关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/redis_hpll/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-08-27T00:14:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-08-27T00:14:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Redis HyperLogLog 命令学习及原理浅析">
+<meta itemprop="description" content="关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统"><meta itemprop="datePublished" content="2021-08-27T00:14:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-08-27T00:14:23&#43;08:00" />
+<meta itemprop="wordCount" content="4916">
+<meta itemprop="keywords" content="Redis," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis HyperLogLog 命令学习及原理浅析"/>
+<meta name="twitter:description" content="关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Redis HyperLogLog 命令学习及原理浅析</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-08-27" class="post-time">
+          2021-08-27
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/redis/"> Redis </a>
+            
+          </div>
+        <span class="more-meta"> 约 4916 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#pfadd">PFADD</a></li>
+    <li><a href="#pfcount">PFCOUNT</a></li>
+    <li><a href="#pfmerge">PFMERGE</a></li>
+    <li><a href="#原理介绍">原理介绍</a>
+      <ul>
+        <li><a href="#伯努利实验">伯努利实验</a></li>
+        <li><a href="#举个栗子">举个栗子</a></li>
+        <li><a href="#分桶思想减小误差">分桶思想减小误差</a></li>
+        <li><a href="#loglog-counting算法">LogLog Counting算法</a></li>
+        <li><a href="#hyperloglog-counting-算法">HyperLogLog Counting 算法</a></li>
+        <li><a href="#redis实现">Redis实现</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+    <li><a href="#参考文档">参考文档</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <p>关注不迷路，一起 From Zero To Hero !</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<h2 id="前言">前言</h2>
+<p>考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统计数量，即统计一个集合中不重复的元素个数。在数学上把一个集合不重复元素的个数称为集合的基数（cardinality），这类问题可以称为基数统计问题。问题其实很简单，有很多常规的方法或数据结构去解决，例如：</p>
+<ul>
+<li>
+<p>集合Set：我们可以将所有元素保存在set中，由于set本身就是去重的，最终set中的元素个数就是最终我们需要的结果值。由于我们在存储真正的数据用于去重，在数据流较小时还可以接受，但是如果数据达到百万级别甚至上亿级别时，会占用大量的内存。假设我们有1亿个不重复的元素，每个数据大小是4字节，那么使用Set至少需要 100000000*4/1024/1024≈400MB，可见内存占用量还是挺大的。</p>
+</li>
+<li>
+<p>Bitmap：在上篇文章中，我们讨论过Bitmap的使用场景，其中就提及过二值场景，统计页面访问或者App访问的场景，也是属于二值场景。如果有1亿个用户，那么我们就需要设置一亿个bit位，用于表示每个用户的状态，那么需要占用的内存为 100000000*1/8/1024/1024≈12M。</p>
+</li>
+</ul>
+<p>上述两种方式都是精确的方式，但是占用内存较大。有时候我们并不需要特别精确的数据，比如对于统计页面访问量来说，1亿和一亿100万其实差别不大，这种误差是用户可以接受的。那么有没有什么算法，在可接受误差的范围内使用极少的内存来统计基数呢？答案是肯定有。在大数据计算中，有很多基数统计算法，比如：</p>
+<ul>
+<li>Linear Counting（LC）</li>
+<li>LogLog Counting（LLC）</li>
+<li>HyperLogLog Counting（HLLC）</li>
+<li>······</li>
+</ul>
+<p>Linear算法和位图类似，但实际使用的不多，这里不多做介绍了。本文要介绍的Redis HyperLogLog，从名字也可以看出来，Redis实现是基于HyperLogLog Counting（HLLC）算法的，HyperLogLog是LogLog算法的一个改进和优化，后面我们会一起讲解这两个算法，并学习HyperLogLog是如何在LogLog的基础上改进的。</p>
+<p>Redis HyperLoglog<code>最多</code>使用<code>12k</code>内存来进行基数统计，并且误差可以保持在<code>0.81%</code>左右。接下来我们首先学习相关命令，然后再学习下原理（这种极致的统计存储，相信你和我一样，也十分好奇是怎么实现的）。</p>
+<h2 id="pfadd">PFADD</h2>
+<blockquote>
+<p>可用版本：&gt;= 2.8.9</p>
+<p>时间复杂度：添加每个元素的时间复杂度为O(1)</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">PFADD key <span class="o">[</span>element <span class="o">[</span>element ...<span class="o">]]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>该命令将多个元素添加到key对应的HyperLogLog中</li>
+<li>调用命令后，HyperLogLog 内部结构可能会更新，用于表示不同元素数量（集合的基数）的估计值</li>
+<li>如果添加元素后基数估计值更新了，那么会返回1；否则返回0</li>
+<li>如果key不存在，该命令会创建一个空的HyperLogLog结构</li>
+<li>如果命令只提供了key，没有提供element参数，此时如果key已经存在，不会执行任何操作；否则会创建空的HyperLogLog</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>整数值：如果估计值被更新，返回1；否则返回0</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 添加元素</span>
+127.0.0.1:6379&gt; pfadd hll a b c d e f g
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; pfcount hll
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">7</span>
+
+<span class="c1"># 添加重复元素</span>
+127.0.0.1:6379&gt; pfadd hll a
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+
+<span class="c1"># 添加新元素</span>
+127.0.0.1:6379&gt; pfadd hll h
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; pfcount hll
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">8</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="pfcount">PFCOUNT</h2>
+<blockquote>
+<p>可用版本：&gt;= 2.8.9</p>
+<p>时间复杂度：对于单个HyperLogLog，复杂度为 O(1)，且具有非常低的平均常数时间。当命令作用于N个HyperLogLog 时，复杂度为 O(N) ， 常数时间也比处理单个HyperLogLog 时要大得多。</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">PFCOUNT key <span class="o">[</span>key ...<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>当只指定一个key时，返回HyperLogLog的近似基数；如果key不存在，返回0</li>
+<li>当指定多个key时，内部通过合并给定的多个HyperLogLog到一个临时的HyperLogLog，以此返回多个HyperLogLog并集的基数</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>整数值：集合基数的近似值</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 添加元素</span>
+127.0.0.1:6379&gt; pfadd hll a b c d e f g
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; pfcount hll
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">7</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="pfmerge">PFMERGE</h2>
+<blockquote>
+<p>可用版本：&gt;= 2.8.9</p>
+<p>时间复杂度：O(N)，其中N为给定的key个数，但是常数时间较高</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">PFMERGE destkey sourcekey <span class="o">[</span>sourcekey ...<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>将多个 sourcekey 对应的 HyperLogLog 合并（merge）到 destkey 对应的HyperLogLog，合并后的 HyperLogLog 的基数接近于所有输入 HyperLogLog 的并集</li>
+<li>如果destkey不存在，会创建一个空的HyperLogLog</li>
+<li>如果destkey已存在，命令会把destkey与所有的sourcekey一起合并，最终destkey对应的基数也包含了自身的数量</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>字符串：“OK”</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; PFADD hll1 foo bar zap a
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; PFADD hll2 a b c foo
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; PFADD hll3 d
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+
+<span class="c1"># a b c d foo bar zap </span>
+127.0.0.1:6379&gt; PFMERGE hll3 hll1 hll2
+OK
+127.0.0.1:6379&gt;  PFCOUNT hll3
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">7</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="原理介绍">原理介绍</h2>
+<p>LogLog Counting（LLC）和 HyperLogLog Counting（HLLC）都是基于伯努利实验，我们先来看下什么是伯努利实验。</p>
+<h3 id="伯努利实验">伯努利实验</h3>
+<p>伯努利试验（Bernoulli experiment）是在同样的条件下重复地、相互独立地进行的一种随机试验，其特点是该随机试验只有两种可能结果：发生或者不发生。我们假设该项试验独立重复地进行了n次，那么就称这一系列重复独立的随机试验为n重伯努利试验，或称为伯努利概型。单个伯努利试验是没有多大意义的，然而，当我们反复进行伯努利试验，去观察这些试验有多少是成功的，多少是失败的，事情就变得有意义了，这些累计记录包含了很多潜在的非常有用的信息。</p>
+<p>生活中最常见的就是抛硬币了，要么是正面（1），要么是反面（0），概率都为1/2。考虑如下情形：我们一直抛硬币，直到第一次出现正面为止，我们称为一次完整的试验。可能第一次抛就出现了正面，也可能连续抛了4次才出现正面，这都算作完整的试验，我们把一次试验抛硬币的次数记为<em>k</em>。</p>
+<p>我们用0表示抛到反面，用1表示抛到正面，假设我们做了<em>N</em>次伯努利试验，对于第次伯努利试验，所经历的抛硬币次数为$k_i$ 。在这<em>N</em>次伯努利试验中，最大的次数为$k_{max}$。如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtumusro2tj619y0oa0ts02.jpg" alt="image-20210826235958224"></p>
+<p>那么如果我不告诉你 <em>N</em> 是多少，只告诉你$k_{max}$，你能否根据$k_{max}$去推算N呢？也就是估算我们一共做了多少次伯努利试验？这种估算在次数较少时误差较大，但是在较大数据量下，有如下结论：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuog2razmj60ga034wea02.jpg" alt="image-20210827005503166"></p>
+<h3 id="举个栗子">举个栗子</h3>
+<p>简单考虑一个抛硬币序列 0001，得到这个序列的概率是多少呢？ ${1/2}^4=1/16$，那么我们反推可以得到，得到这个序列，至少需要抛硬币16次才会出现。</p>
+<p>我们再举个例子：</p>
+<p>（1）第1次伯努利试验，抛了2次才出现正面，$k_1=2$</p>
+<p>（2）第2次伯努利试验，抛了3次才出现正面，$k_2=3$</p>
+<p>（3）第3次伯努利试验，抛了2次才出现正面，$k_3=2$</p>
+<p>（4）第4次伯努利试验，抛了1次才出现正面，$k_4=1$</p>
+<p>因此4次实验中，$k_{max}=3$，最终我们根据$k_{max}$推断，一共做了 $2^3=8$ 次实验。这种估算在数据量较少时存在误差，但是在数据量较大时误差较小，毕竟是根据概率统计得出来的结论，有理论支持。</p>
+<p>回到字符串上来，如果给定一批字符串，然后我们取hash值后，得到的就是01字符串，类似上面的抛硬币序列，我们从右往左找到第一个1的位置，作为$k_i$ ：</p>
+<p>（1）011001100110011001100110，$k_1=2$</p>
+<p>（2）010001000100010001000100，$k_2=3$</p>
+<p>（3）011001100110011001100110，$k_3=2$</p>
+<p>（4）010101010101010101010101，$k_4=1$</p>
+<p>接收到这些字符串后，我们不保存字符串原值，只是更新$k_{max}$的值，最终$k_{max}=3$，我们就推断出用户一共添加了8个字符串。</p>
+<h3 id="分桶思想减小误差">分桶思想减小误差</h3>
+<p>我们在做实验的时候都知道，一次实验可能有误差，但是多次实验取平均值就可以减少误差。对于抛硬币来说，我们可以重复N次实验，然后得到N个$k_{max}$ ， 然后取平均值计算。但是和抛硬币不同，抛硬币我们每一轮的结果都是随机的，所以可以取平均减小误差，但是集合中的数据通过哈希计算得到的值是固定的，无论你计算多少轮，结果也都不会改变。那么对于集合基数的估计，如何去减小误差呢？</p>
+<p>我们只能够从数据本身入手。一种思路就是我们把数据平均分成多份，对每一份数据进行估算，然后多份数据来进行求平均减小误差。这其实就是分桶的思想，假设数据经过处理，得到了一个32bit的二进制串，我们用低10位来表示分桶=的位置（10位最多有1024个桶），然后高22位用于模拟伯努利过程，每个桶只需要保存当前出现过的最大的 $k_{max}$ 。整个过程如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuofaaprlj61qo0u00ux02.jpg" alt="image-20210827005417945"></p>
+<p>最后我们得到1024个桶的 $k_{max}$  值，我们可以进行取平均并估算集合的基数值。</p>
+<h3 id="loglog-counting算法">LogLog Counting算法</h3>
+<p>LogLog Counting算法在分桶后，对这 m 个桶的 $k_{max}$ 值做一个算数平均数：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuoa4p9kej60ou044t8m02.jpg" alt="image-20210827004920631"></p>
+<p>基于 $\overline{R}$ 计算每个桶的基数，最后乘以桶数 <em>m</em> 和偏差修正因子 c  ，就得到了整个集合的基数值：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuo9ueattj60pc04ejra02.jpg" alt="image-20210827004904349"></p>
+<p>可以看出算法的计算并不复杂。那么LLC算法占用多少空间呢？回到上面分桶的例子，我们有1024个桶，高22位去模拟伯努利试验，$k_{max}$ 的最大值也只能是22，因此每个桶只需要5bit就能保存，总共占用空间只需要 1024 * 5bit= 640B 。</p>
+<h3 id="hyperloglog-counting-算法">HyperLogLog Counting 算法</h3>
+<p>前面的LogLog算法中我们是使用的是平均数来将每个桶的结果汇总起来，但是平均数有一个广为人知的缺点，就是容易受到大的数值的影响，一个常见的例子是，假如我的工资是1000元一个月，我老板的工资是100000元一个月，那么我和老板的平均工资就是(100000 + 1000)/2，即50500元，显然这离我的工资相差甚远，我肯定不服这个平均工资。 用调和平均数就可以解决这一问题，调和平均数的结果会倾向于集合中比较小的数，$x_1$ 到 $x_m$的调和平均数的公式如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuo8yltnmj30xm04mjrd.jpg" alt="image-20210827004813451"></p>
+<p>那么对应上面的LogLog公式，HyperLogLog最终的公式为：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuo81acbjj60yq050gll02.jpg" alt="image-20210827004719775"></p>
+<h3 id="redis实现">Redis实现</h3>
+<p>在Redis中，添加到 <code>HLL</code> 中的value值会被Hash函数计算得到一个 64bit 的值，低14位用于分桶，所以桶数为 $m=2^{14}=16384$ 个，高50位用于伯努利试验，需要6bit来存储 ($2^6=64&gt;50$)。所以在Redis中，HLL仅用空间 16384 * 6bit = 12KB ，就可以统计多达 $2^{64}$ 个数。</p>
+<p>算法的实现本身并不复杂，但是Redis还是对其内存占用作了一些优化。我们可以看出，无论基数多大，桶数都是16384个，所占用的内存都是12KB，当基数比较小时，还是会造成一些空间浪费。所以Redis采用稀疏存储结构和密集存储结构两种方式。</p>
+<h4 id="密集存储结构">密集存储结构</h4>
+<p>密集存储结构类似于位图，是一个大小固定为12KB的数组，每6bit表示一个桶，存储该桶的$k_{max}$值，共计16384个桶，对每个桶的读写操作时，都需要一定的位运算，定位到桶的那6个比特并进行读写。密集存储结构如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuobfqpowj61ii0u0dig02.jpg" alt="image-20210827005035494"></p>
+<h4 id="稀疏存储结构">稀疏存储结构</h4>
+<p>稀疏存储结构并不真的使用12KB的数组来表示16384个桶，而是使用特殊的字节结构来表达，如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuoc8q15zj61ys0qagnf02.jpg" alt="image-20210827005122167"></p>
+<ul>
+<li>ZERO：占用1个字节，表示连续多少个桶的计数都是0。前2位固定是00，后6位表示有多少个桶，最大为64</li>
+<li>XZERO：占用2个字节，表示连续多少个桶的计数都是0。前2位固定是01，后14位表示有多少个桶，最大为16384</li>
+<li>VAL：占用1个字节，表示连续多少个桶的计数为多少。前1位固定是1，接下来5位表示计数的值是多少，所以最大是32。最后2位表示连续多少个桶</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuoctff6oj61mq0l4dhx02.jpg" alt="image-20210827005155548"></p>
+<p>所以，一个初始状态的 HyperLogLog 对象只需要2 字节，也就是一个 XZERO 来存储其数据，而不需要消耗12K 内存。当 HyperLogLog 插入了少数元素时，可以只使用少量的 XZERO、VAL 和 ZERO 进行表示，如下图所示。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtuod6qlqmj61ao0u0jus02.jpg" alt="image-20210827005216323"></p>
+<p>Redis从稀疏存储转换到密集存储的条件是：</p>
+<ul>
+<li>任意一个计数值从 32 变成 33，因为 VAL 指令已经无法容纳，它能表示的计数值最大为 32</li>
+<li>稀疏存储占用的总字节数超过 3000 字节，这个阈值可以通过 hll_sparse_max_bytes 参数进行调整。</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>本文介绍了HyperLogLog的相关命令以及基本原理，命令包括：</p>
+<ul>
+<li>PFADD：添加元素</li>
+<li>PFCOUNT：查询基数</li>
+<li>PFMERGE：合并多个HyperLogLog</li>
+</ul>
+<p>相关原理：伯努利实验、分桶优化、Redis实现</p>
+<p>同时给大家推荐一个网站，可以可视化的看到HyperLogLog的变化过程： <a href="http://content.research.neustar.biz/blog/hll.html">HyperLogLog 工具网址</a></p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<h2 id="参考文档">参考文档</h2>
+<ul>
+<li><a href="http://dqyuan.top/2018/08/22/hyperloglog.html">http://dqyuan.top/2018/08/22/hyperloglog.html</a></li>
+<li><a href="https://www.modb.pro/db/43389">https://www.modb.pro/db/43389</a></li>
+<li><a href="https://juejin.cn/post/6844903869965664264#heading-4">https://juejin.cn/post/6844903869965664264#heading-4</a></li>
+<li><a href="https://www.zhihu.com/question/53416615">https://www.zhihu.com/question/53416615</a></li>
+</ul>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-08-27
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/redis/">Redis</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/redis_bitmap/">
+            <span class="next-text nav-default">Redis Bitmap 学习和使用</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

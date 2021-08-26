@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 20 Aug 2021 11:38:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 27 Aug 2021 00:14:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis HyperLogLog 命令学习及原理浅析</title>
+      <link>https://lifelmy.github.io/post/redis_hpll/</link>
+      <pubDate>Fri, 27 Aug 2021 00:14:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_hpll/</guid>
+      <description>关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统</description>
+    </item>
+    
     <item>
       <title>Redis Bitmap 学习和使用</title>
       <link>https://lifelmy.github.io/post/redis_bitmap/</link>

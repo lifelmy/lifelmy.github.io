@@ -78,6 +78,9 @@
 <![endif]-->
 
 
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
 
 
 </head>
@@ -287,13 +290,25 @@
 <section id="archive" class="archive">
     <div class="archive-title">
       <span class="archive-post-counter">
-          共计 11 篇文章
+          共计 12 篇文章
       </span>
     </div>
     
       <div class="collection-title">
         <h2 class="archive-year">2021</h2>
       </div>
+
+    <div class="archive-post">
+      <time datetime="2021-08-27" class="archive-post-time">
+        2021-08-27
+      </time>
+      <span class="archive-post-title">
+        <a href="/post/redis_hpll/" class="archive-post-link">
+          Redis HyperLogLog 命令学习及原理浅析
+        </a>
+      </span>
+    </div>
+    
 
     <div class="archive-post">
       <time datetime="2021-08-20" class="archive-post-time">
@@ -400,18 +415,6 @@
           Redis基本类型学习之String
         </a>
       </span>
-    </div>
-    
-
-    <div class="archive-post">
-      <time datetime="2021-06-26" class="archive-post-time">
-        2021-06-26
-      </time>
-      <span class="archive-post-title">
-        <a href="/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/" class="archive-post-link">
-          Redis配置文件详解
-        </a>
-      </span>
     </div></section>
 
 
@@ -460,7 +463,9 @@
     </main>
 
     <footer id="footer" class="footer">
-      <div class="icon-links">
+      
+
+<div class="icon-links">
   
   
     <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
