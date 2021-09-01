@@ -5,10 +5,887 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 27 Aug 2021 00:14:23 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 02 Sep 2021 00:24:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Redis GEO 命令学习及原理浅析</title>
+      <link>https://lifelmy.github.io/post/redis_geo/</link>
+      <pubDate>Thu, 02 Sep 2021 00:24:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_geo/</guid>
+      
+        <description>&lt;p&gt;关注不迷路，一起 From Zero To Hero !&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-Based Service，LBS）的应用。此类应用都是基于经纬度来查询附近的目标，Redis GEO就适用于此类场景。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtvqwtj3t9j61ee0lyk0b02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;原理介绍&#34;&gt;原理介绍&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;Redis GEO&lt;/code&gt;并不是一种新的数据结构，而是基于&lt;code&gt;Sorted Set&lt;/code&gt;实现的。我们在之前的文章中学过&lt;code&gt;Sorted Set&lt;/code&gt;结构，该结构保存的数据形式是&lt;code&gt;key-score&lt;/code&gt;，即一个元素对应一个分值，默认是根据分值排序的，且可以进行范围查询。但是经纬度是一个数据对，比如（117.25，40.60），那么Redis是如何将经纬度转换成&lt;code&gt;score&lt;/code&gt;值的呢？转换成&lt;code&gt;score&lt;/code&gt;值之后，是如何保证分值相邻的元素距离也相近的呢？这一切就依赖于&lt;code&gt;GeoHash&lt;/code&gt;编码。&lt;/p&gt;
+&lt;p&gt;经度的范围是[-180,180]，纬度的范围是[-90,90]，当我们对经纬度进行编码时，先对经度和纬度分别进行GeoHash编码，然后再合并为一个编码值。下面我们就来介绍GeoHash的编码方法。&lt;/p&gt;
+&lt;p&gt;对于经度或纬度来说，GeoHash会将其编码为一个N为的二进制值，其实就是通过N次的分区得到的，N可以自定义。下面是具体的逻辑：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;第一次分区：我们把经度范围[-180,180]分为两个区间[-180,0) 和[0,180]，简称为左右区间。看当前的经度值落在哪个区间中，如果在左区间，记为一次0，否则记为1，这样我们就得到一位编码值了。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;第二次分区：假设第一次落在了[0,180]区间内，我们再把该区间分为两个区间[0,90) 和[90,180]，然后再根据落在左右区间，得到一个0或者1的编码值。&lt;/p&gt;
+&lt;p&gt;&amp;hellip;&amp;hellip;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;重复N次之后，我们就得到了N个编码值。纬度也是一样的逻辑，可以得到N个编码值。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;举个具体的例子，给定经纬度[120,40]，N=5。&lt;/p&gt;
+&lt;p&gt;经度120：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;分区次数&lt;/th&gt;
+&lt;th&gt;左区间&lt;/th&gt;
+&lt;th&gt;右区间&lt;/th&gt;
+&lt;th&gt;经度120所在区间&lt;/th&gt;
+&lt;th&gt;编码值&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;[-180,0)&lt;/td&gt;
+&lt;td&gt;[0,180]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;[0,90)&lt;/td&gt;
+&lt;td&gt;[90,180]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;[90,135)&lt;/td&gt;
+&lt;td&gt;[135,180]&lt;/td&gt;
+&lt;td&gt;左&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;[90,112.5)&lt;/td&gt;
+&lt;td&gt;[112.5,135]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;[112.5,123.75)&lt;/td&gt;
+&lt;td&gt;[123.75,135]&lt;/td&gt;
+&lt;td&gt;左&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;纬度40：&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;分区次数&lt;/th&gt;
+&lt;th&gt;左区间&lt;/th&gt;
+&lt;th&gt;右区间&lt;/th&gt;
+&lt;th&gt;经度120所在区间&lt;/th&gt;
+&lt;th&gt;编码值&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;td&gt;[-90,0)&lt;/td&gt;
+&lt;td&gt;[0,90]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;2&lt;/td&gt;
+&lt;td&gt;[0,45)&lt;/td&gt;
+&lt;td&gt;[45,90]&lt;/td&gt;
+&lt;td&gt;左&lt;/td&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;[0,22.5)&lt;/td&gt;
+&lt;td&gt;[22.5,45]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;4&lt;/td&gt;
+&lt;td&gt;[22.5,33.75)&lt;/td&gt;
+&lt;td&gt;[33.75,45]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;5&lt;/td&gt;
+&lt;td&gt;[33.75,39.375)&lt;/td&gt;
+&lt;td&gt;[39.375,45]&lt;/td&gt;
+&lt;td&gt;右&lt;/td&gt;
+&lt;td&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;分别得到了经度和纬度的N位编码值后，是如何合并为一个编码值的呢？规则就是：最终编码值的长度是2N，其中偶数位上依次是经度的编码值，奇数位上依次是纬度的编码值（从0开始计数，0为偶数），示意图如下：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtwxmhb9t7j613o0is75502.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;使用了GeoHash编码后，经纬度[120,40]就被编码成了1110011101，这个值就可以作为key对应的score值。&lt;/p&gt;
+&lt;p&gt;从上面的过程可以看出，在划分区间的过程中，我们其实是把整个空间划分成了一个一个的小方格。对经度和纬度分别做一次二分区的话，就会得到四个分区。这 4 个分区对应了 4 个方格，每个方格覆盖了一定范围内的经纬度值，分区越多，每个方格能覆盖到的地理空间就越小，也就越精准。我们把所有方格的编码值映射到一维空间时，相邻方格的 GeoHash 编码值基本也是接近的，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtwyad1nhuj61eg0u0jtc02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;因此我们使用 Sorted Set 范围查询得到的相近编码值，在实际的地理空间上，也是相邻的方格，这就可以实现 LBS 应用“搜索附近的人或物”的功能了。&lt;/p&gt;
+&lt;p&gt;不过，有的编码值虽然在大小上接近，但实际对应的方格却距离比较远。例如，我们用 4 位来做 GeoHash 编码，把经度区间[-180,180]和纬度区间[-90,90]各分成了 4 个分区，一共 16 个分区，对应了 16 个方格。编码值为 0111 和 1000 的两个方格就离得比较远，如下图所示：&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtwyawvzyyj61db0u0whp02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;所以，为了避免查询不准确问题，我们可以同时查询给定经纬度所在的方格周围的 4 个或 8 个方格。&lt;/p&gt;
+&lt;p&gt;到这里我们就了解了Redis GEO的原理，通过GeoHash编码，将元素对应的经纬度编码，然后将该元素id作为key，编码值作为score值存入Sorted Set中，最后通过Sorted Set的范围查询就可以完成我们最初的需求。下面我们来看下Redis GEO相关的指令吧！&lt;/p&gt;
+&lt;h2 id=&#34;geoadd&#34;&gt;GEOADD&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：对每个要添加的元素，时间复杂度为O(log(N))，N为已存在的元素数量&lt;/p&gt;
+&lt;p&gt;版本变化：6.2.0版本后新增了NX、XX、CH参数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOADD key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;NX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;XX&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;CH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; longitude latitude member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;longitude latitude member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将指定的空间元素（经度、纬度、元素名）添加到key对应的Sorted Set中，GeoHash编码会将经纬度转化为52位比特值&lt;/li&gt;
+&lt;li&gt;该命令的参数格式是固定的，即（longitude latitude member），经度要在纬度之前&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;GEOADD&lt;/code&gt; 坐标是有限的： 非常接近两极的区域是无法被索引的。坐标被 EPSG:900913 / EPSG:3785 / OSGEO:41001 规范限制， 合法值如下：
+&lt;ul&gt;
+&lt;li&gt;有效的经度介于 -180 度至 180 度之间&lt;/li&gt;
+&lt;li&gt;有效的纬度介于 -85.05112878 度至 85.05112878 度之间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;当给定的经纬度超出上述合法范围时，会返回error&lt;/li&gt;
+&lt;li&gt;Redis GEO 没有删除命令 GEODEL，因为底层使用的是Sorted Set，所以完全可以使用 ZREM 命令删除&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;XX: 只更新已存在的元素，不添加新元素&lt;/li&gt;
+&lt;li&gt;NX: 只添加新元素，不更新已存在元素&lt;/li&gt;
+&lt;li&gt;CH: 改变命令返回值的逻辑（CH是change的缩写）。命令默认返回添加新元素的个数，不包含更新已存在的元素；但是如果使用了CH 参数，命令返回被改变的元素数量，包括 添加新元素的数量 + 已存在元素被更新的数量&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;默认：返回新增元素的数量&lt;/p&gt;
+&lt;p&gt;CH参数：被改变的元素数量&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+
+127.0.0.1:6379&amp;gt; geoadd city NX 116.41667 39.91667 beijing
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;geopos&#34;&gt;GEOPOS&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(N)，N为给定的元素个数&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOPOS key member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;返回给定元素对应的经纬度&lt;/li&gt;
+&lt;li&gt;使用GEOADD添加的元素，会被GeoHash转化为52位比特值，因此使用GEOPOS取出值并转为经纬度时，可能与添加的经纬度值有少许差异&lt;/li&gt;
+&lt;li&gt;命令接收多个可变参数，返回值始终是数组形式&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;数组：存在的元素返回经纬度，不存在的元素返回nil&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+
+127.0.0.1:6379&amp;gt; geopos city beijing nanjing
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.41667157411575317&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.91667095273589183&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;nil&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;geodist&#34;&gt;GEODIST&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(log(N))&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEODIST key member1 member2 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;返回两个给定元素之间的距离&lt;/li&gt;
+&lt;li&gt;距离度量支持如下参数：
+&lt;ul&gt;
+&lt;li&gt;m: 米（默认值）&lt;/li&gt;
+&lt;li&gt;km: 千米&lt;/li&gt;
+&lt;li&gt;ft: 英尺&lt;/li&gt;
+&lt;li&gt;mi：英里&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;在计算距离时会假设地球为完美的球形，在极限情况下最大会造成 0.5% 的误差&lt;/li&gt;
+&lt;li&gt;如果给定的元素中，有元素不存在，返回nil&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;字符串：双精度的距离，以字符串形式返回；如果其中一个元素不存在，返回nil&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+
+127.0.0.1:6379&amp;gt; geodist city beijing shanghai
+&lt;span class=&#34;s2&#34;&gt;&amp;#34;748346.9287&amp;#34;&lt;/span&gt;
+127.0.0.1:6379&amp;gt; geodist city beijing shanghai km
+&lt;span class=&#34;s2&#34;&gt;&amp;#34;748.3469&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;geohash&#34;&gt;GEOHASH&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：对每个元素，时间复杂度为O(log(N))，N为已存在的元素数量&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOHASH key member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GEOADD命令会将经纬度编码为52bit，该命令返回GeoHash编码转换后的&lt;code&gt;11&lt;/code&gt;位字符串表示形式，该字符串形式，与 &lt;a href=&#34;https://en.wikipedia.org/wiki/Geohash&#34;&gt;维基百科&lt;/a&gt;描述一致，兼容 &lt;a href=&#34;http://geohash.org/&#34;&gt;geohash.org&lt;/a&gt;规范&lt;/li&gt;
+&lt;li&gt;使用该URL： &lt;a href=&#34;http://geohash.org/&#34;&gt;http://geohash.org/&lt;/a&gt;&lt;!-- raw HTML omitted --&gt;，可以反向解析出命令返回的11位字符串对应的经纬度，例如http://geohash.org/sqdtr74hy01。页面中显示对应的纬度和经度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtx0l9f0spj61hq0bq0tp02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;数组：返回给定元素,GeoHash编码值对应的字符串表示&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 15.08723 37.50265 &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+127.0.0.1:6379&amp;gt; geohash city &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;sqdtr74hvb0&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;根据示例返回的字符串“sqdtr74hvb0”，去页面查询，得到的经纬度和添加的经纬度只有很小差异。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtx0ti5dtlj61aw0bagmj02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;georadius&#34;&gt;GEORADIUS&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(N+log(M))，N为指定范围内元素数量，M为元素数量&lt;/p&gt;
+&lt;p&gt;版本变化：6.2.0版本开始废弃该命令，考虑使用 GEOSEARCH 和 GEOSEARCHSTORE 命令&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEORADIUS key longitude latitude radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHCOORD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHHASH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STORE key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STOREDIST key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;通过给定的经纬度（&lt;code&gt;longitude&lt;/code&gt;,&lt;code&gt;latitude&lt;/code&gt;）和半径（&lt;code&gt;radius&lt;/code&gt;）得到一个圆形区域，返回在区域内的元素&lt;/li&gt;
+&lt;li&gt;简单来说就是查询指定位置一定距离内的元素，例如查询当前位置5公里内的银行&lt;/li&gt;
+&lt;li&gt;半径的单位有如下几种：
+&lt;ul&gt;
+&lt;li&gt;m: 米&lt;/li&gt;
+&lt;li&gt;km: 千米&lt;/li&gt;
+&lt;li&gt;ft: 英尺&lt;/li&gt;
+&lt;li&gt;mi：英里&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;附加信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;WITHDIST：返回元素的同时，返回与指定经纬度的距离，距离单位与上述给定单位一致&lt;/li&gt;
+&lt;li&gt;WITHCOORD：同时返回元素的经纬度信息&lt;/li&gt;
+&lt;li&gt;WITHHASH：返回Geohash值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;命令默认返回无序结果集，可以使用如下两种参数来返回有序数据：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;ASC：距给定经纬度由近及远的顺序&lt;/li&gt;
+&lt;li&gt;DESC：距给定经纬度由远及近的顺序&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;命令默认返回所有符合条件的元素，同时也可以通过 &lt;code&gt;COUNT count&lt;/code&gt; 指定返回元素的数量&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;ANY：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用该可选参数，命令在查询时不用得到所有结果，过程中只要得到 &lt;code&gt;count&lt;/code&gt; 个元素，直接可以返回了，因此最终距离最近或最远的元素可能不会被包含在结果集中；&lt;/li&gt;
+&lt;li&gt;不使用该可选参数，会先得到所有结果，然后进行排序，然后再返回前 count 个。因此如果查询的范围较大，即使返回的元素较少，也会影响服务的性能。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;命令默认只返回数据，如果想保存结果，可以使用如下两个参数：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;STORE：保存结果到key对应的Sorted Set中，Store值为GeoHash值&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;STOREDIST：保存结果到key对应的Sorted Set中，Store为距离，单位与给定单位保持一致&lt;/p&gt;
+&lt;p&gt;注：使用以上两个该参数时，不能使用WITHDIST、WITHCOORD、WITHHASH&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;数组：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;未提供可选参数时：返回元素列表，如[&amp;ldquo;New York&amp;rdquo;,&amp;ldquo;Milan&amp;rdquo;,&amp;ldquo;Paris&amp;rdquo;]&lt;/li&gt;
+&lt;li&gt;提供可选参数时：返回数组的数组，每个子数组代表一个元素信息。每个元素信息的第一个值为name，后续的信息先后顺序为：距离、GeoHash编码、经纬度。例如 GEORADIUS Sicily 15 37 200 km WITHCOORD WITHDIST，即使WITHCOORD在前，但是返回结果中也会在后面的位置：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[&amp;#34;Palermo&amp;#34;,&amp;#34;190.4424&amp;#34;,[&amp;#34;13.361389338970184&amp;#34;,&amp;#34;38.115556395496299&amp;#34;]]
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;53
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;54
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;55
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;56
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;57
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;58
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;59
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;60
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;61
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;62
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;63
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;64
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;65
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;66
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;67
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;68
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;69
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;70
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;71
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;72
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;73
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;74
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;75
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;76
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;77
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;78
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;79
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;80
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;81
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;82
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;83
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;84
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;85
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.408 39.904 beijing
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; geoadd city 116.298 39.959 haidian
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; geoadd city 116.443 39.922 chaoyang
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; geoadd city 121.445 31.213 shanghai
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; geoadd city 121.23 31.07 minhang
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; geoadd city 117.246 39.117 tianjin
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+
+
+&lt;span class=&#34;c1&#34;&gt;# withdist&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# withdist withhash withcoord&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist withhash withcoord
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4069880423958265&lt;/span&gt;
+   4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.29799991846084595&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.95900079609685207&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4069885369376452&lt;/span&gt;
+   4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.40800267457962036&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.90399988166036138&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4069885695970869&lt;/span&gt;
+   4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.44300013780593872&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.92199893661282317&amp;#34;&lt;/span&gt;
+ 
+&lt;span class=&#34;c1&#34;&gt;# DESC&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist DESC
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 提供any参数，会随机返回两个元素，并排序，可以看到结果中没有chaoyang&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist COUNT &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; any desc
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 不使用any参数，会返回排序后的前两个元素&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist COUNT &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;  desc
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
+   
+&lt;span class=&#34;c1&#34;&gt;# 使用store，默认保存地理位置信息GeoHash&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km  store city_res
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange city_res &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4069880423958265&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4069885369376452&amp;#34;&lt;/span&gt;
+5&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+6&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4069885695970869&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# storedist，保存距离&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km  storedist city_res
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange city_res &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.80461312279574&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.389782386698734&amp;#34;&lt;/span&gt;
+5&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+6&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.750694603755257&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;georadiusbymember&#34;&gt;GEORADIUSBYMEMBER&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(N+log(M))，N为指定范围内元素数量，M为元素数量&lt;/p&gt;
+&lt;p&gt;版本变化：6.2.0版本开始废弃该命令，考虑使用 GEOSEARCH 和 GEOSEARCHSTORE 命令&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEORADIUSBYMEMBER key member radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHCOORD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHHASH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STORE key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STOREDIST key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;该命令与&lt;code&gt;GEORADIUS&lt;/code&gt;命令基本一样，唯一不同的是：&lt;code&gt;GEORADIUSBYMEMBER&lt;/code&gt;给定的是Sorted Set中的一个元素，而&lt;code&gt;GEORADIUS&lt;/code&gt;给定的是具体经纬度。通过给定元素，其实就可以得到存储的经纬度，进而进行查询。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.408 39.904 beijing 116.298 39.959 haidian 116.443 39.922 chaoyang 121.445 31.213 shanghai 121.23 31.07 minhang 117.246 39.117 tianjin
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+
+127.0.0.1:6379&amp;gt; GEORADIUSBYMEMBER city beijing &lt;span class=&#34;m&#34;&gt;500&lt;/span&gt; km withdist asc
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;0.0000&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3.5948&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;11.2004&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;tianjin&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;113.2837&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;geosearch&#34;&gt;GEOSEARCH&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 6.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(N+log(M))&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOSEARCH key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMMEMBER member&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMLONLAT longitude latitude&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYRADIUS radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYBOX width height m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHCOORD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHHASH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;该命令是 GEORADIUS 和 GEORADIUSBYMEMBER 的整合，同时提供了额外功能。整体来说就是返回给定位置一定区域范围内的元素。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;必选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;查询的中心点通过以下必选参数指定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;FROMMEMBER：指定元素&lt;/li&gt;
+&lt;li&gt;FROMLONLAT：指定经纬度&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;查询的范围形状通过以下必选参数指定：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;BYRADIUS：圆形区域，通过半径radius指定半径&lt;/li&gt;
+&lt;li&gt;BYBOX：长方形区域，通过 width 和 height 指定宽和长&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;附加信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;WITHDIST：返回元素的同时，返回与指定经纬度的距离，距离单位与上述给定单位一致&lt;/li&gt;
+&lt;li&gt;WITHCOORD：同时返回元素的经纬度信息&lt;/li&gt;
+&lt;li&gt;WITHHASH：返回Geohash值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;命令默认返回无序结果集，可以使用如下两种参数来返回有序数据：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;ASC：距给定经纬度由近及远的顺序&lt;/li&gt;
+&lt;li&gt;DESC：距给定经纬度由远及近的顺序&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;命令默认返回所有符合条件的元素，同时也可以通过 &lt;code&gt;COUNT count&lt;/code&gt; 指定返回元素的数量&lt;/p&gt;
+&lt;p&gt;ANY：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;使用该可选参数，命令在查询时不用得到所有结果，过程中只要得到 &lt;code&gt;count&lt;/code&gt; 个元素，直接可以返回了，因此最终距离最近或最远的元素可能不会被包含在结果集中；&lt;/li&gt;
+&lt;li&gt;不使用该可选参数，会先得到所有结果，然后进行排序，然后再返回前 count 个。因此如果查询的范围较大，即使返回的元素较少，也会影响服务的性能。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;数组：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;未提供可选参数时：返回元素列表，如[&amp;ldquo;New York&amp;rdquo;,&amp;ldquo;Milan&amp;rdquo;,&amp;ldquo;Paris&amp;rdquo;]&lt;/li&gt;
+&lt;li&gt;提供可选参数时：返回数组的数组，其中每个子数组代表一个元素信息。每个子数组的第一个值为name，后续的信息先后顺序为：距离、GeoHash编码、经纬度。例如 GEORADIUS Sicily 15 37 200 km WITHCOORD WITHDIST，即使WITHCOORD在前，但是返回结果中也会在后面的位置：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[&amp;#34;Palermo&amp;#34;,&amp;#34;190.4424&amp;#34;,[&amp;#34;13.361389338970184&amp;#34;,&amp;#34;38.115556395496299&amp;#34;]]
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; GEOADD Sicily 13.361389 38.115556 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt; 15.087269 37.502669 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOADD Sicily 12.758489 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge1&amp;#34;&lt;/span&gt; 17.241510 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge2&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOSEARCH Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOSEARCH Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYBOX &lt;span class=&#34;m&#34;&gt;400&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;400&lt;/span&gt; km ASC WITHCOORD WITHDIST
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;56.4413&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;15.08726745843887329&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;37.50266842333162032&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;190.4424&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;13.36138933897018433&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.11555639549629859&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge2&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;279.7403&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;17.24151045083999634&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.78813451624225195&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge1&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;279.7405&amp;#34;&lt;/span&gt;
+   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;12.7584877610206604&amp;#34;&lt;/span&gt;
+      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.78813451624225195&amp;#34;&lt;/span&gt;
+127.0.0.1:6379&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;geosearchstore&#34;&gt;GEOSEARCHSTORE&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 6.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(N+log(M))&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOSEARCHSTORE destination &lt;span class=&#34;nb&#34;&gt;source&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMMEMBER member&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMLONLAT longitude latitude&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYRADIUS radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYBOX width height m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STOREDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;该命令与&lt;code&gt;GEOSEARCH&lt;/code&gt;命令基本一样，唯一不同的是：&lt;code&gt;GEOSEARCH&lt;/code&gt; 是直接返回结果，而&lt;code&gt;GEOSEARCHSTORE&lt;/code&gt;可以将结果保存到给定的key &lt;code&gt;destination&lt;/code&gt;中。&lt;/li&gt;
+&lt;li&gt;命令默认保存代表的地理位置的GeoHash值，指定 &lt;code&gt;STOREDIST&lt;/code&gt;参数后，保存距离信息。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; GEOADD Sicily 13.361389 38.115556 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt; 15.087269 37.502669 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOADD Sicily 12.758489 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge1&amp;#34;&lt;/span&gt; 17.241510 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge2&amp;#34;&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 查询，只返回结果&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOSEARCH Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC withhash
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3479447370796909&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
+   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3479099956230698&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 将查询结果保存到 Sicily_des 中，默认保存geohash&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOSEARCHSTORE Sicily_des Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 遍历 Sicily_des&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange Sicily_des &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3479099956230698&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3479447370796909&amp;#34;&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 保存距离信息&lt;/span&gt;
+127.0.0.1:6379&amp;gt; GEOSEARCHSTORE Sicily_des Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC  STOREDIST
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+127.0.0.1:6379&amp;gt; zrange Sicily_des &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
+1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
+2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;56.441257870158204&amp;#34;&lt;/span&gt;
+3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
+4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;190.44242984775784&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了Redis GEO的基本原理和相关指令：&lt;/p&gt;
+&lt;p&gt;原理：GeoHash的编码规则&lt;/p&gt;
+&lt;p&gt;命令：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;GEOADD：添加指定经纬度的元素&lt;/li&gt;
+&lt;li&gt;GEOPOS：查询给定元素对应的经纬度&lt;/li&gt;
+&lt;li&gt;GEODIST：查询两个给定元素之间的距离&lt;/li&gt;
+&lt;li&gt;GEOHASH：返回GeoHash编码后的字符串表示&lt;/li&gt;
+&lt;li&gt;GEORADIUS：返回以指定经纬度为圆心，给定半径范围内的元素&lt;/li&gt;
+&lt;li&gt;GEORADIUSBYMEMBER：返回以指定元素为圆心，给定半径范围内的元素&lt;/li&gt;
+&lt;li&gt;GEOSEARCH：GEORADIUS 和 GEORADIUSBYMEMBER的整合，同时提供了长方形区域范围查询&lt;/li&gt;
+&lt;li&gt;GEORADIUSBYMEMBER：与GEOSEARCH功能一致，提供了保存结果功能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Redis HyperLogLog 命令学习及原理浅析</title>

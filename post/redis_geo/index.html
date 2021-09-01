@@ -1,0 +1,1427 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Redis GEO 命令学习及原理浅析 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="关注不迷路，一起 From Zero To Hero ! 前言 相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/redis_geo/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Redis GEO 命令学习及原理浅析" />
+<meta property="og:description" content="关注不迷路，一起 From Zero To Hero ! 前言 相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/redis_geo/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-09-02T00:24:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-09-02T00:24:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Redis GEO 命令学习及原理浅析">
+<meta itemprop="description" content="关注不迷路，一起 From Zero To Hero ! 前言 相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-"><meta itemprop="datePublished" content="2021-09-02T00:24:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-09-02T00:24:23&#43;08:00" />
+<meta itemprop="wordCount" content="5993">
+<meta itemprop="keywords" content="Redis," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis GEO 命令学习及原理浅析"/>
+<meta name="twitter:description" content="关注不迷路，一起 From Zero To Hero ! 前言 相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Redis GEO 命令学习及原理浅析</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-09-02" class="post-time">
+          2021-09-02
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/redis/"> Redis </a>
+            
+          </div>
+        <span class="more-meta"> 约 5993 字 </span>
+          <span class="more-meta"> 预计阅读 12 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#原理介绍">原理介绍</a></li>
+    <li><a href="#geoadd">GEOADD</a></li>
+    <li><a href="#geopos">GEOPOS</a></li>
+    <li><a href="#geodist">GEODIST</a></li>
+    <li><a href="#geohash">GEOHASH</a></li>
+    <li><a href="#georadius">GEORADIUS</a></li>
+    <li><a href="#georadiusbymember">GEORADIUSBYMEMBER</a></li>
+    <li><a href="#geosearch">GEOSEARCH</a></li>
+    <li><a href="#geosearchstore">GEOSEARCHSTORE</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <p>关注不迷路，一起 From Zero To Hero !</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<h2 id="前言">前言</h2>
+<p>相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-Based Service，LBS）的应用。此类应用都是基于经纬度来查询附近的目标，Redis GEO就适用于此类场景。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtvqwtj3t9j61ee0lyk0b02.jpg" alt=""></p>
+<h2 id="原理介绍">原理介绍</h2>
+<p><code>Redis GEO</code>并不是一种新的数据结构，而是基于<code>Sorted Set</code>实现的。我们在之前的文章中学过<code>Sorted Set</code>结构，该结构保存的数据形式是<code>key-score</code>，即一个元素对应一个分值，默认是根据分值排序的，且可以进行范围查询。但是经纬度是一个数据对，比如（117.25，40.60），那么Redis是如何将经纬度转换成<code>score</code>值的呢？转换成<code>score</code>值之后，是如何保证分值相邻的元素距离也相近的呢？这一切就依赖于<code>GeoHash</code>编码。</p>
+<p>经度的范围是[-180,180]，纬度的范围是[-90,90]，当我们对经纬度进行编码时，先对经度和纬度分别进行GeoHash编码，然后再合并为一个编码值。下面我们就来介绍GeoHash的编码方法。</p>
+<p>对于经度或纬度来说，GeoHash会将其编码为一个N为的二进制值，其实就是通过N次的分区得到的，N可以自定义。下面是具体的逻辑：</p>
+<ol>
+<li>
+<p>第一次分区：我们把经度范围[-180,180]分为两个区间[-180,0) 和[0,180]，简称为左右区间。看当前的经度值落在哪个区间中，如果在左区间，记为一次0，否则记为1，这样我们就得到一位编码值了。</p>
+</li>
+<li>
+<p>第二次分区：假设第一次落在了[0,180]区间内，我们再把该区间分为两个区间[0,90) 和[90,180]，然后再根据落在左右区间，得到一个0或者1的编码值。</p>
+<p>&hellip;&hellip;</p>
+</li>
+<li>
+<p>重复N次之后，我们就得到了N个编码值。纬度也是一样的逻辑，可以得到N个编码值。</p>
+</li>
+</ol>
+<p>举个具体的例子，给定经纬度[120,40]，N=5。</p>
+<p>经度120：</p>
+<table>
+<thead>
+<tr>
+<th>分区次数</th>
+<th>左区间</th>
+<th>右区间</th>
+<th>经度120所在区间</th>
+<th>编码值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>[-180,0)</td>
+<td>[0,180]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>[0,90)</td>
+<td>[90,180]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>[90,135)</td>
+<td>[135,180]</td>
+<td>左</td>
+<td>0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>[90,112.5)</td>
+<td>[112.5,135]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>[112.5,123.75)</td>
+<td>[123.75,135]</td>
+<td>左</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+<p>纬度40：</p>
+<table>
+<thead>
+<tr>
+<th>分区次数</th>
+<th>左区间</th>
+<th>右区间</th>
+<th>经度120所在区间</th>
+<th>编码值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>[-90,0)</td>
+<td>[0,90]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>[0,45)</td>
+<td>[45,90]</td>
+<td>左</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>[0,22.5)</td>
+<td>[22.5,45]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4</td>
+<td>[22.5,33.75)</td>
+<td>[33.75,45]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>[33.75,39.375)</td>
+<td>[39.375,45]</td>
+<td>右</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<p>分别得到了经度和纬度的N位编码值后，是如何合并为一个编码值的呢？规则就是：最终编码值的长度是2N，其中偶数位上依次是经度的编码值，奇数位上依次是纬度的编码值（从0开始计数，0为偶数），示意图如下：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtwxmhb9t7j613o0is75502.jpg" alt=""></p>
+<p>使用了GeoHash编码后，经纬度[120,40]就被编码成了1110011101，这个值就可以作为key对应的score值。</p>
+<p>从上面的过程可以看出，在划分区间的过程中，我们其实是把整个空间划分成了一个一个的小方格。对经度和纬度分别做一次二分区的话，就会得到四个分区。这 4 个分区对应了 4 个方格，每个方格覆盖了一定范围内的经纬度值，分区越多，每个方格能覆盖到的地理空间就越小，也就越精准。我们把所有方格的编码值映射到一维空间时，相邻方格的 GeoHash 编码值基本也是接近的，如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtwyad1nhuj61eg0u0jtc02.jpg" alt=""></p>
+<p>因此我们使用 Sorted Set 范围查询得到的相近编码值，在实际的地理空间上，也是相邻的方格，这就可以实现 LBS 应用“搜索附近的人或物”的功能了。</p>
+<p>不过，有的编码值虽然在大小上接近，但实际对应的方格却距离比较远。例如，我们用 4 位来做 GeoHash 编码，把经度区间[-180,180]和纬度区间[-90,90]各分成了 4 个分区，一共 16 个分区，对应了 16 个方格。编码值为 0111 和 1000 的两个方格就离得比较远，如下图所示：</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtwyawvzyyj61db0u0whp02.jpg" alt=""></p>
+<p>所以，为了避免查询不准确问题，我们可以同时查询给定经纬度所在的方格周围的 4 个或 8 个方格。</p>
+<p>到这里我们就了解了Redis GEO的原理，通过GeoHash编码，将元素对应的经纬度编码，然后将该元素id作为key，编码值作为score值存入Sorted Set中，最后通过Sorted Set的范围查询就可以完成我们最初的需求。下面我们来看下Redis GEO相关的指令吧！</p>
+<h2 id="geoadd">GEOADD</h2>
+<blockquote>
+<p>可用版本：&gt;= 3.2.0</p>
+<p>时间复杂度：对每个要添加的元素，时间复杂度为O(log(N))，N为已存在的元素数量</p>
+<p>版本变化：6.2.0版本后新增了NX、XX、CH参数</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEOADD key <span class="o">[</span>NX<span class="p">|</span>XX<span class="o">]</span> <span class="o">[</span>CH<span class="o">]</span> longitude latitude member <span class="o">[</span>longitude latitude member ...<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>将指定的空间元素（经度、纬度、元素名）添加到key对应的Sorted Set中，GeoHash编码会将经纬度转化为52位比特值</li>
+<li>该命令的参数格式是固定的，即（longitude latitude member），经度要在纬度之前</li>
+<li><code>GEOADD</code> 坐标是有限的： 非常接近两极的区域是无法被索引的。坐标被 EPSG:900913 / EPSG:3785 / OSGEO:41001 规范限制， 合法值如下：
+<ul>
+<li>有效的经度介于 -180 度至 180 度之间</li>
+<li>有效的纬度介于 -85.05112878 度至 85.05112878 度之间</li>
+</ul>
+</li>
+<li>当给定的经纬度超出上述合法范围时，会返回error</li>
+<li>Redis GEO 没有删除命令 GEODEL，因为底层使用的是Sorted Set，所以完全可以使用 ZREM 命令删除</li>
+</ul>
+<p><strong>可选参数</strong></p>
+<ul>
+<li>XX: 只更新已存在的元素，不添加新元素</li>
+<li>NX: 只添加新元素，不更新已存在元素</li>
+<li>CH: 改变命令返回值的逻辑（CH是change的缩写）。命令默认返回添加新元素的个数，不包含更新已存在的元素；但是如果使用了CH 参数，命令返回被改变的元素数量，包括 添加新元素的数量 + 已存在元素被更新的数量</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>默认：返回新增元素的数量</p>
+<p>CH参数：被改变的元素数量</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+
+127.0.0.1:6379&gt; geoadd city NX 116.41667 39.91667 beijing
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">0</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="geopos">GEOPOS</h2>
+<blockquote>
+<p>可用版本：&gt;= 3.2.0</p>
+<p>时间复杂度：O(N)，N为给定的元素个数</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEOPOS key member <span class="o">[</span>member ...<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>返回给定元素对应的经纬度</li>
+<li>使用GEOADD添加的元素，会被GeoHash转化为52位比特值，因此使用GEOPOS取出值并转为经纬度时，可能与添加的经纬度值有少许差异</li>
+<li>命令接收多个可变参数，返回值始终是数组形式</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>数组：存在的元素返回经纬度，不存在的元素返回nil</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+
+127.0.0.1:6379&gt; geopos city beijing nanjing
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;116.41667157411575317&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;39.91667095273589183&#34;</span>
+2<span class="o">)</span> <span class="o">(</span>nil<span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="geodist">GEODIST</h2>
+<blockquote>
+<p>可用版本：&gt;= 3.2.0</p>
+<p>时间复杂度：O(log(N))</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEODIST key member1 member2 <span class="o">[</span>m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>返回两个给定元素之间的距离</li>
+<li>距离度量支持如下参数：
+<ul>
+<li>m: 米（默认值）</li>
+<li>km: 千米</li>
+<li>ft: 英尺</li>
+<li>mi：英里</li>
+</ul>
+</li>
+<li>在计算距离时会假设地球为完美的球形，在极限情况下最大会造成 0.5% 的误差</li>
+<li>如果给定的元素中，有元素不存在，返回nil</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>字符串：双精度的距离，以字符串形式返回；如果其中一个元素不存在，返回nil</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+
+127.0.0.1:6379&gt; geodist city beijing shanghai
+<span class="s2">&#34;748346.9287&#34;</span>
+127.0.0.1:6379&gt; geodist city beijing shanghai km
+<span class="s2">&#34;748.3469&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="geohash">GEOHASH</h2>
+<blockquote>
+<p>可用版本：&gt;= 3.2.0</p>
+<p>时间复杂度：对每个元素，时间复杂度为O(log(N))，N为已存在的元素数量</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEOHASH key member <span class="o">[</span>member ...<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>GEOADD命令会将经纬度编码为52bit，该命令返回GeoHash编码转换后的<code>11</code>位字符串表示形式，该字符串形式，与 <a href="https://en.wikipedia.org/wiki/Geohash">维基百科</a>描述一致，兼容 <a href="http://geohash.org/">geohash.org</a>规范</li>
+<li>使用该URL： <a href="http://geohash.org/">http://geohash.org/</a><!-- raw HTML omitted -->，可以反向解析出命令返回的11位字符串对应的经纬度，例如http://geohash.org/sqdtr74hy01。页面中显示对应的纬度和经度</li>
+</ul>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtx0l9f0spj61hq0bq0tp02.jpg" alt=""></p>
+<p><strong>返回值</strong></p>
+<p>数组：返回给定元素,GeoHash编码值对应的字符串表示</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; geoadd city 15.08723 37.50265 <span class="nb">test</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+
+127.0.0.1:6379&gt; geohash city <span class="nb">test</span>
+1<span class="o">)</span> <span class="s2">&#34;sqdtr74hvb0&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>根据示例返回的字符串“sqdtr74hvb0”，去页面查询，得到的经纬度和添加的经纬度只有很小差异。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtx0ti5dtlj61aw0bagmj02.jpg" alt=""></p>
+<h2 id="georadius">GEORADIUS</h2>
+<blockquote>
+<p>可用版本：&gt;= 3.2.0</p>
+<p>时间复杂度：O(N+log(M))，N为指定范围内元素数量，M为元素数量</p>
+<p>版本变化：6.2.0版本开始废弃该命令，考虑使用 GEOSEARCH 和 GEOSEARCHSTORE 命令</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEORADIUS key longitude latitude radius m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi <span class="o">[</span>WITHCOORD<span class="o">]</span> <span class="o">[</span>WITHDIST<span class="o">]</span> 
+<span class="o">[</span>WITHHASH<span class="o">]</span> <span class="o">[</span>COUNT count <span class="o">[</span>ANY<span class="o">]]</span> <span class="o">[</span>ASC<span class="p">|</span>DESC<span class="o">]</span> <span class="o">[</span>STORE key<span class="o">]</span> <span class="o">[</span>STOREDIST key<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>通过给定的经纬度（<code>longitude</code>,<code>latitude</code>）和半径（<code>radius</code>）得到一个圆形区域，返回在区域内的元素</li>
+<li>简单来说就是查询指定位置一定距离内的元素，例如查询当前位置5公里内的银行</li>
+<li>半径的单位有如下几种：
+<ul>
+<li>m: 米</li>
+<li>km: 千米</li>
+<li>ft: 英尺</li>
+<li>mi：英里</li>
+</ul>
+</li>
+</ul>
+<p><strong>可选参数</strong></p>
+<ol>
+<li>附加信息</li>
+</ol>
+<ul>
+<li>WITHDIST：返回元素的同时，返回与指定经纬度的距离，距离单位与上述给定单位一致</li>
+<li>WITHCOORD：同时返回元素的经纬度信息</li>
+<li>WITHHASH：返回Geohash值</li>
+</ul>
+<ol start="2">
+<li>命令默认返回无序结果集，可以使用如下两种参数来返回有序数据：</li>
+</ol>
+<ul>
+<li>ASC：距给定经纬度由近及远的顺序</li>
+<li>DESC：距给定经纬度由远及近的顺序</li>
+</ul>
+<ol start="3">
+<li>命令默认返回所有符合条件的元素，同时也可以通过 <code>COUNT count</code> 指定返回元素的数量</li>
+</ol>
+<p>ANY：</p>
+<ul>
+<li>使用该可选参数，命令在查询时不用得到所有结果，过程中只要得到 <code>count</code> 个元素，直接可以返回了，因此最终距离最近或最远的元素可能不会被包含在结果集中；</li>
+<li>不使用该可选参数，会先得到所有结果，然后进行排序，然后再返回前 count 个。因此如果查询的范围较大，即使返回的元素较少，也会影响服务的性能。</li>
+</ul>
+<ol start="4">
+<li>命令默认只返回数据，如果想保存结果，可以使用如下两个参数：</li>
+</ol>
+<ul>
+<li>
+<p>STORE：保存结果到key对应的Sorted Set中，Store值为GeoHash值</p>
+</li>
+<li>
+<p>STOREDIST：保存结果到key对应的Sorted Set中，Store为距离，单位与给定单位保持一致</p>
+<p>注：使用以上两个该参数时，不能使用WITHDIST、WITHCOORD、WITHHASH</p>
+</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>数组：</p>
+<ul>
+<li>未提供可选参数时：返回元素列表，如[&ldquo;New York&rdquo;,&ldquo;Milan&rdquo;,&ldquo;Paris&rdquo;]</li>
+<li>提供可选参数时：返回数组的数组，每个子数组代表一个元素信息。每个元素信息的第一个值为name，后续的信息先后顺序为：距离、GeoHash编码、经纬度。例如 GEORADIUS Sicily 15 37 200 km WITHCOORD WITHDIST，即使WITHCOORD在前，但是返回结果中也会在后面的位置：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[&#34;Palermo&#34;,&#34;190.4424&#34;,[&#34;13.361389338970184&#34;,&#34;38.115556395496299&#34;]]
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; geoadd city 116.408 39.904 beijing
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; geoadd city 116.298 39.959 haidian
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; geoadd city 116.443 39.922 chaoyang
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; geoadd city 121.445 31.213 shanghai
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; geoadd city 121.23 31.07 minhang
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+127.0.0.1:6379&gt; geoadd city 117.246 39.117 tianjin
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+
+
+<span class="c1"># withdist</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km withdist
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;25.8046&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;36.3898&#34;</span>
+3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;38.7507&#34;</span>
+
+<span class="c1"># withdist withhash withcoord</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km withdist withhash withcoord
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;25.8046&#34;</span>
+   3<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">4069880423958265</span>
+   4<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;116.29799991846084595&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;39.95900079609685207&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;36.3898&#34;</span>
+   3<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">4069885369376452</span>
+   4<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;116.40800267457962036&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;39.90399988166036138&#34;</span>
+3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;38.7507&#34;</span>
+   3<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">4069885695970869</span>
+   4<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;116.44300013780593872&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;39.92199893661282317&#34;</span>
+ 
+<span class="c1"># DESC</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km withdist DESC
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;38.7507&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;36.3898&#34;</span>
+3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;25.8046&#34;</span>
+
+<span class="c1"># 提供any参数，会随机返回两个元素，并排序，可以看到结果中没有chaoyang</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km withdist COUNT <span class="m">2</span> any desc
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;36.3898&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;25.8046&#34;</span>
+
+<span class="c1"># 不使用any参数，会返回排序后的前两个元素</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km withdist COUNT <span class="m">2</span>  desc
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;38.7507&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;36.3898&#34;</span>
+   
+<span class="c1"># 使用store，默认保存地理位置信息GeoHash</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km  store city_res
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+127.0.0.1:6379&gt; zrange city_res <span class="m">0</span> -1 withscores
+1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;4069880423958265&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+4<span class="o">)</span> <span class="s2">&#34;4069885369376452&#34;</span>
+5<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+6<span class="o">)</span> <span class="s2">&#34;4069885695970869&#34;</span>
+
+<span class="c1"># storedist，保存距离</span>
+127.0.0.1:6379&gt; GEORADIUS city <span class="m">116</span> <span class="m">40</span> <span class="m">100</span> km  storedist city_res
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+127.0.0.1:6379&gt; zrange city_res <span class="m">0</span> -1 withscores
+1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;25.80461312279574&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+4<span class="o">)</span> <span class="s2">&#34;36.389782386698734&#34;</span>
+5<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+6<span class="o">)</span> <span class="s2">&#34;38.750694603755257&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="georadiusbymember">GEORADIUSBYMEMBER</h2>
+<blockquote>
+<p>可用版本：&gt;= 3.2.0</p>
+<p>时间复杂度：O(N+log(M))，N为指定范围内元素数量，M为元素数量</p>
+<p>版本变化：6.2.0版本开始废弃该命令，考虑使用 GEOSEARCH 和 GEOSEARCHSTORE 命令</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEORADIUSBYMEMBER key member radius m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi <span class="o">[</span>WITHCOORD<span class="o">]</span> <span class="o">[</span>WITHDIST<span class="o">]</span> 
+<span class="o">[</span>WITHHASH<span class="o">]</span> <span class="o">[</span>COUNT count <span class="o">[</span>ANY<span class="o">]]</span> <span class="o">[</span>ASC<span class="p">|</span>DESC<span class="o">]</span> <span class="o">[</span>STORE key<span class="o">]</span> <span class="o">[</span>STOREDIST key<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>该命令与<code>GEORADIUS</code>命令基本一样，唯一不同的是：<code>GEORADIUSBYMEMBER</code>给定的是Sorted Set中的一个元素，而<code>GEORADIUS</code>给定的是具体经纬度。通过给定元素，其实就可以得到存储的经纬度，进而进行查询。</li>
+</ul>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; geoadd city 116.408 39.904 beijing 116.298 39.959 haidian 116.443 39.922 chaoyang 121.445 31.213 shanghai 121.23 31.07 minhang 117.246 39.117 tianjin
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">6</span>
+
+127.0.0.1:6379&gt; GEORADIUSBYMEMBER city beijing <span class="m">500</span> km withdist asc
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;beijing&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;0.0000&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;chaoyang&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;3.5948&#34;</span>
+3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;haidian&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;11.2004&#34;</span>
+4<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;tianjin&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;113.2837&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="geosearch">GEOSEARCH</h2>
+<blockquote>
+<p>可用版本：&gt;= 6.2.0</p>
+<p>时间复杂度：O(N+log(M))</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEOSEARCH key <span class="o">[</span>FROMMEMBER member<span class="o">]</span> <span class="o">[</span>FROMLONLAT longitude latitude<span class="o">]</span> 
+<span class="o">[</span>BYRADIUS radius m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi<span class="o">]</span> <span class="o">[</span>BYBOX width height m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi<span class="o">]</span> 
+<span class="o">[</span>ASC<span class="p">|</span>DESC<span class="o">]</span> <span class="o">[</span>COUNT count <span class="o">[</span>ANY<span class="o">]]</span> <span class="o">[</span>WITHCOORD<span class="o">]</span> <span class="o">[</span>WITHDIST<span class="o">]</span> <span class="o">[</span>WITHHASH<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>该命令是 GEORADIUS 和 GEORADIUSBYMEMBER 的整合，同时提供了额外功能。整体来说就是返回给定位置一定区域范围内的元素。</li>
+</ul>
+<p><strong>必选参数</strong></p>
+<p>查询的中心点通过以下必选参数指定：</p>
+<ul>
+<li>FROMMEMBER：指定元素</li>
+<li>FROMLONLAT：指定经纬度</li>
+</ul>
+<p>查询的范围形状通过以下必选参数指定：</p>
+<ul>
+<li>BYRADIUS：圆形区域，通过半径radius指定半径</li>
+<li>BYBOX：长方形区域，通过 width 和 height 指定宽和长</li>
+</ul>
+<p><strong>可选参数</strong></p>
+<ol>
+<li>附加信息</li>
+</ol>
+<ul>
+<li>WITHDIST：返回元素的同时，返回与指定经纬度的距离，距离单位与上述给定单位一致</li>
+<li>WITHCOORD：同时返回元素的经纬度信息</li>
+<li>WITHHASH：返回Geohash值</li>
+</ul>
+<ol start="2">
+<li>命令默认返回无序结果集，可以使用如下两种参数来返回有序数据：</li>
+</ol>
+<ul>
+<li>ASC：距给定经纬度由近及远的顺序</li>
+<li>DESC：距给定经纬度由远及近的顺序</li>
+</ul>
+<p>命令默认返回所有符合条件的元素，同时也可以通过 <code>COUNT count</code> 指定返回元素的数量</p>
+<p>ANY：</p>
+<ul>
+<li>使用该可选参数，命令在查询时不用得到所有结果，过程中只要得到 <code>count</code> 个元素，直接可以返回了，因此最终距离最近或最远的元素可能不会被包含在结果集中；</li>
+<li>不使用该可选参数，会先得到所有结果，然后进行排序，然后再返回前 count 个。因此如果查询的范围较大，即使返回的元素较少，也会影响服务的性能。</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>数组：</p>
+<ul>
+<li>未提供可选参数时：返回元素列表，如[&ldquo;New York&rdquo;,&ldquo;Milan&rdquo;,&ldquo;Paris&rdquo;]</li>
+<li>提供可选参数时：返回数组的数组，其中每个子数组代表一个元素信息。每个子数组的第一个值为name，后续的信息先后顺序为：距离、GeoHash编码、经纬度。例如 GEORADIUS Sicily 15 37 200 km WITHCOORD WITHDIST，即使WITHCOORD在前，但是返回结果中也会在后面的位置：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">[&#34;Palermo&#34;,&#34;190.4424&#34;,[&#34;13.361389338970184&#34;,&#34;38.115556395496299&#34;]]
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; GEOADD Sicily 13.361389 38.115556 <span class="s2">&#34;Palermo&#34;</span> 15.087269 37.502669 <span class="s2">&#34;Catania&#34;</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; GEOADD Sicily 12.758489 38.788135 <span class="s2">&#34;edge1&#34;</span> 17.241510 38.788135 <span class="s2">&#34;edge2&#34;</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; GEOSEARCH Sicily FROMLONLAT <span class="m">15</span> <span class="m">37</span> BYRADIUS <span class="m">200</span> km ASC
+1<span class="o">)</span> <span class="s2">&#34;Catania&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;Palermo&#34;</span>
+127.0.0.1:6379&gt; GEOSEARCH Sicily FROMLONLAT <span class="m">15</span> <span class="m">37</span> BYBOX <span class="m">400</span> <span class="m">400</span> km ASC WITHCOORD WITHDIST
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;Catania&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;56.4413&#34;</span>
+   3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;15.08726745843887329&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;37.50266842333162032&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;Palermo&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;190.4424&#34;</span>
+   3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;13.36138933897018433&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;38.11555639549629859&#34;</span>
+3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;edge2&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;279.7403&#34;</span>
+   3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;17.24151045083999634&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;38.78813451624225195&#34;</span>
+4<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;edge1&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;279.7405&#34;</span>
+   3<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;12.7584877610206604&#34;</span>
+      2<span class="o">)</span> <span class="s2">&#34;38.78813451624225195&#34;</span>
+127.0.0.1:6379&gt;
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="geosearchstore">GEOSEARCHSTORE</h2>
+<blockquote>
+<p>可用版本：&gt;= 6.2.0</p>
+<p>时间复杂度：O(N+log(M))</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">GEOSEARCHSTORE destination <span class="nb">source</span> <span class="o">[</span>FROMMEMBER member<span class="o">]</span> <span class="o">[</span>FROMLONLAT longitude latitude<span class="o">]</span> 
+<span class="o">[</span>BYRADIUS radius m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi<span class="o">]</span> <span class="o">[</span>BYBOX width height m<span class="p">|</span>km<span class="p">|</span>ft<span class="p">|</span>mi<span class="o">]</span> 
+<span class="o">[</span>ASC<span class="p">|</span>DESC<span class="o">]</span> <span class="o">[</span>COUNT count <span class="o">[</span>ANY<span class="o">]]</span> <span class="o">[</span>STOREDIST<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>该命令与<code>GEOSEARCH</code>命令基本一样，唯一不同的是：<code>GEOSEARCH</code> 是直接返回结果，而<code>GEOSEARCHSTORE</code>可以将结果保存到给定的key <code>destination</code>中。</li>
+<li>命令默认保存代表的地理位置的GeoHash值，指定 <code>STOREDIST</code>参数后，保存距离信息。</li>
+</ul>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; GEOADD Sicily 13.361389 38.115556 <span class="s2">&#34;Palermo&#34;</span> 15.087269 37.502669 <span class="s2">&#34;Catania&#34;</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; GEOADD Sicily 12.758489 38.788135 <span class="s2">&#34;edge1&#34;</span> 17.241510 38.788135 <span class="s2">&#34;edge2&#34;</span>
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+
+<span class="c1"># 查询，只返回结果</span>
+127.0.0.1:6379&gt; GEOSEARCH Sicily FROMLONLAT <span class="m">15</span> <span class="m">37</span> BYRADIUS <span class="m">200</span> km ASC withhash
+1<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;Catania&#34;</span>
+   2<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">3479447370796909</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;Palermo&#34;</span>
+   2<span class="o">)</span> <span class="o">(</span>integer<span class="o">)</span> <span class="m">3479099956230698</span>
+
+<span class="c1"># 将查询结果保存到 Sicily_des 中，默认保存geohash</span>
+127.0.0.1:6379&gt; GEOSEARCHSTORE Sicily_des Sicily FROMLONLAT <span class="m">15</span> <span class="m">37</span> BYRADIUS <span class="m">200</span> km ASC
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+
+<span class="c1"># 遍历 Sicily_des</span>
+127.0.0.1:6379&gt; zrange Sicily_des <span class="m">0</span> -1 withscores
+1<span class="o">)</span> <span class="s2">&#34;Palermo&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;3479099956230698&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;Catania&#34;</span>
+4<span class="o">)</span> <span class="s2">&#34;3479447370796909&#34;</span>
+
+<span class="c1"># 保存距离信息</span>
+127.0.0.1:6379&gt; GEOSEARCHSTORE Sicily_des Sicily FROMLONLAT <span class="m">15</span> <span class="m">37</span> BYRADIUS <span class="m">200</span> km ASC  STOREDIST
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">2</span>
+127.0.0.1:6379&gt; zrange Sicily_des <span class="m">0</span> -1 withscores
+1<span class="o">)</span> <span class="s2">&#34;Catania&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;56.441257870158204&#34;</span>
+3<span class="o">)</span> <span class="s2">&#34;Palermo&#34;</span>
+4<span class="o">)</span> <span class="s2">&#34;190.44242984775784&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本文介绍了Redis GEO的基本原理和相关指令：</p>
+<p>原理：GeoHash的编码规则</p>
+<p>命令：</p>
+<ul>
+<li>GEOADD：添加指定经纬度的元素</li>
+<li>GEOPOS：查询给定元素对应的经纬度</li>
+<li>GEODIST：查询两个给定元素之间的距离</li>
+<li>GEOHASH：返回GeoHash编码后的字符串表示</li>
+<li>GEORADIUS：返回以指定经纬度为圆心，给定半径范围内的元素</li>
+<li>GEORADIUSBYMEMBER：返回以指定元素为圆心，给定半径范围内的元素</li>
+<li>GEOSEARCH：GEORADIUS 和 GEORADIUSBYMEMBER的整合，同时提供了长方形区域范围查询</li>
+<li>GEORADIUSBYMEMBER：与GEOSEARCH功能一致，提供了保存结果功能</li>
+</ul>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-09-02
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/redis/">Redis</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/redis_hpll/">
+            <span class="next-text nav-default">Redis HyperLogLog 命令学习及原理浅析</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
