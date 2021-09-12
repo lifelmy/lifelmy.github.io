@@ -5,7 +5,25 @@
     <link>https://lifelmy.github.io/categories/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 02 Sep 2021 00:24:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 12 Sep 2021 22:40:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis 数据库相关命令学习（2）</title>
+      <link>https://lifelmy.github.io/post/redis_db_2/</link>
+      <pubDate>Sun, 12 Sep 2021 22:40:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_db_2/</guid>
+      <description>前言 上篇文章介绍了Redis 数据库的部分命令，本篇文章介绍剩余相关命令。 EXISTS 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(N)，N为数据库key的数量</description>
+    </item>
+    
+    <item>
+      <title>Redis 数据库相关命令学习（1）</title>
+      <link>https://lifelmy.github.io/post/redis_db/</link>
+      <pubDate>Sun, 12 Sep 2021 22:38:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_db/</guid>
+      <description>前言 前面我们介绍了 Redis 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。 DBSIZE 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(1) 命令</description>
+    </item>
+    
     <item>
       <title>Redis GEO 命令学习及原理浅析</title>
       <link>https://lifelmy.github.io/post/redis_geo/</link>

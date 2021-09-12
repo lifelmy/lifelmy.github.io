@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Redis 数据库相关命令学习（1） - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 前面我们介绍了 Redis 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。 DBSIZE 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(1) 命令" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/redis_db/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Redis 数据库相关命令学习（1）" />
+<meta property="og:description" content="前言 前面我们介绍了 Redis 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。 DBSIZE 可用版本：&gt;= 1.0.0 时间复杂度：O(1) 命令" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/redis_db/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-09-12T22:38:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-09-12T22:38:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Redis 数据库相关命令学习（1）">
+<meta itemprop="description" content="前言 前面我们介绍了 Redis 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。 DBSIZE 可用版本：&gt;= 1.0.0 时间复杂度：O(1) 命令"><meta itemprop="datePublished" content="2021-09-12T22:38:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-09-12T22:38:23&#43;08:00" />
+<meta itemprop="wordCount" content="3958">
+<meta itemprop="keywords" content="Redis," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Redis 数据库相关命令学习（1）"/>
+<meta name="twitter:description" content="前言 前面我们介绍了 Redis 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。 DBSIZE 可用版本：&gt;= 1.0.0 时间复杂度：O(1) 命令"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Redis 数据库相关命令学习（1）</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-09-12" class="post-time">
+          2021-09-12
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/redis/"> Redis </a>
+            
+          </div>
+        <span class="more-meta"> 约 3958 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#dbsize">DBSIZE</a></li>
+    <li><a href="#keys">KEYS</a></li>
+    <li><a href="#flushdb">FLUSHDB</a></li>
+    <li><a href="#flushall">FLUSHALL</a></li>
+    <li><a href="#select">SELECT</a></li>
+    <li><a href="#swapdb">SWAPDB</a></li>
+    <li><a href="#scan">SCAN</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>前面我们介绍了 <code>Redis</code> 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。</p>
+<h2 id="dbsize">DBSIZE</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：O(1)</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">DBSIZE
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>返回当前数据库key的数量</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>整数值</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; flushdb
+OK
+127.0.0.1:6379&gt; mset name jack age <span class="m">10</span> gender male
+OK
+127.0.0.1:6379&gt; dbsize
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">3</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="keys">KEYS</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：O(N)，N为数据库中key的数量</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">KEYS pattern
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>
+<p>返回数据库中与<code>pattern</code>匹配的key</p>
+</li>
+<li>
+<p>pattern支持正则表达式，例如：</p>
+<ul>
+<li><code>h?llo</code> 匹配 hello, hallo 和 hxllo</li>
+<li><code>h*llo</code> 匹配 hllo 和 heeeello</li>
+<li><code>h[ae]llo</code> 匹配 hello 和 hallo, 但是不匹配 hillo</li>
+<li><code>h[^e]llo</code> 匹配 hallo, hbllo 但是不匹配 hello</li>
+<li><code>h[a-b]llo</code> 匹配 hallo 和 hbllo</li>
+</ul>
+<blockquote>
+<p>警告⚠️</p>
+<p>keys命令一般不能用于生产环境，适用于测试环境的debug。如果数据库特别大，keys命令会严重影响性能。</p>
+<p>如果想要查找与需求匹配的key，可以考虑使用SCAN命令，或者使用set结构来存储数据。</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>列表：与<code>pattern</code>匹配的key列表</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; flushdb
+OK
+127.0.0.1:6379&gt; mset hello <span class="m">1</span> hella <span class="m">2</span> hetta <span class="m">3</span>
+OK
+127.0.0.1:6379&gt; keys hell*
+1<span class="o">)</span> <span class="s2">&#34;hello&#34;</span>
+2<span class="o">)</span> <span class="s2">&#34;hella&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="flushdb">FLUSHDB</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：O(N)，N为数据库中key的数量</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">FLUSHDB <span class="o">[</span>ASYNC<span class="p">|</span>SYNC<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>删除<code>当前数据库</code>中所有数据，该命令不会失败</li>
+<li>该命令默认使用<code>同步</code>方式删除所有数据，自Redis 6.2，可以通过配置<code>lazyfree-lazy-user-flush = yes</code>，设置默认删除方式为异步</li>
+<li>异步删除时，只会删除命令执行时存在的key，在收到命令与执行命令中间过程中新增的key不会被删除</li>
+<li>或者直接在命令中指定同步或异步删除
+<ul>
+<li><code>ASYNC</code>: 异步删除</li>
+<li><code>SYNC</code>: 同步删除</li>
+</ul>
+</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>字符串</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; <span class="nb">set</span> name jack
+OK
+127.0.0.1:6379&gt; get name
+<span class="s2">&#34;jack&#34;</span>
+127.0.0.1:6379&gt; flushdb
+OK
+127.0.0.1:6379&gt; get name
+<span class="o">(</span>nil<span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="flushall">FLUSHALL</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：O(N)，N为数据库中key的数量</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">FLUSHALL <span class="o">[</span>ASYNC<span class="p">|</span>SYNC<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>删除<code>所有数据库</code>中所有key，该命令不会失败。</li>
+<li>该命令默认使用<code>同步</code>方式删除所有数据，自Redis 6.2，可以通过配置<code>lazyfree-lazy-user-flush = yes</code>，设置默认删除方式为异步</li>
+<li>异步删除时，只会删除命令执行时存在的key，在收到命令与执行命令中间过程中新增的key不会被删除</li>
+<li>或者直接在命令中指定同步或异步删除
+<ul>
+<li><code>ASYNC</code>: 异步删除</li>
+<li><code>SYNC</code>: 同步删除</li>
+</ul>
+</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>字符串</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; flushall
+OK
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="select">SELECT</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：O(N)，N为数据库中key的数量</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">SELECT index
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>选择逻辑数据库，默认为<code>0</code></li>
+<li><code>Redis</code>配置文件中有如下配置 databases 16，这里的数据库类似于命名空间，所有的数据库都会持久化到同一个RDB/AOF文件中。但是不同的数据库，可以有相同的key。像<code>FLUSHDB</code>、<code>SWAPDB</code>、<code>RANDOMKEY</code>只能作用于特定数据库</li>
+<li>在实践中，应该用数据库保存同一个应用的不同key，而不是将Redis实例用于不同的应用</li>
+<li>当使用<code>Redis Cluster</code>模式时，<code>SELECT</code>命令不可用，因为<code>Redis Cluster</code>只支持0号数据库。</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>字符串</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">127.0.0.1:6379&gt; <span class="nb">set</span> age <span class="m">10</span>
+OK
+127.0.0.1:6379&gt; get age
+<span class="s2">&#34;10&#34;</span>
+
+<span class="c1"># 切换数据库1</span>
+127.0.0.1:6379&gt; <span class="k">select</span> <span class="m">1</span>
+OK
+127.0.0.1:6379<span class="o">[</span>1<span class="o">]</span>&gt; get age
+<span class="o">(</span>nil<span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="swapdb">SWAPDB</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：O(N)，N为监视或者阻塞在两个数据库的客户端数量</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">SWAPDB index1 index2
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li>
+<p>对换指定的两个数据库， 使得两个数据库的数据立即互换。</p>
+<p>例如 SWAPDB 0 1，连接到数据库0的客户端可以立马看到数据库1中的数据，反过来一样。</p>
+</li>
+</ul>
+<p><strong>返回值</strong></p>
+<p>字符串：“OK”</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">SWAPDB <span class="m">0</span> <span class="m">1</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="scan">SCAN</h2>
+<blockquote>
+<p>可用版本：&gt;= 1.0.0</p>
+<p>时间复杂度：单次调用时间复杂度为O(1)，完整迭代数据库时间复杂度为O(N)，其中 N 为数据集中的元素数量。</p>
+</blockquote>
+<p><strong>命令格式</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">SCAN cursor <span class="o">[</span>MATCH pattern<span class="o">]</span> <span class="o">[</span>COUNT count<span class="o">]</span> <span class="o">[</span>TYPE type<span class="o">]</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>命令描述</strong></p>
+<ul>
+<li><code>SCAN</code> 命令及其相关的 <code>SSCAN</code> 命令、 <code>HSCAN</code> 命令和 <code>ZSCAN</code> 命令都用于增量地迭代集合元素
+<ul>
+<li><code>SCAN</code> 命令用于迭代当前数据库中的数据库键。</li>
+<li><code>SSCAN</code> 命令用于迭代Set结构中的元素。</li>
+<li><code>HSCAN</code> 命令用于迭代Hash结构中的键值对。</li>
+<li><code>ZSCAN</code> 命令用于迭代Sorted Set中的元素及其分值。</li>
+</ul>
+</li>
+<li>上述命令可以增量迭代整个数据库，每次只会返回少量数据，因此这些命令可以用于生产环境，不用担心像<code>KEYS</code>、<code>SMEMBERS</code>等命令一样阻塞数据库。</li>
+<li>像<code>KEYS</code>、<code>SMEMBERS</code>等阻塞命令，会一次性返回所有的数据；<code>SCAN</code>相关命令，一次只会返回有限数据，可以通过多次迭代调用，最终获取全量数据。</li>
+<li><code>SCAN</code>、<code>SSCAN</code>、<code>HSCAN</code>、<code>ZSCAN</code> 多个命令的功能类似，这里的解析可以覆盖四个命令。唯一的区别是，<code>SSCAN</code>、<code>HSCAN</code>、<code>ZSCAN</code>命令的第一个参数是要遍历的数据结构的<code>key</code>，而<code>SCAN</code>命令不需要<code>key</code>，因为<code>SCAN</code>命令是遍历的当前数据库。</li>
+</ul>
+<p><strong>SCAN基础用法</strong></p>
+<p>SCAN是基于迭代器的游标，每次命令调用，服务器都会返回一个更新的游标用于下一次调用。当迭代开始时需要将游标设置为0，当Redis返回0时表示迭代结束。下面是SCAN迭代的一个例子：</p>
+<p>首先将游标设置为0，表示迭代开始；第二次迭代时，使用第一次迭代返回的17作为游标，第二次迭代的第一个返回值为0，表示整个迭代过程结束。</p>
+<p>从例子可以看到SCAN的返回值有两个，第一个是下次迭代的游标值，第二个是元素数组。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">redis 127.0.0.1:6379&gt; scan <span class="m">0</span>
+1<span class="o">)</span> <span class="s2">&#34;17&#34;</span>
+2<span class="o">)</span>  1<span class="o">)</span> <span class="s2">&#34;key:12&#34;</span>
+    2<span class="o">)</span> <span class="s2">&#34;key:8&#34;</span>
+    3<span class="o">)</span> <span class="s2">&#34;key:4&#34;</span>
+    4<span class="o">)</span> <span class="s2">&#34;key:14&#34;</span>
+    5<span class="o">)</span> <span class="s2">&#34;key:16&#34;</span>
+    6<span class="o">)</span> <span class="s2">&#34;key:17&#34;</span>
+    7<span class="o">)</span> <span class="s2">&#34;key:15&#34;</span>
+    8<span class="o">)</span> <span class="s2">&#34;key:10&#34;</span>
+    9<span class="o">)</span> <span class="s2">&#34;key:3&#34;</span>
+   10<span class="o">)</span> <span class="s2">&#34;key:7&#34;</span>
+   11<span class="o">)</span> <span class="s2">&#34;key:1&#34;</span>
+   
+redis 127.0.0.1:6379&gt; scan <span class="m">17</span>
+1<span class="o">)</span> <span class="s2">&#34;0&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;key:5&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;key:18&#34;</span>
+   3<span class="o">)</span> <span class="s2">&#34;key:0&#34;</span>
+   4<span class="o">)</span> <span class="s2">&#34;key:2&#34;</span>
+   5<span class="o">)</span> <span class="s2">&#34;key:19&#34;</span>
+   6<span class="o">)</span> <span class="s2">&#34;key:13&#34;</span>
+   7<span class="o">)</span> <span class="s2">&#34;key:6&#34;</span>
+   8<span class="o">)</span> <span class="s2">&#34;key:9&#34;</span>
+   9<span class="o">)</span> <span class="s2">&#34;key:11&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>SCAN命令的保证</strong></p>
+<p>SCAN命令，以及SCAN家族的其他命令，在完成整个迭代过程后，会给用户如下保证：</p>
+<ul>
+<li>一个完整的迭代，会将从开始迭代到结束迭代,位于集合中的所有元素返回。也就是说，如果一个元素在迭代开始时位于集合中，并且在迭代结束时依然在集合中，那么这个元素一定会在某个SCAN迭代的返回值里。</li>
+<li>一个完整的迭代，不会返回从开始到结束，不存在集合中的元素。也就是说，如果从迭代开始前，一个元素被移除，并且在整个迭代过程中没有被再次添加进来，那么SCAN可以保证不会返回该元素。</li>
+</ul>
+<p>因为SCAN使用游标来表示遍历状态，会有如下缺点：</p>
+<ul>
+<li>一个元素可能被返回多次</li>
+<li>如果一个元素在迭代过程中，不是始终存在于集合中的，那么能否返回该元素时不确定的。</li>
+</ul>
+<p><strong>返回元素个数</strong></p>
+<p>SCAN命令家族的命令，并不保证每次返回的元素数量在给定范围内。命令也有可能返回0个元素，但只要返回的游标值不是0，就不能认为迭代结束了。</p>
+<p>但是，迭代返回的元素数量还是符合一定规则的：</p>
+<ul>
+<li>如果迭代的是一个较大数据集，每次迭代会返回10左右的元素个数；</li>
+<li>如果迭代的是一个较小数据集（较小的Set、Hash、Sorted Set），迭代可能会返回所有元素；</li>
+</ul>
+<p>但是，用户可以使用 <code>COUNT</code> 选项调整每次调用返回的元素的数量级。</p>
+<p><strong>COUNT选项</strong></p>
+<p>尽管SCAN命令并不保证返回的元素数量，但是我们可以通过COUNT参数，对命令行为进行一定情况的调整。</p>
+<p>通过COUNT参数，用户指定每次迭代应该返回的元素数量。</p>
+<ul>
+<li>虽然 <code>COUNT</code> 参数只是对代命令的一种提示，但是在大多数情况下，这种提示都是有效的。</li>
+<li>在迭代一个较大的集合时，每次返回的元素数量就是COUNT值，或者会多一点；</li>
+<li>在迭代一个较小的集合时，命令会无视COUNT参数，返回所有元素；</li>
+<li>每次迭代使用的COUNT值可以不同</li>
+</ul>
+<p><strong>MATCh选项</strong></p>
+<p>和上述KEYS命令类似，SCAN命令可以只迭代满足指定模式的元素。如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">redis 127.0.0.1:6379&gt; sadd myset <span class="m">1</span> <span class="m">2</span> <span class="m">3</span> foo foobar feelsgood
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">6</span>
+redis 127.0.0.1:6379&gt; sscan myset <span class="m">0</span> match f*
+1<span class="o">)</span> <span class="s2">&#34;0&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;foo&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;feelsgood&#34;</span>
+   3<span class="o">)</span> <span class="s2">&#34;foobar&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，MATCH参数是在从集合中取得数据后，才进行的过滤，然后再返回给客户端。也就是说如果在集合中可以匹配到的元素很少，那么每次迭代返回的数据也会很少甚至为空：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">redis 127.0.0.1:6379&gt; scan <span class="m">0</span> MATCH *11*
+1<span class="o">)</span> <span class="s2">&#34;288&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;key:911&#34;</span>
+redis 127.0.0.1:6379&gt; scan <span class="m">288</span> MATCH *11*
+1<span class="o">)</span> <span class="s2">&#34;224&#34;</span>
+2<span class="o">)</span> <span class="o">(</span>empty list or <span class="nb">set</span><span class="o">)</span>
+redis 127.0.0.1:6379&gt; scan <span class="m">224</span> MATCH *11*
+1<span class="o">)</span> <span class="s2">&#34;80&#34;</span>
+2<span class="o">)</span> <span class="o">(</span>empty list or <span class="nb">set</span><span class="o">)</span>
+redis 127.0.0.1:6379&gt; scan <span class="m">80</span> MATCH *11*
+1<span class="o">)</span> <span class="s2">&#34;176&#34;</span>
+2<span class="o">)</span> <span class="o">(</span>empty list or <span class="nb">set</span><span class="o">)</span>
+redis 127.0.0.1:6379&gt; scan <span class="m">176</span> MATCH *11* COUNT <span class="m">1000</span>
+1<span class="o">)</span> <span class="s2">&#34;0&#34;</span>
+2<span class="o">)</span>  1<span class="o">)</span> <span class="s2">&#34;key:611&#34;</span>
+    2<span class="o">)</span> <span class="s2">&#34;key:711&#34;</span>
+    3<span class="o">)</span> <span class="s2">&#34;key:118&#34;</span>
+    4<span class="o">)</span> <span class="s2">&#34;key:117&#34;</span>
+    5<span class="o">)</span> <span class="s2">&#34;key:311&#34;</span>
+    6<span class="o">)</span> <span class="s2">&#34;key:112&#34;</span>
+    7<span class="o">)</span> <span class="s2">&#34;key:111&#34;</span>
+    8<span class="o">)</span> <span class="s2">&#34;key:110&#34;</span>
+    9<span class="o">)</span> <span class="s2">&#34;key:113&#34;</span>
+   10<span class="o">)</span> <span class="s2">&#34;key:211&#34;</span>
+   11<span class="o">)</span> <span class="s2">&#34;key:411&#34;</span>
+   12<span class="o">)</span> <span class="s2">&#34;key:115&#34;</span>
+   13<span class="o">)</span> <span class="s2">&#34;key:116&#34;</span>
+   14<span class="o">)</span> <span class="s2">&#34;key:114&#34;</span>
+   15<span class="o">)</span> <span class="s2">&#34;key:119&#34;</span>
+   16<span class="o">)</span> <span class="s2">&#34;key:811&#34;</span>
+   17<span class="o">)</span> <span class="s2">&#34;key:511&#34;</span>
+   18<span class="o">)</span> <span class="s2">&#34;key:11&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面例子可以看出，前几次的调用返回的数据很少甚至为空，最后一次通过指定COUNT=1000，强制迭代更多的元素，才返回了较多的匹配。</p>
+<p><strong>TYPE参数</strong></p>
+<p>自Redis 6.0，可以通过指定TYPE参数，来返回特定类型key。TYPE参数只适用SCAN命令，不使用SSCAN、HSCAN、ZSCAN等命令。</p>
+<p>TYPE是针对的底层基础数据类型，对于Geo、HyperLogLog、Bitmap，TYPE字段不能区分，因为这几个的底层实现都是基于其他基础类型的，比如Geo就是基于ZSET实现的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">redis 127.0.0.1:6379&gt; GEOADD geokey <span class="m">0</span> <span class="m">0</span> value
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+redis 127.0.0.1:6379&gt; ZADD zkey <span class="m">1000</span> value
+<span class="o">(</span>integer<span class="o">)</span> <span class="m">1</span>
+redis 127.0.0.1:6379&gt; TYPE geokey
+zset
+redis 127.0.0.1:6379&gt; TYPE zkey
+zset
+redis 127.0.0.1:6379&gt; SCAN <span class="m">0</span> TYPE zset
+1<span class="o">)</span> <span class="s2">&#34;0&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;geokey&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;zkey&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>和MATCH选项一样，TYPE参数也是在取得数据之后进行过滤，然后再返回给客户端，所以使用该参数，也不会减少需要遍历的元素个数。</p>
+<p><strong>并发执行多个迭代</strong></p>
+<p>因为迭代的状态是使用游标标识的，而游标状态客户端进行保存，因此多个客户端可以同时对一个集合执行迭代。</p>
+<p><strong>中途停止迭代</strong></p>
+<p>因为迭代的游标是客户端保存的，服务端不保存状态，客户端可以随意停止迭代，不会影响到服务器。</p>
+<p><strong>使用错误的游标进行迭代</strong></p>
+<p>使用间断的、负数值、超出范围内或者其他非法游标进行迭代，不会造成服务器崩溃， 但可能会让命令产生未知行为。有效的游标值如下：</p>
+<ul>
+<li>开始迭代时给定的0值</li>
+<li>上一次迭代返回的游标值</li>
+</ul>
+<p><strong>迭代结束的保证</strong></p>
+<p>只有迭代的数据集大小在给定的范围内，迭代才会停止，否则迭代一个不断增长的数据集，可能会永远不会停止。</p>
+<p>其实可以很好理解，一个集合不断增长，而如果迭代结束，就需要保证迭代的速度大于增长速度，否则永远不会停止迭代。</p>
+<p><strong>返回值</strong></p>
+<p>SCAN、SSCAN、HSCAN、ZSCAN都会返回两个值，第一个值是更新后的游标值，第二个值是元素数组。</p>
+<ul>
+<li>SCAN返回的数组是key列表</li>
+<li>SSCAN返回的数组是Set元素列表</li>
+<li>HSCAN返回的元素数组中，包含两种元素：filed域和value值</li>
+<li>ZSCAN返回的元素数组中，包含两种元素：元素和分值</li>
+</ul>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">redis 127.0.0.1:6379&gt; hmset <span class="nb">hash</span> name Jack age <span class="m">33</span>
+OK
+redis 127.0.0.1:6379&gt; hscan <span class="nb">hash</span> <span class="m">0</span>
+1<span class="o">)</span> <span class="s2">&#34;0&#34;</span>
+2<span class="o">)</span> 1<span class="o">)</span> <span class="s2">&#34;name&#34;</span>
+   2<span class="o">)</span> <span class="s2">&#34;Jack&#34;</span>
+   3<span class="o">)</span> <span class="s2">&#34;age&#34;</span>
+   4<span class="o">)</span> <span class="s2">&#34;33&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-09-12
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/redis/">Redis</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+          <a class="prev" href="/post/redis_db_2/">
+            
+            <i class="iconfont">
+              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
+</svg>
+
+            </i>
+            <span class="prev-text nav-default">Redis 数据库相关命令学习（2）</span>
+            <span class="prev-text nav-mobile">上一篇</span>
+          </a>
+        
+          <a class="next" href="/post/redis_geo/">
+            <span class="next-text nav-default">Redis GEO 命令学习及原理浅析</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
