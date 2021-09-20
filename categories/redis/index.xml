@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 12 Sep 2021 22:40:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Sep 2021 11:15:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/redis/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Redis 如何设置过期时间，你学会了吗？</title>
+      <link>https://lifelmy.github.io/post/redis_expire/</link>
+      <pubDate>Mon, 20 Sep 2021 11:15:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_expire/</guid>
+      <description>前言 本篇文章我们来学习下Redis 过期时间的相关命令！ EXPIRE 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(1) 命令格式 1 EXPIRE key seconds [NX|XX|GT|LT] 命令描述 给key设定一个</description>
+    </item>
+    
     <item>
       <title>Redis 数据库相关命令学习（2）</title>
       <link>https://lifelmy.github.io/post/redis_db_2/</link>

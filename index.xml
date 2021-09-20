@@ -5,10 +5,464 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 12 Sep 2021 22:40:23 +0800</lastBuildDate>
+    <lastBuildDate>Mon, 20 Sep 2021 11:15:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Redis 如何设置过期时间，你学会了吗？</title>
+      <link>https://lifelmy.github.io/post/redis_expire/</link>
+      <pubDate>Mon, 20 Sep 2021 11:15:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/redis_expire/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;本篇文章我们来学习下Redis 过期时间的相关命令！&lt;/p&gt;
+&lt;h2 id=&#34;expire&#34;&gt;EXPIRE&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 1.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;EXPIRE key seconds &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;NX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;XX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;GT&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;LT&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;给key设定一个存活时间（单位为秒），当key过期后会被删除；&lt;/li&gt;
+&lt;li&gt;对一个已经带有生存时间的 key 执行 EXPIRE 命令，新指定的生存时间会取代旧的生存时间。&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;DEL&lt;/code&gt;删除一个key后，对应的过期时间也会被删除；&lt;/li&gt;
+&lt;li&gt;使用&lt;code&gt;SET&lt;/code&gt;、&lt;code&gt;GETSET&lt;/code&gt;等保存命令时，过期时间会被覆盖；&lt;/li&gt;
+&lt;li&gt;对于其它命令，如果只是修改key对应的value，而不是重新设置的话，过期时间不变。例如使用&lt;code&gt;INCR&lt;/code&gt;命令增加value值、使用&lt;code&gt;LPUSH&lt;/code&gt;添加新的元素、使用&lt;code&gt;HSET&lt;/code&gt;修改field对应的value；&lt;/li&gt;
+&lt;li&gt;如果对一个key，使用RENAME命令重命名，新的key继承原来key的过期时间；&lt;/li&gt;
+&lt;li&gt;使用PERSIST命令，可以清除过期时间，使key永不过期；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;自Redis 7.0，EXPIRE支持如下参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;NX：只有当key没有设置过期时间，才会执行命令（已经设置过的，不能再设置）&lt;/li&gt;
+&lt;li&gt;XX ：只有当key有过期时间，才会执行命令设置（没有设置过的，不能设置）&lt;/li&gt;
+&lt;li&gt;GT ：只有当新的过期时间大于当前过期时间时，才会设置（只会增加过期时间）&lt;/li&gt;
+&lt;li&gt;LT ：只有当新的过期时间大于当前过期时间时，才会设置（只会减少过期时间）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;1：设置成功&lt;/p&gt;
+&lt;p&gt;0：设置失败&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey hello
+OK
+&lt;span class=&#34;c1&#34;&gt;# 查看过期时间（永不过期）&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
+&lt;span class=&#34;c1&#34;&gt;# 设置过期时间为100s&lt;/span&gt;
+127.0.0.1:6379&amp;gt; expire mykey &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;98&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 再次设置，会覆盖原有的过期时间&lt;/span&gt;
+127.0.0.1:6379&amp;gt; expire mykey &lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;997&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;expireat&#34;&gt;EXPIREAT&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 1.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;EXPIREAT key timestamp &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;NX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;XX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;GT&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;LT&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与&lt;code&gt;EXPIRE&lt;/code&gt;功能类似，不同点在于，&lt;code&gt;EXPIREAT&lt;/code&gt;设置的过期时间为Unix秒级时间戳，而不是生存秒数。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;自Redis 7.0，&lt;code&gt;EXPIREAT&lt;/code&gt;支持如下参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;NX：只有当key没有设置过期时间，才会执行命令（已经设置过的，不能再设置）&lt;/li&gt;
+&lt;li&gt;XX ：只有当key有过期时间，才会执行命令设置（没有设置过的，不能设置）&lt;/li&gt;
+&lt;li&gt;GT ：只有当新的过期时间大于当前过期时间时，才会设置（只会增加过期时间）&lt;/li&gt;
+&lt;li&gt;LT ：只有当新的过期时间大于当前过期时间时，才会设置（只会减少过期时间）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;1：设置成功&lt;/p&gt;
+&lt;p&gt;0：设置失败&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey hello
+OK
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
+&lt;span class=&#34;c1&#34;&gt;# 设置过期时间&lt;/span&gt;
+127.0.0.1:6379&amp;gt; expireat mykey &lt;span class=&#34;m&#34;&gt;1632104800&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;163&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;expiretime&#34;&gt;EXPIRETIME&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 7.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;EXPIRETIME key
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与&lt;code&gt;EXPIREAT&lt;/code&gt;对应，返回key过期的秒级Unix时间戳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正数：秒级Unix时间戳&lt;/li&gt;
+&lt;li&gt;负数：代表发生了error
+&lt;ul&gt;
+&lt;li&gt;-1：key存在，没有设置过期时间&lt;/li&gt;
+&lt;li&gt;-2：key不存在&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;pexpire&#34;&gt;PEXPIRE&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.6.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PEXPIRE key milliseconds &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;NX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;XX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;GT&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;LT&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与&lt;code&gt;EXPIRE&lt;/code&gt;功能类似，不同点在于，&lt;code&gt;PEXPIRE&lt;/code&gt;设置的生存时间单位是&lt;code&gt;毫秒&lt;/code&gt;，而不是&lt;code&gt;秒&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;自Redis 7.0，&lt;code&gt;PEXPIRE&lt;/code&gt;支持如下参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;NX：只有当key没有设置过期时间，才会执行命令（已经设置过的，不能再设置）&lt;/li&gt;
+&lt;li&gt;XX ：只有当key有过期时间，才会执行命令设置（没有设置过的，不能设置）&lt;/li&gt;
+&lt;li&gt;GT ：只有当新的过期时间大于当前过期时间时，才会设置（只会增加过期时间）&lt;/li&gt;
+&lt;li&gt;LT ：只有当新的过期时间大于当前过期时间时，才会设置（只会减少过期时间）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;1：设置成功&lt;/p&gt;
+&lt;p&gt;0：设置失败&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey hello
+OK
+127.0.0.1:6379&amp;gt; pexpire mykey &lt;span class=&#34;m&#34;&gt;100000&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;93&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;pexpireat&#34;&gt;PEXPIREAT&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.6.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PEXPIREAT key milliseconds-timestamp &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;NX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;XX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;GT&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;LT&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与&lt;code&gt;EXPIREAT&lt;/code&gt;功能类似，不同点在于，&lt;code&gt;PEXPIREAT&lt;/code&gt;设置的过期时间为Unix &lt;code&gt;毫秒&lt;/code&gt; 级时间戳，而不是秒级时间戳。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;自Redis 7.0，&lt;code&gt;PEXPIREAT&lt;/code&gt;支持如下参数：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;NX：只有当key没有设置过期时间，才会执行命令（已经设置过的，不能再设置）&lt;/li&gt;
+&lt;li&gt;XX ：只有当key有过期时间，才会执行命令设置（没有设置过的，不能设置）&lt;/li&gt;
+&lt;li&gt;GT ：只有当新的过期时间大于当前过期时间时，才会设置（只会增加过期时间）&lt;/li&gt;
+&lt;li&gt;LT ：只有当新的过期时间大于当前过期时间时，才会设置（只会减少过期时间）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;1：设置成功&lt;/p&gt;
+&lt;p&gt;0：设置失败&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey hello
+OK
+127.0.0.1:6379&amp;gt; pexpireat mykey &lt;span class=&#34;m&#34;&gt;1632105572072&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;154&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;pexpiretime&#34;&gt;PEXPIRETIME&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 7.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;EXPIRETIME key
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与&lt;code&gt;PEXPIREAT&lt;/code&gt;对应，返回key过期的毫秒级Unix时间戳&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正数：毫秒级Unix时间戳&lt;/li&gt;
+&lt;li&gt;负数：代表发生了error
+&lt;ul&gt;
+&lt;li&gt;-1：key存在，没有设置过期时间&lt;/li&gt;
+&lt;li&gt;-2：key不存在&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;ttl&#34;&gt;TTL&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 1.0.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;TTL key
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;以秒为单位，返回 &lt;code&gt;key&lt;/code&gt; 的剩余生存时间(TTL, time to live)。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正数：剩余生存时间（秒）&lt;/li&gt;
+&lt;li&gt;负数：代表发生了error
+&lt;ul&gt;
+&lt;li&gt;-1：key存在，没有设置过期时间&lt;/li&gt;
+&lt;li&gt;-2：key不存在&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey hello
+OK
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
+127.0.0.1:6379&amp;gt; expire mykey &lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;992&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;pttl&#34;&gt;PTTL&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.6.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PTTL key
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;与 &lt;code&gt;TTL&lt;/code&gt; 命令类似，不同点在于 &lt;code&gt;PTTL&lt;/code&gt; 以 &lt;code&gt;毫秒&lt;/code&gt; 为单位返回剩余生存时间。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;正数：剩余生存时间（毫秒）&lt;/li&gt;
+&lt;li&gt;负数：代表发生了error
+&lt;ul&gt;
+&lt;li&gt;-1：key存在，没有设置过期时间&lt;/li&gt;
+&lt;li&gt;-2：key不存在&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey hello
+OK
+127.0.0.1:6379&amp;gt; pttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
+127.0.0.1:6379&amp;gt; expire mykey &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; pttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;97767&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;persist&#34;&gt;PERSIST&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;可用版本：&amp;gt;= 2.2.0&lt;/p&gt;
+&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PERSIST key
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;移除key的过期时间，使得key从易失的（有生存时间）变为持久的(永不过期)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;1：移除成功&lt;/li&gt;
+&lt;li&gt;0：key不存在或者没有过期时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey htllo ex &lt;span class=&#34;m&#34;&gt;1000&lt;/span&gt;
+OK
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;997&lt;/span&gt;
+127.0.0.1:6379&amp;gt; persist mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+127.0.0.1:6379&amp;gt; ttl mykey
+&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了Redis 过期时间的相关操作，主要包括以下命令&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;EXPIRE、PEXPIRE：设置生存时间（秒、毫秒）&lt;/li&gt;
+&lt;li&gt;EXPIREAT、PEXPIREAT：设置具体时间点（Unix时间戳）&lt;/li&gt;
+&lt;li&gt;EXPIRETIME、PEXPIRETIME：查询过期的时间戳&lt;/li&gt;
+&lt;li&gt;TTL、PTTL：返回生存时间&lt;/li&gt;
+&lt;li&gt;PERSIST：持久化key&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Redis 数据库相关命令学习（2）</title>
