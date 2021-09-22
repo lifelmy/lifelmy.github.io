@@ -5,10 +5,571 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 20 Sep 2021 11:15:23 +0800</lastBuildDate>
+    <lastBuildDate>Thu, 23 Sep 2021 00:16:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux常用文件操作命令学习</title>
+      <link>https://lifelmy.github.io/post/linux_file/</link>
+      <pubDate>Thu, 23 Sep 2021 00:16:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/linux_file/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Linux系列，主要是学习在工作中所必须的 &lt;code&gt;Linux&lt;/code&gt; 命令及&lt;code&gt;shell&lt;/code&gt;编程，只涉及常用命令及参数。如果有对&lt;code&gt;Linux&lt;/code&gt;不熟悉的同学，或者想要更加深入学习&lt;code&gt;Linux&lt;/code&gt;的同学，可以点击&lt;a href=&#34;https://github.com/jaywcjlove/linux-command&#34;&gt;这里&lt;/a&gt;。本篇文章首先来学习文件操作相关命令。&lt;/p&gt;
+&lt;h2 id=&#34;cd&#34;&gt;cd&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; 目录
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;切换用户当前工作目录。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt;    &lt;span class=&#34;c1&#34;&gt;# 进入用户主目录；&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; /  &lt;span class=&#34;c1&#34;&gt;# 进入根目录&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ~  &lt;span class=&#34;c1&#34;&gt;# 进入用户主目录；&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ..  &lt;span class=&#34;c1&#34;&gt;# 返回上级目录（若当前目录为“/“，则执行完后还在“/&amp;#34;；&amp;#34;..&amp;#34;为上级目录的意思）；&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ../..  &lt;span class=&#34;c1&#34;&gt;# 返回上两级目录；&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;ls&#34;&gt;ls&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ls 选项 目录
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;ls&lt;/code&gt;就是list的缩写，用来显示目标列表，在Linux中是使用率较高的命令。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-a: 显示所有文件，包括隐藏文件&lt;/li&gt;
+&lt;li&gt;-l: 详细信息显示&lt;/li&gt;
+&lt;li&gt;-h: 人性化显示，文件大小以B、K、M显示&lt;/li&gt;
+&lt;li&gt;-i: 显示Linux对于每个文件的id&lt;/li&gt;
+&lt;li&gt;-t: 按时间信息排序&lt;/li&gt;
+&lt;li&gt;-d: 显示目录属性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 组合使用多个命令&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos redis-6.2.4&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -alhit&lt;/span&gt;
+总用量 348K
+&lt;span class=&#34;m&#34;&gt;131900&lt;/span&gt; drwxrwxr-x   &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; root root  12K 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 11:14 src
+&lt;span class=&#34;m&#34;&gt;131082&lt;/span&gt; drwxrwxr-x   &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt; root root 4.0K 6月  &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; 14:16 .
+&lt;span class=&#34;m&#34;&gt;132726&lt;/span&gt; -rw-r--r--   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root  92K 6月  &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; 14:15 my.conf
+&lt;span class=&#34;m&#34;&gt;131140&lt;/span&gt; drwxrwxr-x   &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt; root root 4.0K 6月  &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; 14:04 deps
+&lt;span class=&#34;m&#34;&gt;131117&lt;/span&gt; -rw-rw-r--   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root  28K 6月   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; 22:03 00-RELEASENOTES
+&lt;span class=&#34;m&#34;&gt;131120&lt;/span&gt; -rw-rw-r--   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root   &lt;span class=&#34;m&#34;&gt;51&lt;/span&gt; 6月   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; 22:03 BUGS
+&lt;span class=&#34;m&#34;&gt;131123&lt;/span&gt; -rw-rw-r--   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root 5.0K 6月   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; 22:03 CONDUCT
+&lt;span class=&#34;m&#34;&gt;131126&lt;/span&gt; -rw-rw-r--   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root 3.4K 6月   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; 22:03 CONTRIBUTING
+&lt;span class=&#34;m&#34;&gt;131129&lt;/span&gt; -rw-rw-r--   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root 1.5K 6月   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; 22:03 COPYING
+
+&lt;span class=&#34;c1&#34;&gt;# 使用 -d，输出目录属性，而不是列出其中的文件&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos redis-6.2.4&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -lhd /opt&lt;/span&gt;
+drwxr-xr-x. &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; root root 4.0K 6月  &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; 14:03 /opt
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;命令输出第二列，有字符串&amp;quot;-rw-r&amp;ndash;r&amp;ndash;&amp;quot;，这是对文件的权限描述，具体如下图所示：&lt;/p&gt;
+&lt;p&gt;其中第一个字符表示文件类型：&#39;-&amp;lsquo;表示二进制文件，&amp;rsquo;d&amp;rsquo;表示目录  &amp;lsquo;l&amp;rsquo;表示软链接文件&lt;/p&gt;
+&lt;p&gt;后面三组分别表示所有者、所属组、其他用户对该文件的权限：r表示可读、w表示可写、x表示可执行&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gun6ljbbqhj60sg09gmxv02.jpg&#34; alt=&#34;image-20210920163849280&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;mkdir&#34;&gt;mkdir&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;mkdir 选项 目录
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;用来创建目录&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-m: 建立目录的同时设置目录的权限&lt;/li&gt;
+&lt;li&gt;-p: 若所要建立目录的上层目录目前尚未建立，则会一并建立上层目录；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos /&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cd home&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# -p，新建父子目录&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir -p hello/world&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+hello
+
+&lt;span class=&#34;c1&#34;&gt;# -m，新建时指定权限&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir -m 700 test&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
+总用量 &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;
+drwxr-xr-x &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:06 hello
+drwx------ &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:07 &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;rmdir&#34;&gt;rmdir&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;rmdir 选项 目录
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;删除空目录&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-p：删除指定目录后，若该目录的上层目录已变成空目录，则将其一并删除；&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+hello  &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 使用 -p 参数删除空目录&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# rmdir -p hello/world/&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;touch&#34;&gt;touch&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;touch 选项 文件 
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;创建新的空文件&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch a.txt&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+a.txt  hello  &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;rm&#34;&gt;rm&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;rm 选项 文件
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;删除文件或目录&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-f：强制删除，没有提示是否确认删除&lt;/li&gt;
+&lt;li&gt;-r：递归删除，在删除目录时使用&lt;/li&gt;
+&lt;li&gt;-i：删除已有文件或目录之前先询问用户&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;慎重使用&lt;code&gt;rm&lt;/code&gt;命令，不小心删除后无法找回&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# rm test2.txt&lt;/span&gt;
+rm：是否删除普通空文件 &lt;span class=&#34;s2&#34;&gt;&amp;#34;test2.txt&amp;#34;&lt;/span&gt;？y
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;#&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;cp&#34;&gt;cp&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cp 选项 原文件或目录  目标文件或目录
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;将源文件或目录复制到目标文件或目录中&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-r 递归复制，用于复制目录&lt;/li&gt;
+&lt;li&gt;-p 保留原有文件属性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1. 不使用 -p 参数，可以看到两个文件夹中，文件的创建时间不同&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch test1.txt&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch test2.txt&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir hello&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
+总用量 &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
+drwxr-xr-x &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:31 hello
+-rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root    &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:29 test1.txt
+-rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root    &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:29 test2.txt
+
+&lt;span class=&#34;c1&#34;&gt;# 等一分钟后再复制&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cp test1.txt test2.txt hello&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l hello/&lt;/span&gt;
+总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+-rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:31 test1.txt
+-rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:31 test2.txt
+
+&lt;span class=&#34;c1&#34;&gt;# 2. 使用 -p 参数，文件属性会保留&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir test&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cp -p test1.txt test2.txt test&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l test&lt;/span&gt;
+总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+-rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:29 test1.txt
+-rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 9月  &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt; 12:29 test2.txt
+
+&lt;span class=&#34;c1&#34;&gt;# 3. 使用-r，复制目录&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cp -r test hello/&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls hello/&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;  test1.txt  test2.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;mv&#34;&gt;mv&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;mv 原文件或目录 目标文件或目录
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;移动文件或者重命名&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 重命名&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mv test1.txt test3.txt&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;# 移动文件到另一个文件夹&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mv test3.txt hello/&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;cat&#34;&gt;cat&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;cat 选项 文件
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;显示文件内容&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-n 显示行号&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat -n /etc/issue&lt;/span&gt;
+     1	&lt;span class=&#34;se&#34;&gt;\S&lt;/span&gt;
+     2	Kernel &lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt; on an &lt;span class=&#34;se&#34;&gt;\m&lt;/span&gt;
+     &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;tac&#34;&gt;tac&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;tac 选项 文件
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;与cat相反，反向显示文件内容&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# tac /etc/issue&lt;/span&gt;
+
+Kernel &lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt; on an &lt;span class=&#34;se&#34;&gt;\m&lt;/span&gt;
+&lt;span class=&#34;se&#34;&gt;\S&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;more&#34;&gt;more&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;more 文件名
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;分页显示文件内容&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;操作&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;运行命令进入查看页面后，可以进行如下操作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;空格 或 f：向下翻页&lt;/li&gt;
+&lt;li&gt;b：向上翻页&lt;/li&gt;
+&lt;li&gt;Enter：换行&lt;/li&gt;
+&lt;li&gt;q或Q：退出&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# more /etc/services&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;less&#34;&gt;less&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;less 文件名
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;与&lt;code&gt;more&lt;/code&gt;分页显示文件内容类似，但是&lt;code&gt;less&lt;/code&gt;可以搜索关键字，比&lt;code&gt;more&lt;/code&gt;更强大&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;操作&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;运行命令进入查看页面后，可以进行如下操作：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;空格 或 f：向下翻页&lt;/li&gt;
+&lt;li&gt;b：向上翻页&lt;/li&gt;
+&lt;li&gt;上下键：换行&lt;/li&gt;
+&lt;li&gt;Enter：换行&lt;/li&gt;
+&lt;li&gt;q或Q：退出&lt;/li&gt;
+&lt;li&gt;输入 &amp;ldquo;/内容 &amp;ldquo;，搜索内容，按&lt;code&gt;n&lt;/code&gt;寻找下一个（n表示next）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# less /etc/services&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;head&#34;&gt;head&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;head 选项 文件名
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;显示文件前几行，默认显示前10行&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;-n：指定显示行数&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# head -n 5 /etc/services&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# /etc/services:&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# $Id: services,v 1.55 2013/04/14 ovasik Exp $&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# Network services, Internet style&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# IANA services version: last updated 2013-04-10&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;tail&#34;&gt;tail&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;tail 选项 文件名
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;显示文件最后几行，默认显示最后10行&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;常用选项&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;-n：指定显示行数&lt;/li&gt;
+&lt;li&gt;-f：动态显示文件内容（不会退出命令，监听新的数据，文件中有新的数据增加后，会自动打印出来，按 control + c 退出）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos home&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# tail -f /var/log/messages&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了Linux文件操作的相关命令，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建、删除文件&lt;/li&gt;
+&lt;li&gt;创建、查看文件&lt;/li&gt;
+&lt;li&gt;复制、剪切文件&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Redis 如何设置过期时间，你学会了吗？</title>
