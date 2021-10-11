@@ -5,10 +5,332 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 23 Sep 2021 00:16:23 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 12 Oct 2021 00:11:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Linux软硬链接及用户管理命令学习</title>
+      <link>https://lifelmy.github.io/post/linux_ln_user/</link>
+      <pubDate>Tue, 12 Oct 2021 00:11:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/linux_ln_user/</guid>
+      
+        <description>&lt;blockquote&gt;
+&lt;p&gt;你必须非常努力，才能看起来毫不费力！&lt;/p&gt;
+&lt;p&gt;微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero !&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;本篇文章主要讨论Linux中的软硬链接，以及用户管理相关的命令，相对来说比较简单，大家一起来学习吧！&lt;/p&gt;
+&lt;h2 id=&#34;ln&#34;&gt;ln&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;ln 选项 原文件 目标文件
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;用来为文件创建链接，链接类型分为硬链接和符号链接两种，默认的链接类型是硬链接。如果要创建符号链接必须使用&amp;quot;-s&amp;quot;选项。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;软链接：类似于Windows系统中的快捷方式，创建后的权限为&lt;code&gt;lrwxrwxrwx&lt;/code&gt;,以&lt;code&gt;l&lt;/code&gt;开头表示软链接，拥有所有权限，但是软链接的权限并不决定原文件的权限，最终的权限还是以原文件为准；创建后的链接文件大小很小，因为只是一个链接（还是类似Windows快捷方式）。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;硬链接：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;相当于上一篇文章讲过的 &lt;code&gt;cp -p&lt;/code&gt; 命令 + &lt;code&gt;同步更新&lt;/code&gt;。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;cp -p命令：拷贝后的文件属性都相同；&lt;/li&gt;
+&lt;li&gt;同步更新：拷贝后的两个文件保持同步，如果源文件有改动，硬链接文件也同步改动。&lt;/li&gt;
+&lt;li&gt;源文件删除，硬链接文件依然可以运行。&lt;/li&gt;
+&lt;li&gt;可以看出硬链接类似于指针的概念，创建硬链接之后，两个文件都可以比作一个指针，指向真正的文件，因此文件属性肯定一样。对文件修改后，通过指针去查看文件，肯定看到的都是一样的，所以保持同步。当对源文件进行删除操作，只是删除当前保存的一个指针，并非删除源文件，因此还能对硬链接文件进行操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;创建硬链接后，两个文件的&lt;code&gt;i节点&lt;/code&gt;一样&lt;/li&gt;
+&lt;li&gt;不能跨分区创建硬链接（类似Windows中的C盘、D盘）&lt;/li&gt;
+&lt;li&gt;不能针对目录创建硬链接&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;选项&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;-s：创建软连接&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch test.txt                   # 新建一个文件&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ln test.txt test_hard.txt        # 创建硬链接&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ln -s test.txt test_soft.txt     # 创建软链接&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -li                           # 查看文件详情&lt;/span&gt;
+总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;393327&lt;/span&gt; -rw-r--r-- &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 00:15 test_hard.txt
+&lt;span class=&#34;m&#34;&gt;396083&lt;/span&gt; lrwxrwxrwx &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 00:16 test_soft.txt -&amp;gt; test.txt
+&lt;span class=&#34;m&#34;&gt;393327&lt;/span&gt; -rw-r--r-- &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 00:15 test.txt
+
+&lt;span class=&#34;c1&#34;&gt;# 软链接权限为：lrwxrwxrwx，同时有箭头，从软链接指向源文件  test_soft.txt -&amp;gt; test.txt&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;# 硬链接的文件属性和原文件一致， 且文件id号与原文件一样，引用数为2&lt;/span&gt;
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# echo &amp;#39;hello world&amp;#39; &amp;gt;  test.txt   # 往源文件中写入数据&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat test.txt                     # 查看源文件&lt;/span&gt;
+hello world
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat test_soft.txt								 # 查看软链接文件，与源文件相同&lt;/span&gt;
+hello world
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat test_hard.txt								 # 查看硬链接文件，与源文件相同&lt;/span&gt;
+hello world
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# rm -f test.txt									 # 删除源文件&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat test_soft.txt								 # 无法查看软链接文件&lt;/span&gt;
+cat: test_soft.txt: 没有那个文件或目录
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cat test_hard.txt								 # 正常查看硬链接文件&lt;/span&gt;
+hello world
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -li                           # 硬链接引用数变为了 1&lt;/span&gt;
+总用量 &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;393327&lt;/span&gt; -rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;12&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 00:34 test_hard.txt
+&lt;span class=&#34;m&#34;&gt;396083&lt;/span&gt; lrwxrwxrwx &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root  &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 00:15 test_soft.txt -&amp;gt; test.txt
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir test&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;  test_hard.txt  test_soft.txt
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ln test test_hard								 # 不能对目录创建硬链接&lt;/span&gt;
+ln: &lt;span class=&#34;s2&#34;&gt;&amp;#34;test&amp;#34;&lt;/span&gt;: 不允许将硬链接指向目录
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ln -s  test test_soft						 # 可以对目录创建软链接&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;useradd&#34;&gt;useradd&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;useradd 用户名
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;添加新用户&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# useradd user3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;passwd&#34;&gt;passwd&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;passwd 用户名
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;为用户设置密码&lt;/li&gt;
+&lt;li&gt;root可以更改所有人的密码，普通用户只能更改自己的密码&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# passwd user3&lt;/span&gt;
+更改用户 user3 的密码 。
+新的 密码：
+重新输入新的 密码：
+passwd：所有的身份验证令牌已经成功更新。
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;who&#34;&gt;who&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;who
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;查看登录用户信息:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;登录用户  登录终端（tty：本地终端  pts：远程终端）  登录时间   IP地址&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# who&lt;/span&gt;
+root     pts/0        2021-10-09 18:08 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;180.102.173.132&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+root     pts/1        2021-10-09 19:14 &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;122.14.229.252&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;w&#34;&gt;w&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;w &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;选项&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;参数&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;用于显示已经登陆系统的用户列表，并显示用户正在执行的指令。执行这个命令可得知目前登入系统的用户有那些人，以及他们正在执行的程序。单独执行w命令会显示所有的用户，您也可指定用户名称，仅显示某位用户的相关信息。&lt;/p&gt;
+&lt;p&gt;第一行输出与 &lt;code&gt;uptime&lt;/code&gt; 命令输出一致&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;当前系统时间：19:26:52&lt;/li&gt;
+&lt;li&gt;系统已经启动的时长：up 112 days,  5:33&lt;/li&gt;
+&lt;li&gt;登录的用户数：2 users&lt;/li&gt;
+&lt;li&gt;系统过去1，5，15分钟的平均负载信息：load average: 0.00, 0.02, 0.05&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# uptime&lt;/span&gt;
+ 19:49:47 up &lt;span class=&#34;m&#34;&gt;112&lt;/span&gt; days,  5:56,  &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; users,  load average: 0.00, 0.01, 0.05
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;第二行信息包括如下字段说明:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;USER：登录用户名&lt;/li&gt;
+&lt;li&gt;TTY： 登录用户使用的终端名（tty：本地终端  pts：远程终端）&lt;/li&gt;
+&lt;li&gt;FROM：登录用户来源的主机名或IP地址&lt;/li&gt;
+&lt;li&gt;LOGIN@：用户登录时长&lt;/li&gt;
+&lt;li&gt;IDLE：自用户上一次与终端进行交互以来的空闲时间&lt;/li&gt;
+&lt;li&gt;JCPU：附加到tty的所有进程使用的时间&lt;/li&gt;
+&lt;li&gt;PCPU：用户当前进程所用的时间，即显示在“ WHAT”字段中的那个进程&lt;/li&gt;
+&lt;li&gt;WHAT：用户当前的进程及选项/参数&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;选项&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt; -h, --no-header     不打印头信息；
+ -u, --no-current    当显示当前进程和cpu时间时忽略用户名；
+ -s, --short         使用短输出格式；
+ -f, --from          显示用户从哪登录；
+ -o, --old-style     老式输出
+ -i, --ip-addr       显示IP地址而不是主机名（如果可能）
+
+     --help     显示此帮助并退出
+ -V, --version  显示版本信息。
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;参数&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;用户：仅显示指定用户。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# w&lt;/span&gt;
+ 19:26:52 up &lt;span class=&#34;m&#34;&gt;112&lt;/span&gt; days,  5:33,  &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; users,  load average: 0.00, 0.02, 0.05
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+root     pts/0    180.102.173.132  18:08   17:48   0.12s  0.05s -bash
+root     pts/1    122.14.229.252   19:14    4.00s  0.02s  0.00s w
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了Linux软硬链接、以及用户管理命令：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;创建软硬链接：ln&lt;/li&gt;
+&lt;li&gt;用户管理命令：
+&lt;ul&gt;
+&lt;li&gt;useradd：添加用户&lt;/li&gt;
+&lt;li&gt;passwd：给用户设置密码&lt;/li&gt;
+&lt;li&gt;who：查看当前用户&lt;/li&gt;
+&lt;li&gt;w：显示登录用户列表及系统负载&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Linux常用文件操作命令学习</title>
