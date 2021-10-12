@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/linux/</link>
     <description>Recent content in Linux on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 12 Oct 2021 00:11:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 12 Oct 2021 23:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Linux文件权限管理命令学习</title>
+      <link>https://lifelmy.github.io/post/linux_authority/</link>
+      <pubDate>Tue, 12 Oct 2021 23:20:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/linux_authority/</guid>
+      <description>关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论</description>
+    </item>
+    
     <item>
       <title>Linux软硬链接及用户管理命令学习</title>
       <link>https://lifelmy.github.io/post/linux_ln_user/</link>
