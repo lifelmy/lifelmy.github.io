@@ -5,10 +5,297 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 24 Oct 2021 00:16:23 +0800</lastBuildDate>
+    <lastBuildDate>Wed, 27 Oct 2021 00:25:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Vim 基础&#43;进阶，看这篇就够了！</title>
+      <link>https://lifelmy.github.io/post/2021_10_27_linux_vim/</link>
+      <pubDate>Wed, 27 Oct 2021 00:25:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_10_27_linux_vim/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;vim 是从vi发展出来的一个文本编辑器。其代码补全、编译及错误跳转等方便编程的功能特别丰富，在程序员中被广泛使用。&lt;/p&gt;
+&lt;p&gt;Vim的第一个版本由布莱姆·米勒在1991年发布。最初的简称是&lt;code&gt;V&lt;/code&gt;i &lt;code&gt;IM&lt;/code&gt;itation，随着功能的不断增加，正式名称改成了&lt;code&gt;V&lt;/code&gt;i &lt;code&gt;IM&lt;/code&gt;proved。不过很多人在实际使用的时候，还是习惯使用Vi命令，因此在很多Linux版本中，系统对Vim做了一个别名还是叫Vi。&lt;/p&gt;
+&lt;p&gt;Vim是一个功能强大的全屏幕文本编辑器，不仅可以用于编辑文本，在编程方面也是非常强大，Linux/UNIX系统都会默认安装这个编辑器。正因为Vim的强大，会有很多命令需要学习，这里只介绍些常用的命令，在满足日常的文本编辑需求的同时，还能显著提高效率。&lt;/p&gt;
+&lt;h2 id=&#34;概念介绍&#34;&gt;概念介绍&lt;/h2&gt;
+&lt;p&gt;vim 有三种基础工作模式，分别是普通模式，插入模式 和 命令行模式。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;普通模式&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Vim启动后的默认模式，此状态下敲击键盘动作&lt;code&gt;会被Vim识别为命令，而非输入字符&lt;/code&gt;。比如我们此时按下 &lt;code&gt;i&lt;/code&gt;，并不会输入一个字符，&lt;code&gt;i&lt;/code&gt; 被当作了一个命令。不管用户处于何种模式，只要按一下 &lt;code&gt;ESC&lt;/code&gt; 键，即可使Vim进入普通模式。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;插入模式&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这个模式和我们平时使用的编辑器是一样的，用户输入的任何字符都被 &lt;code&gt;Vim&lt;/code&gt; 当做文件内容保存起来，并将其显示在屏幕上。在文本输入过程中，若想回到普通模式，按 &lt;code&gt;ESC&lt;/code&gt; 键即可。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;命令行模式&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;在普通模式下按下 &lt;code&gt;:&lt;/code&gt;、&lt;code&gt;/&lt;/code&gt; 或者 &lt;code&gt;！&lt;/code&gt; 字符，这时你会看到窗口的左下角出现了相应的字符 ，代表你已经进入命令行模式可以进行命令的输入，输入的命令会出现在字符后面，按回车就会执行相应的命令。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqnr472xzj61c80luabe02.jpg&#34; alt=&#34;三种基本模式转化示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;插入命令&#34;&gt;插入命令&lt;/h2&gt;
+&lt;p&gt;在普通模式下，输入下述命令，会进入插入模式，然后就可以进行文本的输入。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;a&lt;/td&gt;
+&lt;td&gt;在光标所在字符后插入&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;A&lt;/td&gt;
+&lt;td&gt;在光标所在行尾插入&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;i&lt;/td&gt;
+&lt;td&gt;在光标所在字符前插入&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;I&lt;/td&gt;
+&lt;td&gt;在光标所在行首插入&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;o&lt;/td&gt;
+&lt;td&gt;在光标下插入新行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;O&lt;/td&gt;
+&lt;td&gt;在光标上插入新行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;保存和退出命令&#34;&gt;保存和退出命令&lt;/h2&gt;
+&lt;p&gt;在执行插入命令完成文本编辑后，按 &lt;code&gt;ESC&lt;/code&gt; 退出插入模式，进入普通模式。如果想要保存文件并退出，即下述命令的 &lt;code&gt;:wq&lt;/code&gt;，此时输入&lt;code&gt;:&lt;/code&gt;(英文冒号)进入命令行模式，然后输入 &lt;code&gt;wq&lt;/code&gt; 保存文件并退出。&lt;code&gt;ZZ&lt;/code&gt; 命令是在普通模式下，按 &lt;code&gt;shift+Z&lt;/code&gt; 两次即可。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;:w&lt;/td&gt;
+&lt;td&gt;保存修改&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:w new_filename&lt;/td&gt;
+&lt;td&gt;另存为指定文件&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:wq&lt;/td&gt;
+&lt;td&gt;保存并退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ZZ&lt;/td&gt;
+&lt;td&gt;保存并退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:q!&lt;/td&gt;
+&lt;td&gt;不保存修改退出&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:wq！&lt;/td&gt;
+&lt;td&gt;保存修改并退出（文件所有者及root可使用）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如下动图首先新建了一个文件，然后通过vim打开，按下 &lt;code&gt;i&lt;/code&gt; 键进行输入文本，然后按下&lt;code&gt;ESC&lt;/code&gt;键进入普通模式，最后输入&lt;code&gt;:wq&lt;/code&gt;保存退出。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqoob0y4ig60s00jse8402.gif&#34; alt=&#34;插入和保存退出示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;定位命令&#34;&gt;定位命令&lt;/h2&gt;
+&lt;p&gt;在普通模式下，分别执行如下命令，可以做到快速定位。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;: set nu&lt;/td&gt;
+&lt;td&gt;设置行号&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;: set nonu&lt;/td&gt;
+&lt;td&gt;取消行号&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;gg&lt;/td&gt;
+&lt;td&gt;到第一行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;G&lt;/td&gt;
+&lt;td&gt;到最后一行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;nG&lt;/td&gt;
+&lt;td&gt;到第n行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;: n&lt;/td&gt;
+&lt;td&gt;到第n行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;$&lt;/td&gt;
+&lt;td&gt;到行尾&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;0&lt;/td&gt;
+&lt;td&gt;到行首&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;动图中（注意光标的位置），首先打开了一个文件，然后输入 &lt;code&gt;:set nu&lt;/code&gt; 显示行号，然后键盘按下&lt;code&gt;G&lt;/code&gt;（shift+g）命令到最后一行，然后按&lt;code&gt;gg&lt;/code&gt;到第一行，输入&lt;code&gt;:3&lt;/code&gt; 到第三行，按 &lt;code&gt;$&lt;/code&gt; 到行尾，按下 &lt;code&gt;0&lt;/code&gt; 到行首，然后输入 &lt;code&gt;:set nonu &lt;/code&gt;取消行号，最后输入 &lt;code&gt;:q&lt;/code&gt; 退出。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqoz5fushg60s00jse8s02.gif&#34; alt=&#34;定位命令示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;替换和取消命令&#34;&gt;替换和取消命令&lt;/h2&gt;
+&lt;p&gt;在普通模式下，可以执行如下命令，实现替换和取消。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;r&lt;/td&gt;
+&lt;td&gt;取代光标所在处字符&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;R&lt;/td&gt;
+&lt;td&gt;从光标所在处开始替换字符，按ESC结束&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;u&lt;/td&gt;
+&lt;td&gt;取消上一步操作&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;动图中，打开了一个文本文件，然后键盘按下 &lt;code&gt;r &lt;/code&gt; 键，然后输入 &lt;code&gt;0&lt;/code&gt; 替换了文本文件中的 &lt;code&gt;i&lt;/code&gt; 字符。按下 &lt;code&gt;R&lt;/code&gt; 键（shift+r），可以从光标处连续替换字符。最后按下了 &lt;code&gt;ESC&lt;/code&gt; 键，进入普通模式，最后连续按 &lt;code&gt;u&lt;/code&gt; 键，取消上一步操作。最后输入 &lt;code&gt;:q&lt;/code&gt;，退出vim。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqpdltpi9g60s00jsb2b02.gif&#34; alt=&#34;替换取消命令示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;复制和剪切命令&#34;&gt;复制和剪切命令&lt;/h2&gt;
+&lt;p&gt;普通模式下，按下如下命令，即可实现快速的复制粘贴。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;yy&lt;/td&gt;
+&lt;td&gt;复制当前行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;nyy&lt;/td&gt;
+&lt;td&gt;复制当前行以下n行（含当前行）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;dd&lt;/td&gt;
+&lt;td&gt;剪切当前行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;ndd&lt;/td&gt;
+&lt;td&gt;剪切当前行以下n行（含当前行）&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;p   /  P&lt;/td&gt;
+&lt;td&gt;粘贴在当前光标所在行下     /    上&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如下动图中，首先打开了一个文件，按 &lt;code&gt;↑键&lt;/code&gt; 将光标移动到第一行，键盘按下 &lt;code&gt;yy&lt;/code&gt; 命令，复制第一行内容，然后将光标移动到最后一行，按了三次 &lt;code&gt;p&lt;/code&gt;命令，进行粘贴，最后输入 &lt;code&gt;:wq&lt;/code&gt; 退出。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqpknmwuzg60s00jsqv702.gif&#34; alt=&#34;复制剪切命令示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;删除命令&#34;&gt;删除命令&lt;/h2&gt;
+&lt;p&gt;在普通模式下，输入如下命令，即可实现快速的文本删除。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;x&lt;/td&gt;
+&lt;td&gt;删除光标所在处字符&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;nx&lt;/td&gt;
+&lt;td&gt;删除光标所在处后的n个字符&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;dd / ndd&lt;/td&gt;
+&lt;td&gt;删除光标所在行  / 光标后n行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;dG&lt;/td&gt;
+&lt;td&gt;删除文件所在行到文件末尾内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;D&lt;/td&gt;
+&lt;td&gt;删除光标所在处到行尾内容&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:n1,n2d&lt;/td&gt;
+&lt;td&gt;删除指定范围内的行&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如下动图中，首先通过vim打开一个文件，然后按下 &lt;code&gt;x&lt;/code&gt; 键删除光标处内容，然后按下 &lt;code&gt;dd&lt;/code&gt; 删除三行内容，再按下 &lt;code&gt;2dd&lt;/code&gt; 删除两行内容。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqprvwcc3g60s00jshdv02.gif&#34; alt=&#34;删除命令示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;搜索和替换命令&#34;&gt;搜索和替换命令&lt;/h2&gt;
+&lt;p&gt;普通模式下，输入如下命令，可以快速完成文档中的内容搜索和替换操作。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;命令&lt;/th&gt;
+&lt;th&gt;作用&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;/string&lt;/td&gt;
+&lt;td&gt;搜索指定字符串，搜索时指定忽略大小写  :set ic&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;n&lt;/td&gt;
+&lt;td&gt;搜索指定字符串的下一个出现位置&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:%s/old/new/g&lt;/td&gt;
+&lt;td&gt;全文替换指定字符串&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;:n1,n2s/old/new/g&lt;/td&gt;
+&lt;td&gt;在一定范围内替换字符串&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;如下动图中，首先打开了一个文件，然后输入了 &lt;code&gt;/love&lt;/code&gt; 进行查找，然后输入了 &lt;code&gt;:%s/hate/love/g&lt;/code&gt; 进行全文替换。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gvqq4kdz6bg60s00jshdx02.gif&#34; alt=&#34;搜索替换命令示意图&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了Linux中vim相关的操作，主要包含以下内容：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;vim的三种基本模式&lt;/li&gt;
+&lt;li&gt;插入命令&lt;/li&gt;
+&lt;li&gt;保存命令&lt;/li&gt;
+&lt;li&gt;定位命令&lt;/li&gt;
+&lt;li&gt;替换和取消命令&lt;/li&gt;
+&lt;li&gt;删除命令&lt;/li&gt;
+&lt;li&gt;搜索和替换命令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;命令比较多，不需要死记硬背，使用的多了，也便记住了。&lt;/p&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>zip、gzip、bzip2、tar 傻傻分不清楚</title>
@@ -12793,756 +13080,6 @@ OK
 &lt;p&gt;转发给你的小伙伴，一起学习，一起进步，一起 From Zero To Hero !!!&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;扫码_搜索联合传播样式-白色版&#34;&gt;&lt;/p&gt;
 </description>
-      
-    </item>
-    
-    <item>
-      <title>Redis配置文件详解</title>
-      <link>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</link>
-      <pubDate>Sat, 26 Jun 2021 21:31:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</guid>
-      
-        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;当我们买来一台机器时，首先需要看说明书，了解使用方式。同样对于Redis来说，通过查看配置文件，我们也可以大体了解Redis的组成部分和运行机制，从而更好的使用Redis。Redis配置文件中分成了不同的模块，我们也按照模块顺序学习。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# Redis内存单位，大小写不敏感。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1k =&amp;gt; 1000 bytes&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1kb =&amp;gt; 1024 bytes&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1m =&amp;gt; 1000000 bytes&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1mb =&amp;gt; 1024*1024 bytes&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1g =&amp;gt; 1000000000 bytes&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1gb =&amp;gt; 1024*1024*1024 bytes&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;includes&#34;&gt;Includes&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 引入其他配置文件，如果使用include引入配置文件&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# include /path/to/local.conf&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# include /path/to/other.conf&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;modules&#34;&gt;Modules&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 启动时加载模块，如果server加载模块失败，会中断加载操作。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# loadmodule /path/to/my_module.so&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# loadmodule /path/to/other_module.so&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;network&#34;&gt;Network&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 设置允许连接的IP，类似于白名单。如果不设置bind，则允许所有网络连接，这种是非常危险的，所以默认只允许本地访问。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 在地址前加上&amp;#34;-&amp;#34;前缀，表示即使这个地址不可用，Redis依然可以成功启动。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# bind 192.168.1.100 10.0.0.1 允许这两个IP连接Redis&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 默认 bind 127.0.0.1 -::1&lt;/span&gt;
-&lt;span class=&#34;nb&#34;&gt;bind&lt;/span&gt; 127.0.0.1 -::1
-
-&lt;span class=&#34;c1&#34;&gt;# 保护模式，默认开启&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 当保护模式开启时，如果没有配置bind 或者 没有设置密码，只接受本地连接&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 只有确定在没有使用 bind 绑定网络接口且未配置身份验证的情况下，允许其它主机的客户端仍要连接到 Redis，才应该禁用保护模式&lt;/span&gt;
-protected-mode yes
-
-&lt;span class=&#34;c1&#34;&gt;# Redis端口&lt;/span&gt;
-port &lt;span class=&#34;m&#34;&gt;6379&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 此参数确定了TCP连接中已完成队列(完成三次握手之后)的长度，&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 当然此值必须不大于Linux系统定义的/proc/sys/net/core/somaxconn值，默认是511，&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 而Linux的默认参数值是128。当系统并发量大并且客户端速度缓慢的时候，可以将这二个参数一起参考设定。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 在高并发环境下你需要一个高backlog值来避免慢客户端连接问题&lt;/span&gt;
-tcp-backlog &lt;span class=&#34;m&#34;&gt;511&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 客户端空闲多少秒后，服务端侧断开连接，0代表不断开连接&lt;/span&gt;
-timeout &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# TCP 连接保活&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果该选项配置不为0，则Redis将周期性地向客户端发送ACK请求，以检查客户端是否已经挂掉，对于无响应的客户端则会关闭其连接，默认为300秒。&lt;/span&gt;
-tcp-keepalive &lt;span class=&#34;m&#34;&gt;300&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;general&#34;&gt;General&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 是否以守护进程的模式运行，改为yes，否则无法后台启动&lt;/span&gt;
-daemonize no
-
-&lt;span class=&#34;c1&#34;&gt;# 当Redis以守护进程方式运行时，Redis会把pid写入pidfile，默认&amp;#34;/var/run/redis.pid&amp;#34;&lt;/span&gt;
-pidfile /var/run/redis_6379.pid
-
-&lt;span class=&#34;c1&#34;&gt;# 日志级别 (debug、verbose、notice、warning)&lt;/span&gt;
-loglevel notice
-
-&lt;span class=&#34;c1&#34;&gt;# 指定日志文件名称，设置为空字符串表示使用标准输出。如果以守护进程方式运行，并且使用标准输出日志将会写入 &amp;#34;/dev/null&amp;#34;&lt;/span&gt;
-logfile &lt;span class=&#34;s2&#34;&gt;&amp;#34;&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 通过syslog-enabled来控制是否将日志打印到syslog中，同时可以通过syslog-ident来指定syslog里的日志标识。&lt;/span&gt;
-syslog-enabled no
-syslog-ident redis
-
-&lt;span class=&#34;c1&#34;&gt;# 指定syslog设备，值可以是USER或LOCAL0-LOCAL7。具体可以参考syslog服务本身的用法。&lt;/span&gt;
-syslog-facility local0
-
-&lt;span class=&#34;c1&#34;&gt;# 禁用内置的崩溃日志，该配置默认被注释掉，即默认启用日志记录，需要禁用去掉注释即可&lt;/span&gt;
-crash-log-enabled no
-
-&lt;span class=&#34;c1&#34;&gt;# 崩溃时的内存检查，是上述崩溃日志记录的一部分，默认启用，禁用去掉注释即可&lt;/span&gt;
-crash-memcheck-enabled no
-
-&lt;span class=&#34;c1&#34;&gt;# 数据库的数量，默认使用第0个数据库，你可以通过&amp;#34;SELECT 1”命令选择第一个数据库&lt;/span&gt;
-databases &lt;span class=&#34;m&#34;&gt;16&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;snapshotting&#34;&gt;SnapShotting&lt;/h2&gt;
-&lt;p&gt;由于Redis是内存数据库，断电即失，为了防止宕机后数据丢失，需要将内存数据保存到硬盘上。Redis提供了两种方式保存，一种是这里的&lt;code&gt;SnapShot&lt;/code&gt;快照，将内存中的全部数据保存到硬盘上，该文件称为&lt;code&gt;RDB&lt;/code&gt;文件（Redis DataBase），宕机重启后将&lt;code&gt;RDB&lt;/code&gt;文件加载到内存；另一种是&lt;code&gt;AOF&lt;/code&gt;（Append Only File）日志，每次的更新操作完成后，将该操作对应的日志写到文件中，宕机重启后，挨个执行日志中的命令来恢复数据。这里我们首先看先&lt;code&gt;RDB&lt;/code&gt;相关的配置，&lt;code&gt;AOF&lt;/code&gt;的配置在后面。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 由于Redis是内存数据库，断电即失，为了防止宕机后数据丢失，需要将内存数据保存到硬盘上&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# save &amp;lt;seconds&amp;gt; &amp;lt;changes&amp;gt; 表示在多少秒内，至少有多少次更新操作，就把数据保存到硬盘上&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果不配置，Redis使用如下三种策略保存快照&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# save 3600 1 : 3600秒(一小时)内至少有1次更新操作&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# save 300 100: 300秒（5分钟）内至少有100次更新操作&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# save 60 10000: 60秒内至少有10000次更新操作&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# save &amp;#34;&amp;#34; 表示禁用快照&lt;/span&gt;
-save &amp;lt;seconds&amp;gt; &amp;lt;changes&amp;gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# 默认情况下，如果RDB快照开启，并且最近的一次快照保存失败了，Redis会拒绝接收更新操作，以此来提醒用户数据持久化失败了，否则这些更新的数据可能会丢失。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 当后台的快照操作恢复后，Redis会恢复接收更新操作。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 当然，可以更改这个配置，当最近的快照操作失败时，允许Redis继续接收更新操作。&lt;/span&gt;
-stop-writes-on-bgsave-error yes
-
-
-&lt;span class=&#34;c1&#34;&gt;# 是否启用RDB快照文件压缩存储&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 默认是开启的，当数据量特别大时，压缩可以节省硬盘空间，但是会增加CPU消耗，可以选择关闭来节省CPU资源，建议开启。&lt;/span&gt;
-rdbcompression yes
-
-&lt;span class=&#34;c1&#34;&gt;# 在5.0版本后，保存和加载RDB文件，新增了校验功能，用于保证文件的完整性。开启这个选项会增加10%左右的性能损耗，如果追求高性能，可以关闭该选项。&lt;/span&gt;
-rdbchecksum yes
-
-&lt;span class=&#34;c1&#34;&gt;# RDB文件名&lt;/span&gt;
-dbfilename dump.rdb
-
-&lt;span class=&#34;c1&#34;&gt;# Redis主从全量同步时，通过RDB文件传输实现。如果没有开启持久化，同步完成后，是否要移除主从同步的RDB文件，默认为no，如果涉及法律合规或者考虑安全问题，可以设置为yes。（只有AOF和RDB持久化都关闭情况下，该配置才生效）&lt;/span&gt;
-rdb-del-sync-files no
-
-&lt;span class=&#34;c1&#34;&gt;# 存放RDB文件和AOF文件的目录&lt;/span&gt;
-dir ./
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;replication&#34;&gt;Replication&lt;/h2&gt;
-&lt;p&gt;Redis是高可用的，需要保证服务不能中断，因此Redis提供了主从库模式，将一份数据保存到多个实例上，用于分担压力的同时，当master挂掉后，其他实例可以继续提供服务。因此我们需要考虑的是，如何保证多个实例之间数据的一致性，同时当master挂掉后，怎样选举一个新的master？&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;53
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;54
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;55
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;56
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;57
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;58
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;59
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;60
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;61
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;62
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;63
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;64
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;65
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;66
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;67
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;68
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;69
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;70
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;71
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;72
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;73
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;74
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;75
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;76
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;77
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;78
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;79
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;80
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;81
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;82
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;83
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;84
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;85
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;86
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;87
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;88
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;89
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;90
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 指定该Redis实例作为masterip:masterport的从机（replica）&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# master和replica之间的复制是异步的；但是也可以指定，在master的副本小于指定数量时，复制时停止接收写请求&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 当replica短暂断联时，Redis使用增量同步的方式（只接收断联后Master接收的更新操作），而不用全量同步（将Master的所有数据再重新复制一份）&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 主从同步是自动进行的，不需要人为参与&lt;/span&gt;
-replicaof &amp;lt;masterip&amp;gt; &amp;lt;masterport&amp;gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;#当master服务设置了密码保护时，slave服务连接master的密码&lt;/span&gt;
-masterauth &amp;lt;master-password&amp;gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# 当replica与master断联，或者正在复制全量数据时，replica应对客户端的请求：&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# （1）replica-serve-stale-data yes&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#     replica依然接受客户端请求，此时返回的数据可能是过时的数据（master更新了新数据，但是该replica断联，没有及时更新），或者是空数据（第一次复制时，还没来得及将数据复制完成）&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# （2）replica-serve-stale-data no&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#     除执行“INFO, REPLICAOF, AUTH, PING, SHUTDOWN, REPLCONF, ROLE, CONFIG, SUBSCRIBE,&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#     UNSUBSCRIBE, PSUBSCRIBE, PUNSUBSCRIBE, PUBLISH, PUBSUB, COMMAND, POST,&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#     HOST and LATENCY”命令外，针对其他所有命令都会返回错误信息“SYNC with master in progress”&lt;/span&gt;
-replica-serve-stale-data yes
-
-
-&lt;span class=&#34;c1&#34;&gt;# replica是否只读，默认只读&lt;/span&gt;
-replica-read-only yes
-
-
-&lt;span class=&#34;c1&#34;&gt;# 主从复制是否使用无硬盘同步&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 当一个新的replica连接上master，或者一个replica断联时间过长后重新连接（无法使用增量同步），两种情况均需要使用RDB文件全量同步数据，此时有两种方式：&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1. 使用硬盘：master将全量数据的RDB快照保存到硬盘上，然后把RDB文件发送给replica&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 2. 无盘复制：不保存RDB到硬盘上，直接传输RDB文件&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果使用硬盘，此时有多个replica需要同步数据，共享这一个RDB文件就可以了；如果使用无盘复制，需要对每个replica都顺序挨个复制一次。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 针对无盘复制，Redis也做了优化，当有replica需要全量同步时，Master并不是马上发送数据，而是等几秒钟，看是否还有新的replica需要同步，这样可以并行发送，否则一次传输一旦开始后，后续来的replica只能等待本次同步完后才能开始。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 何时使用无盘复制：磁盘速度缓慢，带宽较高的情况下&lt;/span&gt;
-repl-diskless-sync no
-
-
-&lt;span class=&#34;c1&#34;&gt;# 无盘复制时，master开始传输RDB快照的等待时间，默认5秒。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 一旦开始传输，后续到达的replica只能排队等待本次RDB传输完后再开始同步。如果Master等待几秒钟，可能会有多个replica到达，这样可以并行传输&lt;/span&gt;
-repl-diskless-sync-delay &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
-
-
-
-&lt;span class=&#34;c1&#34;&gt;# 使用无盘复制时，replica接收到数据后如何加载&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 通常情况下，磁盘速度是比网络慢的，保存并加载RDB文件会增加耗时，但是直接从网络解析RDB会一直刷新数据库，因此提供如下三个选项&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1. 将接收到的数据先保存到本地，传输完后再加载（默认）&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 2. 确保安全时，直接无盘加载&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 3. 将接收到的数据，先在内存中保存一个副本（占用内存，可能OOM）&lt;/span&gt;
-repl-diskless-load disabled
-
-
-&lt;span class=&#34;c1&#34;&gt;# replica PING master 的周期，默认10s&lt;/span&gt;
-repl-ping-replica-period &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# 设置超时时间，包含三类&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# replica角度，master SYNC传输的RDB数据的超时时间&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# replica角度，master发送数据包或者ping的超时时间。 &lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# master角度，replica ACK ping的超时时间&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 需要确保超时时间大于repl-ping-replica-period&lt;/span&gt;
-repl-timeout &lt;span class=&#34;m&#34;&gt;60&lt;/span&gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# 是否禁用TCP_NODELAY&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 选择yes，禁用TCP_NODELAY，会使用较小带宽发送数据，replica收到数据会有延迟，Linux默认40ms&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 选择no，表示不禁用，即启用TCP_NODELAY，Redis使用较大带宽发送数据给replica，这样replica收到数据的延迟较小&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 默认为no，保证主从较低延迟，如果网络拥塞，可以选择yes。&lt;/span&gt;
-repl-disable-tcp-nodelay no
-
-
-&lt;span class=&#34;c1&#34;&gt;# replication backlog：接收到更新请求时，master会多写一份数据到backlog，这是一个环形缓冲区，当replica短暂断开连接并重连后，不用进行全量同步，只需要同步断联后更新的那部分。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 由于是环形缓冲区，当replica断联时间过长，之前的数据会被覆盖，此时就需要进行全量同步了。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# replication backlog size 越大，允许replica断联的时间就越长，默认1MB&lt;/span&gt;
-repl-backlog-size 1mb
-
-
-&lt;span class=&#34;c1&#34;&gt;# 所有replica断联多长时间后，master释放backlog，默认3600s,0代表永不清空。&lt;/span&gt;
-repl-backlog-ttl &lt;span class=&#34;m&#34;&gt;3600&lt;/span&gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# Redis是高可用的，当master有问题掉线时，需要从所有replica中选一个当master。该配置代表replica的优先级，越小代表优先级越高，默认100，0代表永远不会被推选当master&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 例如三个replica的优先级分别为10，100，25，第一个replica会选择第一个。&lt;/span&gt;
-replica-priority &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt;
-
-
-
-&lt;span class=&#34;c1&#34;&gt;# min-replicas-to-write，该配置指定，如果master的健康replica个数小于N，master则停止接收更新请求。默认为0，表示禁用该配置&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# min-replicas-max-lag：延迟小于等于min-slaves-max-lag秒的slave才认为是健康的slave，默认为10秒。&lt;/span&gt;
-min-replicas-to-write &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-min-replicas-max-lag &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;clients&#34;&gt;Clients&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 设置同一时间最大客户端连接数，默认是10000&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果Redis Server 根据maxclients去配置进程文件限制失败，则最大客户端连接数设置为 进程文件限制数-32 (留32个连接给内部连接用)&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果当前连接数到达maxclients，则新的连接会被关闭，并报错&amp;#34;max number of clients reached&amp;#34;&lt;/span&gt;
-maxclients &lt;span class=&#34;m&#34;&gt;10000&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;memory-management&#34;&gt;Memory Management&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 设置Redis可用的最大内存限制,单位字节。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果到达内存限制，根据清除策略（maxmemory-policy）移除key-value来腾出空间&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果根据清除策略无法移除key，或者清除策略配置的是“不清除”，Redis将会对增加内存占用的命令，如SET、LPUSH报错，读操作不受影响。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 需要注意的是，这个内存限制不包含master发送给replica命令的buffer。如果包含这个buffer，当内存满了的话，master删除一部分key用于清除内存，同时又需要把这些命令放到buffer中，这也会增加内存占用，可能导致内存还是满的，master又需要清除key，循环上述操作，最终可能导致清空数据库。因此设置内存限制时，需要比内存小，给buffer留出内存空间。&lt;/span&gt;
-maxmemory &amp;lt;bytes&amp;gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# 内存占用到达限制后，数据清除策略&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# volatile-lru: 利用LRU算法移除设置过期时间的key（Least Recently Used 最近最少使用）&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# allkeys-lru: 利用LRU算法移除任何key&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# volatile-lfu: 利用LFU算法移除设置过期时间的key（Least frequently used 最不经常使用）&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# allkeys-lfu: 利用LFU算法移除任何key&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# volatile-random: 随机移除一个设置过期时间的key&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# allkeys-random: 随机移除一个key&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# volatile-ttl: 移除一个最接近过期时间的key&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# noeviction: 不移除任何key，只是返回一个写错误，默认选项&lt;/span&gt;
-maxmemory-policy noeviction
-
-&lt;span class=&#34;c1&#34;&gt;# LRU、LFU 和 minimal TTL 都是近似算法，相对精确算法可以节省内存，可以通过该配置来调整速度或精确度&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# maxmemory-samples 越小，速度越快，越不精确；反之越精确，但是占用较多CPU资源。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 默认为5，是一个比较折中的配置。&lt;/span&gt;
-maxmemory-samples &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# 从Redis 5开始，最大内存限制只对master生效，对replica无效，即replica-ignore-maxmemory yes。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 清除策略只会在master端进行，然后master把要清除key的命令发给replica。如果replica达到内存限制，master没有，replica也不会根据清除策略删除key&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 该配置保证了主从一致性，如果配置了replica可写，或者replica内存和master不一样等情况，可以改为false&lt;/span&gt;
-replica-ignore-maxmemory yes
-
-
-&lt;span class=&#34;c1&#34;&gt;# Redis有两种方式发现key过期了：访问到该key时发现过期了，或者是后台线程扫描发现（该方式称为 active expire key）。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 扫描尽量保证过期key数量不能超过内存数量的10%，并避免消耗超过25%的cpu资源&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 该配置默认为1，最大值为10。配置越大，扫描后内存中存在的过期key越少，但会占用较多CPU资源，增大系统延迟。&lt;/span&gt;
-active-expire-effort &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;lazy-freeing&#34;&gt;Lazy Freeing&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# Redis有两种删除方式：同步删除和异步删除。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# DEL命令是同步删除，当删除命令来时，删除完数据才能处理其他命令。如果key对应的value较小，阻塞的时间较短；当时如果key对应的value较大，服务可能会阻塞秒级来删除数据。同时Redis提供了异步删除命令：UNLINK（对应DEL的非阻塞版本）、FLUSHALL ASYNC（对应FLUSHALL的非阻塞版本） 和 FLUSHDB ASYNC(对应FLUSHDB的非阻塞版本）. 当收到命令后，Redis会启动一个线程去删除数据，不会阻塞。&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 使用阻塞或者非阻塞方式，控制权在用户手中。但是Redis Server有时也需要删除Key或者刷新整个数据库，因此提供用户配置，默认阻塞方式删除。具体场景和配置项如下，&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1. 内存到达限制后，根据配置的清除策略删除key &lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 2. 过期Key需要删除&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 3. 部分指令的影响，比如set一个已存在的key，需要把之前的value删除 &lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 4. replica全量复制时，需要先清空自身数据库&lt;/span&gt;
-
-lazyfree-lazy-eviction no
-lazyfree-lazy-expire no
-lazyfree-lazy-server-del no
-replica-lazy-flush no
-
-&lt;span class=&#34;c1&#34;&gt;# 用户执行DEL命令时，Redis转为UNLINK命令执行&lt;/span&gt;
-lazyfree-lazy-user-del no
-
-&lt;span class=&#34;c1&#34;&gt;# FLUSHDB、FLUSHALL 命令通过后面的SYNC和ASYNC标记，来区分同步或异步操作。如果没有提供标记的话，使用该配置。默认为no，即同步操作。&lt;/span&gt;
-lazyfree-lazy-user-flush no
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;threaded-io&#34;&gt;Threaded I/O&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 我们通常说，Redis是单线程，主要是指Redis的网络 IO 和键值对读写是由一个线程来完成的，但 Redis 的其他功能，比如持久化、异步删除、集群数据同步等，其实是由额外的线程执行的。&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 现在Redis提供了多线程处理读写的功能。由于写操作较慢，此前我们的解决办法是通过pipeline的方式，或者是使用集群分片的方式横向拓展。现在使用多线程，不用再考虑pipeline和分片，能够提升两倍速度。&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 默认多线程是禁用的，如果确保是由于CPU繁忙导致性能较差才开启。开启时，建议机器配置应多于4个核，同时开启后保持一个核的空余。 例如4个核，配置 2-3个 I/O线程；8个核，配置6个线程。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 设置为1，相当于不开启多线程，只是用一个线程处理读写。&lt;/span&gt;
-io-threads &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 开启多线程后，默认多线程只用于写，也可以配置用于读（多线程读作用不大）。&lt;/span&gt;
-io-threads-do-reads no
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;append-only-mode&#34;&gt;Append Only Mode&lt;/h2&gt;
-&lt;p&gt;这是Redis的另一种持久化方式，使用快照保存RDB文件的持久化方式我们在上面讨论过。&lt;/p&gt;
-&lt;p&gt;开启该配置后，Redis在执行每个更新操作后，会将该命令写入日志文件，当机器宕机时，可以挨个执行日志中的命令恢复数据。如果使用这种方式，即使机器宕机，相对于RDB快照文件，丢失的数据很少。但是由于每个更新操作都写一次日志，会导致日志文件特别大。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# Redis默认使用RDB快照进行持久化，这种方式需要将整个内存文件做个备份，频率不能太高，否则对Redis性能有较大影响。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 但是如果在两次RDB备份过程中宕机了，会丢失分钟级别的数据，因此Redis提供了AOF持久化方案，至多丢失一个更新数据或者秒级数据（依赖配置）。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# RDB和AOF可以同时启用，如果启用了AOF，Redis重启时默认加载AOF文件。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 默认禁用AOF，使用RDB&lt;/span&gt;
-appendonly no
-
-&lt;span class=&#34;c1&#34;&gt;# AFO文件名&lt;/span&gt;
-appendfilename &lt;span class=&#34;s2&#34;&gt;&amp;#34;appendonly.aof&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# AOF日志落盘策略&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 一个更新命令执行完成后，Redis会接着将该命令写入AOF缓冲区（使用主线程），调用fsync()会让操作系统将缓冲区数据写入磁盘。Redis提供了三种缓冲区写磁盘时机：&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1. always: 同步写回：每个写命令执行完，立马同步地将日志写回磁盘&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 2. everysec，每秒写回：每个写命令执行完，只是先把日志写到 AOF 文件的内存缓冲区，每隔一秒把缓冲区中的内容写入磁盘&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 3. no，操作系统控制的写回：每个写命令执行完，只是先把日志写到 AOF 文件的内存缓冲区，由操作系统决定何时将缓冲区内容写回磁盘&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 三种操作各有优劣：&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1. always: 可以做到基本不丢数据（至多丢一个），但是每个写命令后都需要将日志落盘，影响主线程性能&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 2. no: 效率较高，但是由操作系统负责落盘，Redis无法控制，一旦宕机数据就会丢失&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 3. everysec: 折中方案，每秒落盘一次，兼顾效率和数据&lt;/span&gt;
-appendfsync everysec
-
-
-&lt;span class=&#34;c1&#34;&gt;# 当开启了AOF，并配置的是always或者everysec策略，如果此时后台在进行大量I/O操作，调用fsync()落盘可能会被阻塞。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 该配置指定：当后台在执行BGSAVE或者BGREWRITEAOF命令进行大量I/O时，是否停止落盘，默认为no，即继续落盘。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 如果选择yes，即停止落盘，如果发生宕机，可能会导致至多30s的数据丢失。 &lt;/span&gt;
-no-appendfsync-on-rewrite no
-
-
-&lt;span class=&#34;c1&#34;&gt;# AOF文件重写&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# AOF是以文件的形式在记录接收到的所有写命令。随着接收的写命令越来越多，AOF文件会越来越大。因此Redis提供了AOF重写机制用于压缩文件（同一个key的多次更新命令，最终可以重写为写一个命令）。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# auto-aof-rewrite-min-size ： AOF文件size大于这个配置时才能触发重写&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# auto-aof-rewrite-percentage： AOF文件大小增长率（对比上次重写后的大小）大于该配置时，触发重写。&lt;/span&gt;
-auto-aof-rewrite-percentage &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt;
-auto-aof-rewrite-min-size 64mb
-
-
-&lt;span class=&#34;c1&#34;&gt;# 是否允许加载被截断的AOF文件。&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# AOF文件可能由于宕机未完全写入，导致文件不完整，当Redis重启时，会加载AOF文件，如果此时发现文件不完整：&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 1. Redis退出，并提示错误信息，后续用户可以通过&amp;#34;redis-check-aof“工具修复AOF文件，然后再重启&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 2. 尽可能加载可用信息，丢弃错误数据&lt;/span&gt;
-aof-load-truncated yes
-
-
-
-&lt;span class=&#34;c1&#34;&gt;# RDB和AOF混合持久化&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# RDB是全量内存数据的复制，频繁生成RDB文件会对性能造成很大影响，发生宕机会影响分钟级别的数据，但是文件大小较小，加载较快；&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# AOF是写操作日志，一秒一次落盘的操作对性能影响不大，发生宕机至多会影响秒级别的数据，但是如果只使用AOF，会导致日志文件太大，需要重写AOF&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 因此可以将两者结合起来：两次RDB快照中间的数据，使用AOF日志保存。这样既保证了数据不丢失，也提高了性能。&lt;/span&gt;
-aof-use-rdb-preamble yes
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
       
     </item>
     

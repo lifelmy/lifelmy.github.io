@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 24 Oct 2021 00:16:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 27 Oct 2021 00:25:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vim 基础&#43;进阶，看这篇就够了！</title>
+      <link>https://lifelmy.github.io/post/2021_10_27_linux_vim/</link>
+      <pubDate>Wed, 27 Oct 2021 00:25:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_10_27_linux_vim/</guid>
+      <description>前言 vim 是从vi发展出来的一个文本编辑器。其代码补全、编译及错误跳转等方便编程的功能特别丰富，在程序员中被广泛使用。 Vim的第一个版本由布莱姆</description>
+    </item>
+    
     <item>
       <title>zip、gzip、bzip2、tar 傻傻分不清楚</title>
       <link>https://lifelmy.github.io/post/2021_10_24_linux_zip/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/redis_string/</guid>
       <description>前言 String类型是Redis最基本的数据类型，也是Memcached唯一支持的类型，对于刚接触Redis的同学也可以轻松上手。Redis</description>
-    </item>
-    
-    <item>
-      <title>Redis配置文件详解</title>
-      <link>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</link>
-      <pubDate>Sat, 26 Jun 2021 21:31:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</guid>
-      <description>前言 当我们买来一台机器时，首先需要看说明书，了解使用方式。同样对于Redis来说，通过查看配置文件，我们也可以大体了解Redis的组成部分和</description>
     </item>
     
   </channel>
