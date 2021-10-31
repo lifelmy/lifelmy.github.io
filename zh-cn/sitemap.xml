@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lifelmy.github.io/post/2021_10_31_restful/</loc>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lifelmy.github.io/post/2021_10_27_linux_vim/</loc>
     <lastmod>2021-10-27T00:25:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -157,14 +164,42 @@
   
   <url>
     <loc>https://lifelmy.github.io/categories/</loc>
-    <lastmod>2021-10-27T00:25:23+08:00</lastmod>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lifelmy.github.io/tags/http/</loc>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lifelmy.github.io/categories/http/</loc>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/</loc>
-    <lastmod>2021-10-27T00:25:23+08:00</lastmod>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lifelmy.github.io/post/</loc>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lifelmy.github.io/tags/</loc>
+    <lastmod>2021-10-31T21:42:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -178,20 +213,6 @@
   
   <url>
     <loc>https://lifelmy.github.io/categories/linux/</loc>
-    <lastmod>2021-10-27T00:25:23+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://lifelmy.github.io/post/</loc>
-    <lastmod>2021-10-27T00:25:23+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://lifelmy.github.io/tags/</loc>
     <lastmod>2021-10-27T00:25:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

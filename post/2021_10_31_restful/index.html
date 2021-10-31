@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>RESTful API 设计规范 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_10_31_restful/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="RESTful API 设计规范" />
+<meta property="og:description" content="前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_10_31_restful/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-10-31T21:42:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-10-31T21:42:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="RESTful API 设计规范">
+<meta itemprop="description" content="前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提"><meta itemprop="datePublished" content="2021-10-31T21:42:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-10-31T21:42:23&#43;08:00" />
+<meta itemprop="wordCount" content="4552">
+<meta itemprop="keywords" content="HTTP," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="RESTful API 设计规范"/>
+<meta name="twitter:description" content="前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">RESTful API 设计规范</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-10-31" class="post-time">
+          2021-10-31
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/http/"> HTTP </a>
+            
+          </div>
+        <span class="more-meta"> 约 4552 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#协议">协议</a></li>
+    <li><a href="#域名">域名</a></li>
+    <li><a href="#路径">路径</a></li>
+    <li><a href="#http动词">HTTP动词</a></li>
+    <li><a href="#过滤">过滤</a></li>
+    <li><a href="#hateoas">HATEOAS</a></li>
+    <li><a href="#版本控制">版本控制</a></li>
+    <li><a href="#服务端响应">服务端响应</a></li>
+    <li><a href="#状态码">状态码</a></li>
+    <li><a href="#其他">其他</a></li>
+    <li><a href="#参考">参考</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。</p>
+<h2 id="简介">简介</h2>
+<p>在主流公司的程序开发中，为了提高程序开发迭代的速度，基本都是前后端分离架构，而前端既包括网页、App、小程序等等，因此必须要有一个统一的规范用于约束前后端的通信，RESTful API则是目前比较成熟的API设计理论。</p>
+<p>要想理解RESTful，就需要先明白REST。REST是 <a href="https://roy.gbiv.com/">Roy T. Fielding</a> 在其2000年的博士论文中提出的，是<code>RE</code>presentational <code>S</code>tate <code>T</code>ransfer 词组的缩写，可以翻译为“表现层状态转移”，其实这个词组前面省略了个主语&ndash;“Resource”，加上主语后就是“资源表现层状态转移”。每个词都能看懂，连在一起不知道什么意思了有木有？</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvyskyh3apj303f04aq2s.jpg" alt=" Roy T. Fielding"></p>
+<ol>
+<li>
+<p>Resource（资源）</p>
+<p>所谓资源，就是互联网上的一个实体。URI（Uniform Resource Identifier）的全称就是统一资源标识符，和我们这里的资源一个意思。一个资源可以是一段文字、一张图片、一段音频、一个服务。</p>
+</li>
+<li>
+<p>表现层（Representation）</p>
+<p>&ldquo;资源&quot;是一种信息实体，它可以有多种外在表现形式。我们把&quot;资源&quot;具体呈现出来的形式，叫做它的&quot;表现层&rdquo;（Representation）。比如一篇文章，可以使用XML、JSON、HTML的形式呈现出来。</p>
+</li>
+<li>
+<p>状态转移（State Transfer）</p>
+<p>访问一个网站，就代表了客户端和服务器的一个互动过程。在这个过程中，势必涉及到数据和状态的变化。互联网通信协议HTTP协议，是一个无状态协议，这意味着所有的状态都保存在服务器端。因此，如果客户端想要操作服务器，必须通过某种手段，让服务器端发生&quot;状态转化&quot;（State Transfer）。而这种转化是建立在表现层之上的，所以就是&quot;表现层状态转化&quot;。</p>
+</li>
+</ol>
+<p>上面我们介绍了REST的基本概念，那么服务REST规范的设计，我们就可以称为RESTful。接下来我们就来看一下RESTful API的设计规范。</p>
+<h2 id="协议">协议</h2>
+<p>协议是最基本的设计，表示前后端通信规范，现阶段应该使用<code>HTTPs</code>协议。</p>
+<h2 id="域名">域名</h2>
+<p><code>API</code> 的根入口点应尽可能保持足够简单，这里有两个常见的例子：</p>
+<ul>
+<li>api.example.com/* （子域名下）</li>
+<li>example.com/api/* （主域名下）</li>
+</ul>
+<p>域名应该考虑拓展性，如果不确定API后续是否会拓展，应该将其放在子域名下（api.example.com/*），这样可以保持一定的灵活性。</p>
+<h2 id="路径">路径</h2>
+<p>路径又称为端点，表示API的具体地址。在路径的设计中，需遵守下列约定：</p>
+<ul>
+<li>命名必须全部<code>小写</code></li>
+<li>资源（resource）的命名必须是<code>名词</code>，并且必须是<code>复数形式</code></li>
+<li>如果要使用连字符，建议使用‘-’而不是‘_’，‘_’字符可能会在某些浏览器或屏幕中被部分遮挡或完全隐藏</li>
+<li>易读</li>
+</ul>
+<p>命名必须全部小写和易读都无需解释，可以理解为规定，那么为什么命名必须是名词且需要复数形式呢？这是因为在RESTful中，主语是资源，资源肯定是名词，不能是动词。其次，一个资源往往对应数据库中一张表，表就是实体的集合，因此需要是复数形式。</p>
+<p>下面是一些反例：</p>
+<ul>
+<li><a href="https://api.example.com/getUser">https://api.example.com/getUser</a></li>
+<li><a href="https://api.example.com/addUser">https://api.example.com/addUser</a></li>
+</ul>
+<p>下面是一些正例：</p>
+<ul>
+<li><a href="https://api.example.com/zoos">https://api.example.com/zoos</a></li>
+<li><a href="https://api.example.com/zoos/animals">https://api.example.com/zoos/animals</a></li>
+</ul>
+<h2 id="http动词">HTTP动词</h2>
+<p>对于如何操作资源，有相应的HTTP动词对应，常见的动词有如下五个（括号里表示SQL对应的命令）：</p>
+<ul>
+<li>GET（SELECT）：从服务器取出资源（一项或多项）</li>
+<li>POST（CREATE）：在服务器新建一个资源</li>
+<li>PUT（UPDATE）：在服务器更新资源（客户端提供改变后的完整资源）。</li>
+<li>PATCH（UPDATE）：在服务器更新资源（客户端提供改变的属性）</li>
+<li>DELETE（DELETE）：从服务器删除资源</li>
+</ul>
+<p>示例：</p>
+<table>
+<thead>
+<tr>
+<th>HTTP动词</th>
+<th>路径</th>
+<th>表述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GET</td>
+<td>/zoos</td>
+<td>获取所有动物园信息</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>/zoos</td>
+<td>新建一个动物园</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/zoos/ID</td>
+<td>获取指定动物园的信息</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>/zoos/ID</td>
+<td>更新指定动物园的信息（前端提供该动物园的全部信息）</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>/zoos/ID</td>
+<td>更新某个指定动物园的信息（提供该动物园改动部分的信息）</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>/zoos/ID</td>
+<td>删除某个动物园</td>
+</tr>
+<tr>
+<td>GET</td>
+<td>/zoos/ID/animals</td>
+<td>获取某个动物园里面的所有动物信息</td>
+</tr>
+</tbody>
+</table>
+<h2 id="过滤">过滤</h2>
+<p>如果数据量很大，服务器不可能将全部数据都返回给前端，因此前端需要提供一些参数进行过滤，用于分页展示或者排序等，下面是一些常见的参数：</p>
+<ul>
+<li>?limit=10：指定返回记录的数量</li>
+<li>?offset=10：指定返回记录的开始位置。</li>
+<li>?page=2&amp;per_page=100：指定第几页，以及每页的记录数。</li>
+<li>?sortby=name&amp;order=asc：指定返回结果按照哪个属性排序，以及排序顺序。</li>
+<li>?animal_type_id=1：指定筛选条件</li>
+</ul>
+<h2 id="hateoas">HATEOAS</h2>
+<p>HATEOAS 是 <em>Hypermedia As The Engine Of Application State</em> 的缩写，从字面上理解是 <em>“超媒体即应用状态引擎”</em> 。其原则就是客户端与服务器的交互完全由API动态提供，客户端无需事先了解如何与服务器交互，即返回结果中提供链接，连向其他API方法，使得用户不查文档，也知道下一步应该做什么。</p>
+<p>例如，若要处理订单与客户之间的关系，可以在订单的表示形式中包含链接，用于指定下单客户可以执行的操作（查看客户信息、查看订单信息、删除订单等操作）。rel表示这个API与当前网址的关系，href表示API的路径，title表示API的标题，type表示返回类型，action表示支持的操作类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;orderID&#34;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+  <span class="nt">&#34;productID&#34;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+  <span class="nt">&#34;quantity&#34;</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span>
+  <span class="nt">&#34;orderValue&#34;</span><span class="p">:</span><span class="mf">16.60</span><span class="p">,</span>
+  <span class="nt">&#34;links&#34;</span><span class="p">:[</span>
+     <span class="p">{</span>
+      <span class="nt">&#34;rel&#34;</span><span class="p">:</span><span class="s2">&#34;customer&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;href&#34;</span><span class="p">:</span><span class="s2">&#34;https://adventure-works.com/customers/3&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;action&#34;</span><span class="p">:</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;title&#34;</span><span class="p">:</span><span class="s2">&#34;get customer info&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;types&#34;</span><span class="p">:[</span><span class="s2">&#34;text/xml&#34;</span><span class="p">,</span><span class="s2">&#34;application/json&#34;</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;rel&#34;</span><span class="p">:</span><span class="s2">&#34;self&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;href&#34;</span><span class="p">:</span><span class="s2">&#34;https://adventure-works.com/orders/3&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;action&#34;</span><span class="p">:</span><span class="s2">&#34;GET&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;title&#34;</span><span class="p">:</span><span class="s2">&#34;get order info&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;types&#34;</span><span class="p">:[</span><span class="s2">&#34;text/xml&#34;</span><span class="p">,</span><span class="s2">&#34;application/json&#34;</span><span class="p">]</span>
+    <span class="p">}]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Github的API就是这种设计，访问<a href="https://api.github.com/">api.github.com</a>会得到一个所有可用API的网址列表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;current_user_url&#34;</span><span class="p">:</span> <span class="s2">&#34;https://api.github.com/user&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;emojis_url&#34;</span><span class="p">:</span> <span class="s2">&#34;https://api.github.com/emojis&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;events_url&#34;</span><span class="p">:</span> <span class="s2">&#34;https://api.github.com/events&#34;</span><span class="p">,</span>
+  <span class="err">......</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="版本控制">版本控制</h2>
+<p>API一直保持静态的可能性很小，随着业务需求变化，可能会添加新的资源，底层的数据结构可能也会有更改。在更新API提供新功能的同时，需要考虑对已使用该API用户的影响，因此需要保持向前兼容，这就引出了版本控制。主要的版本控制方法有如下几种：</p>
+<ol>
+<li>URI版本管理</li>
+</ol>
+<p>每次修改 Web API 或更改资源的架构时，向每个资源的 URI 添加版本号。 以前存在的 URI 应像以前一样继续运行，并返回符合原始架构的资源。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-text" data-lang="text">api.example.com/v1/*
+api.example.com/v2/*
+</code></pre></td></tr></table>
+</div>
+</div><p>该方法的版本控制机制非常简单，但是随着 API 多次迭代，服务器需要支持多个版本的路由，增大了维护的成本。 此方案也增加了 HATEOAS 实现的复杂性，因为所有链接都需要在其 URI 中包括版本号。</p>
+<ol start="2">
+<li>查询字符串版本控制</li>
+</ol>
+<p>不是提供多个 URI，而是通过在追加查询字符串的方式来指定版本，例如 <code>https://adventure-works.com/customers/3?version=2</code>。 如果 version 参数被较旧的客户端应用程序省略，则应默认为有意义的值（例如 1）。</p>
+<p>此方法具有语义优势（即，同一资源始终从同一 URI 进行检索），但它依赖于代码处理请求以分析查询字符串并发送回相应的 HTTP 响应。 该方法也与 URI 版本控制机制一样，增加了实现 HATEOAS 的复杂性。</p>
+<ol start="3">
+<li>自定义请求标头进行版本控制</li>
+</ol>
+<p>在请求的header中自定义版本控制选项。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">GET</span> <span class="nn">https://adventure-works.com/customers/3</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="n">Custom-Header</span><span class="o">:</span> <span class="l">api-version=1</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>Accept标头进行版本控制</li>
+</ol>
+<p>当客户端应用程序向 Web 服务器发送 HTTP GET 请求时，可以 Accept 标头规定它可以处理的内容的格式。 通常，<em>Accept</em> 标头的用途是客户端指定响应的正文应是 XML、JSON 或者其他可处理的的格式。 但是，我们也可以指定该标头为使客户端需要的资源版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-http" data-lang="http"><span class="nf">GET</span> <span class="nn">https://adventure-works.com/customers/3</span> <span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span>
+<span class="n">Accept</span><span class="o">:</span> <span class="l">application/vnd.adventure-works.v1+json</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>上例将 <em>Accept</em> 标头指定为 <em>application/vnd.adventure-works.v1+json</em>。 <em>vnd.adventure-works.v1</em> 元素向 Web 服务器指示它应返回资源的版本 v1，而 <em>json</em> 元素则指定响应正文的格式应为 JSON。</p>
+<p>此方法可以说是最纯粹的版本控制机制并自然地适用于 HATEOAS，后者可以在资源链接中包含相关数据的 MIME 类型。</p>
+<p>在现实世界中，API永远不会完全稳定。因此，如何管理这一变化非常重要。对于大多数API而言，商定好部分版本的控制策略，然后对API详细记录和逐步弃用是可接受的做法。</p>
+<h2 id="服务端响应">服务端响应</h2>
+<p>API响应，需要遵守HTTP设计规范，选择合适的状态码返回。你可能见过有的接口始终返回状态码200，然后通过返回体中的code字段进行区分请求是否成功，这种是不符合规范的，相当于状态码没有了任何作用，下面就是一个反例。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-http" data-lang="http"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">200</span> <span class="ne">ok</span>
+<span class="n">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="n">Server</span><span class="o">:</span> <span class="l">example.com</span>
+
+<span class="p">{</span>
+    <span class="nt">&#34;code&#34;</span><span class="p">:</span> <span class="mi">-1</span><span class="p">,</span>
+    <span class="nt">&#34;msg&#34;</span><span class="p">:</span> <span class="s2">&#34;该活动不存在&#34;</span><span class="p">,</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>其次，在出现错误时，需要返回错误信息，常见的返回方式就是放在返回体中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-http" data-lang="http"><span class="kr">HTTP</span><span class="o">/</span><span class="m">1.1</span> <span class="m">401</span> <span class="ne">Unauthorized</span>
+<span class="n">Server</span><span class="o">:</span> <span class="l">nginx/1.11.9</span>
+<span class="n">Content-Type</span><span class="o">:</span> <span class="l">application/json</span>
+<span class="n">Transfer-Encoding</span><span class="o">:</span> <span class="l">chunked</span>
+<span class="n">Cache-Control</span><span class="o">:</span> <span class="l">no-cache, private</span>
+<span class="n">Date</span><span class="o">:</span> <span class="l">Sun, 24 Jun 2018 10:02:59 GMT</span>
+<span class="n">Connection</span><span class="o">:</span> <span class="l">keep-alive</span>
+
+<span class="p">{</span><span class="nt">&#34;error_code&#34;</span><span class="p">:</span><span class="mi">40100</span><span class="p">,</span><span class="nt">&#34;message&#34;</span><span class="p">:</span><span class="s2">&#34;Unauthorized&#34;</span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="状态码">状态码</h2>
+<p>HTTP状态码由三个十进制数字组成，第一个十进制数字定义了状态码的类型，HTTP状态码共分为5种类型：</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1xx</td>
+<td>信息，服务器收到请求，需要请求者继续执行操作</td>
+</tr>
+<tr>
+<td>2xx</td>
+<td>成功，操作被成功接收并处理</td>
+</tr>
+<tr>
+<td>3xx</td>
+<td>重定向，需要进一步的操作以完成请求</td>
+</tr>
+<tr>
+<td>4xx</td>
+<td>客户端错误，请求包含语法错误或无法完成请求</td>
+</tr>
+<tr>
+<td>5xx</td>
+<td>服务器错误，服务器在处理请求的过程中发生了错误</td>
+</tr>
+</tbody>
+</table>
+<p>API不需要返回1**类型的状态码，因此我们主要看下其他几个类型常见的状态码：</p>
+<ol>
+<li>2xx状态码</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>英文名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>200</td>
+<td>OK</td>
+<td>请求成功，一般用于GET和POST请求</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+<td>请求成功并创建了新的资源，用于POST、PUT、PATCH请求。例如新增用户、修改用户信息等，同时在返回体中，我们既可以返回创建后实体的所有信息数据，也可以不返回相关信息。</td>
+</tr>
+<tr>
+<td>202</td>
+<td>Accepted</td>
+<td>已接受请求，但未处理完成，会在未来再处理，通常用于异步操作</td>
+</tr>
+<tr>
+<td>204</td>
+<td>No Content</td>
+<td>该状态码表示响应实体不包含任何数据，使用DELETE进行删除操作时，需返回该状态码</td>
+</tr>
+</tbody>
+</table>
+<ol start="2">
+<li>3xx状态码</li>
+</ol>
+<p>API 用不到301状态码（永久重定向）和302状态码（暂时重定向，307也是这个含义），因为它们可以由应用级别返回，浏览器会直接跳转，API 级别可以不考虑这两种情况。</p>
+<p>API 用到的3xx状态码，主要是303 See Other，表示参考另一个 URL。它与302和307的含义一样，也是&quot;暂时重定向&quot;，区别在于302和307用于GET请求，而303用于POST、PUT和DELETE请求。收到303以后，浏览器不会自动跳转，而会让用户自己决定下一步怎么办。</p>
+<p>下面是一个例子。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html">HTTP/1.1 303 See Other
+Location: /api/orders/12345
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>4xx状态码</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>英文名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>客户端请求的语法错误，服务器无法理解</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>表示用户没有权限（令牌、用户名、密码错误）</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>没有权限访问该请求，服务器收到请求但拒绝提供服务</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>服务器无法根据客户端的请求找到资源（如路径不存在）</td>
+</tr>
+<tr>
+<td>405</td>
+<td>Method Not Allowed</td>
+<td>客户端请求的方法服务端不支持，例如使用 POST 方法请求只支持 GET 方法的接口</td>
+</tr>
+<tr>
+<td>406</td>
+<td>Not Acceptable</td>
+<td>用户GET请求的格式不可得（比如用户请求 JSON 格式，但是只有 XML 格式）</td>
+</tr>
+<tr>
+<td>408</td>
+<td>Request Time-out</td>
+<td>客户端请求超时</td>
+</tr>
+<tr>
+<td>410</td>
+<td>Gone</td>
+<td>客户端GET请求的资源已经不存在。410 不同于 404，如果资源以前有现在被永久删除了可使用410 代码，网站设计人员可通过 301 代码指定资源的新位置</td>
+</tr>
+<tr>
+<td>415</td>
+<td>Unsupported Media Type</td>
+<td>通常表示服务器不支持客户端请求首部 Content-Type 指定的数据格式。如在只接受 JSON 格式的 API 中放入 XML 类型的数据并向服务器发送</td>
+</tr>
+<tr>
+<td>429</td>
+<td>Too Many Requests</td>
+<td>客户端的请求次数超过限额</td>
+</tr>
+</tbody>
+</table>
+<ol start="4">
+<li>5xx状态码</li>
+</ol>
+<p>5xx状态码表示服务端错误。一般来说，API 不会向用户透露服务器的详细信息，所以只要两个状态码就够了。</p>
+<table>
+<thead>
+<tr>
+<th>状态码</th>
+<th>英文名称</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>500</td>
+<td>Internal Server Error</td>
+<td>客户端请求有效，服务器处理时发生了意外</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable</td>
+<td>服务器无法处理请求，一般用于网站维护状态</td>
+</tr>
+</tbody>
+</table>
+<h2 id="其他">其他</h2>
+<ul>
+<li>API的身份认证应该使用<a href="https://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html">OAuth 2.0</a>框架</li>
+<li>服务器返回的数据格式，应该尽量使用JSON，避免使用XML</li>
+</ul>
+<h2 id="参考">参考</h2>
+<p><a href="https://www.ruanyifeng.com/blog/2011/09/restful.html">https://www.ruanyifeng.com/blog/2011/09/restful.html</a></p>
+<p><a href="https://www.ruanyifeng.com/blog/2014/05/restful_api.html">https://www.ruanyifeng.com/blog/2014/05/restful_api.html</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/68103094">https://zhuanlan.zhihu.com/p/68103094</a></p>
+<p><a href="https://segmentfault.com/a/1190000015384373">https://segmentfault.com/a/1190000015384373</a></p>
+<p><a href="https://docs.microsoft.com/zh-cn/azure/architecture/best-practices/api-design">https://docs.microsoft.com/zh-cn/azure/architecture/best-practices/api-design</a></p>
+<h2 id="总结">总结</h2>
+<p>本篇文章我们一起来学习了RESTful API的基本概念和设计规范，基于该规范，在工作中可以根据团队来做些适配。</p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-10-31
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/http/">HTTP</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2021_10_27_linux_vim/">
+            <span class="next-text nav-default">Vim 基础&#43;进阶，看这篇就够了！</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

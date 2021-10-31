@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 27 Oct 2021 00:25:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Oct 2021 21:42:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RESTful API 设计规范</title>
+      <link>https://lifelmy.github.io/post/2021_10_31_restful/</link>
+      <pubDate>Sun, 31 Oct 2021 21:42:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_10_31_restful/</guid>
+      <description>前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提</description>
+    </item>
+    
     <item>
       <title>Vim 基础&#43;进阶，看这篇就够了！</title>
       <link>https://lifelmy.github.io/post/2021_10_27_linux_vim/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/redis_hash/</guid>
       <description>前言 Redis Hash是 键-值 类型，值类型类似map结构，即 key-{{field1,value1},...,{fieldN，valueN}}，更适</description>
-    </item>
-    
-    <item>
-      <title>Redis基本类型学习之String</title>
-      <link>https://lifelmy.github.io/post/redis_string/</link>
-      <pubDate>Tue, 06 Jul 2021 08:46:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_string/</guid>
-      <description>前言 String类型是Redis最基本的数据类型，也是Memcached唯一支持的类型，对于刚接触Redis的同学也可以轻松上手。Redis</description>
     </item>
     
   </channel>
