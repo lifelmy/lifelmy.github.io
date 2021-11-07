@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/linux/</link>
     <description>Recent content in Linux on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 27 Oct 2021 00:25:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 08 Nov 2021 00:37:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell 编程初体验</title>
+      <link>https://lifelmy.github.io/post/2021_11_08_linux_shell/</link>
+      <pubDate>Mon, 08 Nov 2021 00:37:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_08_linux_shell/</guid>
+      <description>前言 经常听到 &amp;ldquo;Shell脚本&amp;rdquo;、&amp;ldquo;Shell编程&amp;rdquo;、&amp;ldquo;Bash命令&amp;rdquo;</description>
+    </item>
+    
     <item>
       <title>Vim 基础&#43;进阶，看这篇就够了！</title>
       <link>https://lifelmy.github.io/post/2021_10_27_linux_vim/</link>

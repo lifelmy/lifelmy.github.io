@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 31 Oct 2021 21:42:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 08 Nov 2021 00:37:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell 编程初体验</title>
+      <link>https://lifelmy.github.io/post/2021_11_08_linux_shell/</link>
+      <pubDate>Mon, 08 Nov 2021 00:37:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_08_linux_shell/</guid>
+      <description>前言 经常听到 &amp;ldquo;Shell脚本&amp;rdquo;、&amp;ldquo;Shell编程&amp;rdquo;、&amp;ldquo;Bash命令&amp;rdquo;</description>
+    </item>
+    
     <item>
       <title>RESTful API 设计规范</title>
       <link>https://lifelmy.github.io/post/2021_10_31_restful/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/redis_list_01/</guid>
       <description>你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 Redis 中的列表（List）类型，底层是由双端队</description>
-    </item>
-    
-    <item>
-      <title>Redis基本数据类型学习之Hash</title>
-      <link>https://lifelmy.github.io/post/redis_hash/</link>
-      <pubDate>Sun, 11 Jul 2021 16:01:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_hash/</guid>
-      <description>前言 Redis Hash是 键-值 类型，值类型类似map结构，即 key-{{field1,value1},...,{fieldN，valueN}}，更适</description>
     </item>
     
   </channel>
