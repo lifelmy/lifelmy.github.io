@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/linux/</link>
     <description>Recent content in Linux on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 08 Nov 2021 00:37:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 09 Nov 2021 00:37:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bash的基本功能-1</title>
+      <link>https://lifelmy.github.io/post/2021_11_09_linux_bash_01/</link>
+      <pubDate>Tue, 09 Nov 2021 00:37:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_09_linux_bash_01/</guid>
+      <description>前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命</description>
+    </item>
+    
     <item>
       <title>Shell 编程初体验</title>
       <link>https://lifelmy.github.io/post/2021_11_08_linux_shell/</link>

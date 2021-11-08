@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Shell 编程初体验 - lifelmy的博客</title>
+  <title>Bash的基本功能-1 - lifelmy的博客</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="漫漫Coding路" />
-  <meta name="description" content="前言 经常听到 &amp;ldquo;Shell脚本&amp;rdquo;、&amp;ldquo;Shell编程&amp;rdquo;、&amp;ldquo;Bash命令&amp;rdquo;" />
+  <meta name="description" content="前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命" />
 
   <meta name="keywords" content="Hugo, theme, jane" />
 
@@ -35,7 +35,7 @@
 <meta name="generator" content="Hugo 0.84.0" />
 
 
-<link rel="canonical" href="https://lifelmy.github.io/post/2021_11_08_linux_shell/" />
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_11_09_linux_bash_01/" />
 
 
 
@@ -59,20 +59,20 @@
 
 
 
-<meta property="og:title" content="Shell 编程初体验" />
-<meta property="og:description" content="前言 经常听到 &ldquo;Shell脚本&rdquo;、&ldquo;Shell编程&rdquo;、&ldquo;Bash命令&rdquo;" />
+<meta property="og:title" content="Bash的基本功能-1" />
+<meta property="og:description" content="前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lifelmy.github.io/post/2021_11_08_linux_shell/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2021-11-08T00:37:23&#43;08:00" />
-<meta property="article:modified_time" content="2021-11-08T00:37:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_11_09_linux_bash_01/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-11-09T00:37:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-11-09T00:37:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
 
-<meta itemprop="name" content="Shell 编程初体验">
-<meta itemprop="description" content="前言 经常听到 &ldquo;Shell脚本&rdquo;、&ldquo;Shell编程&rdquo;、&ldquo;Bash命令&rdquo;"><meta itemprop="datePublished" content="2021-11-08T00:37:23&#43;08:00" />
-<meta itemprop="dateModified" content="2021-11-08T00:37:23&#43;08:00" />
-<meta itemprop="wordCount" content="1376">
+<meta itemprop="name" content="Bash的基本功能-1">
+<meta itemprop="description" content="前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命"><meta itemprop="datePublished" content="2021-11-09T00:37:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-11-09T00:37:23&#43;08:00" />
+<meta itemprop="wordCount" content="1945">
 <meta itemprop="keywords" content="Linux," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Shell 编程初体验"/>
-<meta name="twitter:description" content="前言 经常听到 &ldquo;Shell脚本&rdquo;、&ldquo;Shell编程&rdquo;、&ldquo;Bash命令&rdquo;"/>
+<meta name="twitter:title" content="Bash的基本功能-1"/>
+<meta name="twitter:description" content="前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -295,18 +295,18 @@
           <article class="post bg-white">
     
     <header class="post-header">
-      <h1 class="post-title">Shell 编程初体验</h1>
+      <h1 class="post-title">Bash的基本功能-1</h1>
       
       <div class="post-meta">
-        <time datetime="2021-11-08" class="post-time">
-          2021-11-08
+        <time datetime="2021-11-09" class="post-time">
+          2021-11-09
         </time>
         <div class="post-category">
             <a href="https://lifelmy.github.io/categories/linux/"> Linux </a>
             
           </div>
-        <span class="more-meta"> 约 1376 字 </span>
-          <span class="more-meta"> 预计阅读 3 分钟 </span>
+        <span class="more-meta"> 约 1945 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
 
         
         
@@ -328,10 +328,10 @@
     <nav id="TableOfContents">
   <ul>
     <li><a href="#前言">前言</a></li>
-    <li><a href="#shell-是什么">Shell 是什么</a></li>
-    <li><a href="#shell的分类">Shell的分类</a></li>
-    <li><a href="#查看支持的shell">查看支持的Shell</a></li>
-    <li><a href="#编写第一个shell脚本">编写第一个Shell脚本</a></li>
+    <li><a href="#历史命令与命令补全">历史命令与命令补全</a></li>
+    <li><a href="#命令别名">命令别名</a></li>
+    <li><a href="#常用快捷键">常用快捷键</a></li>
+    <li><a href="#管道符">管道符</a></li>
     <li><a href="#总结">总结</a></li>
     <li><a href="#更多">更多</a></li>
   </ul>
@@ -342,173 +342,264 @@
     
     <div class="post-content">
       <h2 id="前言">前言</h2>
-<p>经常听到 &ldquo;Shell脚本&rdquo;、&ldquo;Shell编程&rdquo;、&ldquo;Bash命令&rdquo;，那么什么是 Shell 呢？Shell 和 Bash 有什么关系呢？我们一起来学习下吧！</p>
-<h2 id="shell-是什么">Shell 是什么</h2>
-<p><code>Shell</code> 是一个命令行解释器，它为用户提供了一个向 Linux 内核发送请求以便运行程序的界面系统级程序，用户可以使用Shell来启动、挂起、停止甚至编写一些程序。更简单的来说，它连接了用户和 Linux 内核，让用户能够更加高效、安全、低成本地使用 Linux 内核，这就是 Shell 的本质。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw6qpvnce1j313u0r640s.jpg" alt="image-20211107180100470"></p>
-<p>Shell还是一个功能相当强大的编程语言，易于编写和调试，灵活性较强。它支持变量、条件判断、循环操作等语法，所以用户可以用 Shell 命令写出各种小程序，又称为脚本（script）。Shell是解释执行的脚本语言，<code>在Shell中可以直接调用Linux命令</code>。</p>
-<h2 id="shell的分类">Shell的分类</h2>
-<p>Shell 有很多种，只要能给用户提供命令行环境的程序，都可以看作是 Shell。</p>
-<ul>
-<li>Bourne Shell（sh）</li>
-<li>Bourne Again shell（Bash）</li>
-<li>C Shell（csh）</li>
-<li>TENEX C Shell（tcsh）</li>
-<li>Korn shell（ksh）</li>
-<li>Z Shell（zsh）</li>
-<li>Friendly Interactive Shell（fish）</li>
+<p>上篇文章我们学习了什么是 <code>Shell</code>，并了解到 <code>Bash</code> 是我们最常使用的 <code>Shell</code>，那么本篇文章我们就来一起学习下Bash的基本功能。</p>
+<h2 id="历史命令与命令补全">历史命令与命令补全</h2>
+<p><code>Bash</code> 中可以查看历史输入的命令，并且可以通过上下剪头或者其他方式，快捷执行历史命令。当前终端的命令会缓存在内存中，当退出终端后，内存中的命令会写入到文件中。我们一般不会轻易清空历史命令文件，否则后续遇到问题难以追溯。</p>
+<p><strong>历史命令</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">history</span> <span class="o">[</span>选项<span class="o">]</span> <span class="o">[</span>历史命令保存文件<span class="o">]</span>
+
+-c：清空历史文件
+-w: 把缓存的历史命令写入历史命令保存文件  ~/.bash_history
+-n: 列出最近几条命令
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>历史命令默认会保存1000条，可以在环境变量配置文件/etc/profile中修改  HISTSIZE=1000</li>
+<li>使用上、下箭头调用以前的命令</li>
+<li>使用&quot;!n&quot;重复执行第n条历史命令</li>
+<li>使用&quot;!!&ldquo;重复执行上一条命令</li>
+<li>使用&rdquo;!字符串&quot;重复执行最后一条以该字符串开头的命令</li>
 </ul>
-<p>Bash 与 sh 兼容，现在使用的大部分 Linux 就是使用 <code>Bash</code> 作为用户的 Shell，即<code>用户登录后的默认 Shell 就是 Bash </code>。因此，我们可以把 Bash 与 Shell 看作同义词。</p>
-<h2 id="查看支持的shell">查看支持的Shell</h2>
-<p>可以通过查看 <code>/etc/shells</code> 文件，查看当前Linux支持的 Shell 种类。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat /etc/shells</span>
-/bin/sh
-/bin/bash
-/sbin/nologin
-/usr/bin/sh
-/usr/bin/bash
-/usr/sbin/nologin
-/bin/tcsh
-/bin/csh
-</code></pre></td></tr></table>
-</div>
-</div><p>可以通过执行命令，切换到Linux支持的其他 shell 中，输入 exit 可以退出。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sh</span>
-sh-4.2# ls /opt
-movie  redis-6.2.4  redis-6.2.4.tar.gz	rh
-sh-4.2# <span class="nb">exit</span>
-<span class="nb">exit</span>
-<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1">#</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>执行 <code>echo $SHELL</code> 命令，可以查看当前的Shell。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $SHELL</span>
-/bin/bash
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="编写第一个shell脚本">编写第一个Shell脚本</h2>
-<p>虽然Linux不区分文件后缀名，但是我们在编写脚本的时候，习惯将文件后缀名设置为 <code>.sh</code>，这样使用某些编辑器打开时，会有颜色提示，方便编写脚本。</p>
-<ol>
-<li>编写Shell脚本</li>
-</ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 新建 hello_world.sh 文件</span>
-vim hello_world.sh
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 查看历史命令</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># history</span>
+ <span class="m">1221</span>  07/11/21 21:10:52 <span class="nb">echo</span> <span class="sb">`</span>date<span class="sb">`</span>
+ <span class="m">1222</span>  07/11/21 21:11:27 <span class="nv">name</span><span class="o">=</span><span class="m">1</span>
+ <span class="m">1223</span>  07/11/21 21:11:31 <span class="nb">echo</span> <span class="nv">$name</span>
+ <span class="m">1224</span>  07/11/21 21:12:06 <span class="nb">echo</span>  <span class="se">\$</span>name
+ <span class="m">1225</span>  08/11/21 23:31:17 <span class="nb">history</span>
 
-<span class="c1"># 2. 在文件中输入以下内容保存</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ls</span>
+hello_world.sh  test.txt
 
-<span class="c1">#!/bin/bash</span>
-<span class="c1"># Author: lifelmy</span>
-<span class="nb">echo</span> <span class="s2">&#34;hello world&#34;</span>
+<span class="c1"># 重复执行上一条命令（通过上箭头更方便点）</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># !!</span>
+ls
+hello_world.sh  test.txt
 </code></pre></td></tr></table>
 </div>
-</div><blockquote>
-<p>脚本文件中，第一行 <code>#!/bin/bash</code> 中的 <code>#!</code> 用来指定使用哪一种 <code>Shell</code>，这是一种标准，不可省略；</p>
-<p>除了第一行的 <code>#!</code> 之外，在脚本文件中，以 &ldquo;#&rdquo; 开头的<code>均表示注释</code>，比如我在第二行使用注释说明了脚本文件的作者；</p>
-<p>第三行调用了Shell命令 echo ，用于打印出 &ldquo;hello world&rdquo; 字符串</p>
-</blockquote>
-<ol start="2">
-<li>执行脚本</li>
-</ol>
-<p>有两种方式可以运行脚本:</p>
-<ol>
-<li>添加可执行权限，直接运行</li>
-</ol>
-<p>Linux中新建的文件默认是没有可执行权限的，因此如果我们想执行这个脚本，就需要给它添加可执行权限。权限操作我们在之前的文章中已经学习过了，如果忘记的小伙伴可以去复习下。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 添加可执行权限,使用 chmod a+x 或者 chmod 755</span>
-<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># chmod a+x hello_world.sh</span>
-<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ls -l hello_world.sh</span>
--rwxr-xr-x <span class="m">1</span> root root <span class="m">49</span> 11月  <span class="m">7</span> 18:16 hello_world.sh
-</code></pre></td></tr></table>
-</div>
-</div><p>注意，如果使用这种方式在Linux中执行脚本，<code>必须使用绝对路径或者相对路径来指定文件</code>。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 使用相对路径的方式执行</span>
-<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ./hello_world.sh</span>
-hello world
-
-<span class="c1"># 直接输入文件名，会提示未找到命令</span>
-<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># hello_world.sh</span>
--bash: hello_world.sh: 未找到命令
-</code></pre></td></tr></table>
-</div>
-</div><ol start="2">
-<li>使用解释器执行</li>
-</ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># bash hello_world.sh</span>
-hello world
-</code></pre></td></tr></table>
-</div>
-</div><p>使用这种方式执行，不需要在脚本第一行指定解释器信息，即不需要写 <code>#!/bin/bash</code>，因为你已经执行了解释器；同时也不需要添加可执行权限。</p>
+</div><p><strong>命令补全</strong></p>
+<p>在Bash中，命令与文件补全是非常方便的功能，我们在输入命令或者文件名的时候，输入前几个字母，然后按下 &ldquo;TAB&rdquo; 键，Bash就会自动为我们补全。如果没有补全，说明有多个匹配项，再按一次 &ldquo;TAB&rdquo; 键，就会出现所有的可选项。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw6ta7h69lg30mi0gie81.gif" alt="命令补全"></p>
 <blockquote>
-<p>虽然第二种方式看起来比较简单，但是平时使用最多的还是第一种方式，不推荐第二种方式。</p>
+<p>上图中，我们输入&quot;ca&quot;，按下&quot;TAB&quot;键，Bash并没有为我们补全，再按一次，列出了所有符合的命令，我们手动输入&quot;t&quot;和一个空格，然后输入&quot;hell&quot;，按下&quot;TAB&quot;键，就自动补全了 hello_world.sh，因为在当前文件夹只有一个匹配项。</p>
 </blockquote>
+<h2 id="命令别名">命令别名</h2>
+<p>命令别名，其实就是给一个命令设置一个&quot;小名&quot;，通过输入这个别名，实际执行的是对应的复杂命令。在 <code>Bash</code> 中，执行的命令优先级如下：</p>
+<ol>
+<li>使用绝对或相对路径执行的命令</li>
+<li>别名</li>
+<li>Bash内部命令</li>
+<li>按照 <code>$PATH</code> 环境变量定义的目录顺序查找到的第一个命令</li>
+</ol>
+<p>使用绝对路径或相对路径指定的命令，相当于指定了这个命令，优先级肯定最高，其次就是别名，然后就是Bash自带的一些命令，最后是$PATH包含的目录中的命令。可以看出别名的优先级很高，我们在定义别名的时候，尽量保证不要和已有的命令重名。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw6ttc93dbj318q0hu43l.jpg" alt="$PATH定义目录中命令"></p>
+<p>别名相关的命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 设定命令别名</span>
+<span class="nb">alias</span> <span class="nv">别名</span><span class="o">=</span><span class="s2">&#34;原命令&#34;</span>
+
+<span class="c1"># 查询命令别名</span>
+<span class="nb">alias</span>
+
+<span class="c1"># 让别名永久生效</span>
+vim /root/.bashrc
+
+<span class="c1"># 删除别名</span>
+<span class="nb">unalias</span> 别名
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 设定别名</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># alias lifelmy=&#39;/root/hello_world.sh&#39;</span>
+
+<span class="c1"># 2. 查看别名</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># alias</span>
+<span class="nb">alias</span> <span class="nv">cp</span><span class="o">=</span><span class="s1">&#39;cp -i&#39;</span>
+<span class="nb">alias</span> <span class="nv">egrep</span><span class="o">=</span><span class="s1">&#39;egrep --color=auto&#39;</span>
+<span class="nb">alias</span> <span class="nv">fgrep</span><span class="o">=</span><span class="s1">&#39;fgrep --color=auto&#39;</span>
+<span class="nb">alias</span> <span class="nv">grep</span><span class="o">=</span><span class="s1">&#39;grep --color=auto&#39;</span>
+<span class="nb">alias</span> l.<span class="o">=</span><span class="s1">&#39;ls -d .* --color=auto&#39;</span>
+<span class="nb">alias</span> <span class="nv">lifelmy</span><span class="o">=</span><span class="s1">&#39;/root/hello_world.sh&#39;</span>
+<span class="nb">alias</span> <span class="nv">ll</span><span class="o">=</span><span class="s1">&#39;ls -l --color=auto&#39;</span>
+<span class="nb">alias</span> <span class="nv">ls</span><span class="o">=</span><span class="s1">&#39;ls --color=auto&#39;</span>
+<span class="nb">alias</span> <span class="nv">mv</span><span class="o">=</span><span class="s1">&#39;mv -i&#39;</span>
+<span class="nb">alias</span> <span class="nv">rm</span><span class="o">=</span><span class="s1">&#39;rm -i&#39;</span>
+<span class="nb">alias</span> <span class="nv">which</span><span class="o">=</span><span class="s1">&#39;alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde&#39;</span>
+
+<span class="c1"># 3. 执行别名</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># lifelmy</span>
+hello world
+
+<span class="c1"># 4. 删除别名</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># unalias lifelmy</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以看到在查看别名部分，<code>ls</code> 的别名为 &ldquo;<code>ls --color=auto</code>&quot;，这也就是为什么不同的文件类型会显示不同颜色的原因。<code>rm</code> 的别名是&rdquo;<code>rm -i</code>&quot;，其实&quot;rm&quot;命令默认不会提示是否确定删除，但是由于别名添加了&quot;-i&quot;参数，就会出现提示了。</p>
+<p>默认设置的别名只在当前终端有效，关闭终端后就无法再次使用别名，如果想要别名永久生效，可以编辑/root/.bashrc文件，保存别名。</p>
+<h2 id="常用快捷键">常用快捷键</h2>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ctrl+A</td>
+<td>把光标移动到命令行开头</td>
+</tr>
+<tr>
+<td>Ctrl+E</td>
+<td>把光标移动到命令行结尾</td>
+</tr>
+<tr>
+<td>Ctrl+C</td>
+<td>强制终止当前的命令</td>
+</tr>
+<tr>
+<td>Ctrl+L</td>
+<td>清屏，相当于clear</td>
+</tr>
+<tr>
+<td>Ctrl+U</td>
+<td>删除或剪切光标之前的命令,不需要退格键一个个删除</td>
+</tr>
+<tr>
+<td>Ctrl+K</td>
+<td>删除或剪切光标之后的命令</td>
+</tr>
+<tr>
+<td>Ctrl+Y</td>
+<td>粘贴Ctrl+U或Ctrl+K剪切的内容</td>
+</tr>
+<tr>
+<td>Ctrl+R</td>
+<td>在历史命令中搜索</td>
+</tr>
+<tr>
+<td>Ctrl+D</td>
+<td>退出当前终端</td>
+</tr>
+<tr>
+<td>Ctrl+Z</td>
+<td>暂停，并放入后台</td>
+</tr>
+<tr>
+<td>Ctrl+S</td>
+<td>暂停屏幕输出</td>
+</tr>
+<tr>
+<td>Ctrl+Q</td>
+<td>恢复屏幕输出</td>
+</tr>
+</tbody>
+</table>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gw6uc7nklhg30mi0gi4qp.gif" alt="Bash常用快捷键"></p>
+<p>上图中，我们输入了一个命令，然后 &ldquo;<code>Ctrl+A</code>&rdquo; 光标移动到了命令开头，&quot;<code>Ctrl+E</code>&ldquo;光标移动到了命令最后，&quot;<code>Ctrl+U</code>&ldquo;剪切光标之前的命令，&quot;<code>Ctrl+Y</code>&rdquo; 又粘贴了回来。</p>
+<p>比如当我们输入一个很长的命令，发现输错了之后，不需要使用退格键一个个删除，而是使用&quot;Ctrl+U&quot;直接删除所有，可以大大提高效率。</p>
+<h2 id="管道符">管道符</h2>
+<p>我们可以使用管道符，将命令1的正确输出作为命令2的输入。管道符使用前提是：<code>第一个命令正确执行</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">命令1 <span class="p">|</span> 命令2
+<span class="c1"># 命令1的正确输出作为命令2的输入</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>示例：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># netstat | grep -i &#39;establish&#39;</span>
+tcp        <span class="m">0</span>     <span class="m">28</span> VM-0-5-centos:ssh       220.243.131.5:51904     ESTABLISHED
+tcp        <span class="m">0</span>      <span class="m">0</span> VM-0-5-centos:50908     169.254.0.55:lsi-bobcat ESTABLISHED
+</code></pre></td></tr></table>
+</div>
+</div><p>grep 命令后面本来是需要跟一个文件的，但是我们可以使用其他命令的正确输出，作为 grep 的输入。</p>
 <h2 id="总结">总结</h2>
-<p>本文介绍了 Shell 的基础知识，解释了 Bash 与 Shell 的关系，并编写了一个简单的Shell脚本，之后我们就可以开始学习Bash了。</p>
+<p>本文介绍了 Bash 的部分基本功能，熟练掌握这些技巧，可以极大的提升我们的工作效率。</p>
+<ul>
+<li>历史命令与命令补全</li>
+<li>命令别名</li>
+<li>常用快捷键</li>
+<li>管道符</li>
+</ul>
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
@@ -526,7 +617,7 @@ hello world
   <p class="copyright-item">
     <span class="item-title">上次更新</span>
     <span class="item-content">
-      2021-11-08
+      2021-11-09
       
     </span>
   </p>
@@ -550,22 +641,9 @@ hello world
       
       <nav class="post-nav">
         
-          <a class="prev" href="/post/2021_11_09_linux_bash_01/">
-            
-            <i class="iconfont">
-              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
-  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  width="18" height="18">
-  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
-</svg>
-
-            </i>
-            <span class="prev-text nav-default">Bash的基本功能-1</span>
-            <span class="prev-text nav-mobile">上一篇</span>
-          </a>
         
-          <a class="next" href="/post/2021_10_31_restful/">
-            <span class="next-text nav-default">RESTful API 设计规范</span>
+          <a class="next" href="/post/2021_11_08_linux_shell/">
+            <span class="next-text nav-default">Shell 编程初体验</span>
             <span class="prev-text nav-mobile">下一篇</span>
             
             <i class="iconfont">
