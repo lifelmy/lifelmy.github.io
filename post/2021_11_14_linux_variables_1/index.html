@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Bash中的变量类型，你知道几种？ - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_11_14_linux_variables_1/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Bash中的变量类型，你知道几种？" />
+<meta property="og:description" content="前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_11_14_linux_variables_1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-11-14T20:25:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-11-14T20:25:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Bash中的变量类型，你知道几种？">
+<meta itemprop="description" content="前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供"><meta itemprop="datePublished" content="2021-11-14T20:25:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-11-14T20:25:23&#43;08:00" />
+<meta itemprop="wordCount" content="3534">
+<meta itemprop="keywords" content="Linux," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Bash中的变量类型，你知道几种？"/>
+<meta name="twitter:description" content="前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Bash中的变量类型，你知道几种？</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-11-14" class="post-time">
+          2021-11-14
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/linux/"> Linux </a>
+            
+          </div>
+        <span class="more-meta"> 约 3534 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#变量分类">变量分类</a></li>
+    <li><a href="#自定义变量">自定义变量</a>
+      <ul>
+        <li><a href="#数值运算">数值运算</a></li>
+      </ul>
+    </li>
+    <li><a href="#环境变量">环境变量</a>
+      <ul>
+        <li><a href="#常见系统环境变量-path">常见系统环境变量-PATH</a></li>
+        <li><a href="#常见系统环境变量-ps1">常见系统环境变量-PS1</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供我们使用呢？一起来学习吧！</p>
+<h2 id="变量分类">变量分类</h2>
+<p>在 <code>Bash</code> 中，变量主要分为以下四种类型：</p>
+<ul>
+<li>自定义变量：类似Java、Go语言中的自定义变量，灵活性最高；</li>
+<li>环境变量：主要保存和系统环境相关的变量，系统已经定义好了很多环境变量，同时允许用户新增自定义环境变量，灵活性较高；</li>
+<li>位置参数变量：这种变量主要是用来向脚本中传递参数或者数据用的，参数名不能自定义，变量的作用也是固定的，只能更改值；</li>
+<li>预定义变量：Bash中已经定义好的变量，变量名不能自定义，变量作用也是固定的。</li>
+</ul>
+<p>由于内容较多，我们分为两篇文章来学习，本篇文章主要学习前两种变量：自定义变量和环境变量。</p>
+<h2 id="自定义变量">自定义变量</h2>
+<p>在 <code>Java</code> 中，你可以使用类似 <code>int i = 1</code> 的形式定义一个变量，同样在 <code>Bash</code> 中，你也可以定义变量，需要遵循以下几点规则：</p>
+<ul>
+<li>变量名可以由字母、数字、下划线组成，但是不能以数字开头</li>
+<li>变量与值之间通过 <code>=</code> 连接，中间不能有空格</li>
+<li>变量的值如果有空格，需要用单引号或者双引号包括</li>
+<li>在变量的值中，可以使用 &ldquo;\&rdquo; 符号进行转义</li>
+<li>如果需要追加变量的值，需要使用双引号包含&quot;$变量名&quot; 或者 ${变量名包含}</li>
+<li>Bash定义的变量默认都是字符串类型的，如果要进行数值运算，必须指定变量类型为数值类型</li>
+</ul>
+<p>用户变量也可以称为本地变量，因为自定义变量只在当前 Shell 中生效，其他 Shell 不能使用。</p>
+<p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 变量与值通过 &#39;=&#39; 连接</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=lifelmy</span>
+
+<span class="c1"># 变量与值中间不能有空格</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name = lifelmy</span>
+-bash: name: 未找到命令
+
+<span class="c1"># 变量名不能使用数字开头,</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># 2name=lifelmy     </span>
+-bash: <span class="nv">2name</span><span class="o">=</span>lifelmy: 未找到命令
+
+<span class="c1"># 值如果有空格，需要使用单引号或者双引号包括</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># title=this is a title</span>
+-bash: is: 未找到命令
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># title=&#34;this is a title&#34;</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $title</span>
+this is a title
+
+<span class="c1"># 变量的值可以使用转义符进行转义</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=\lifelmy</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name</span>
+lifelmy
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=\\lifelmy</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name</span>
+<span class="se">\l</span>ifelmy
+
+<span class="c1"># 变量值的追加</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=lifelmy</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name1=${name}123</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name2=&#34;$name&#34;456</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name1</span>
+lifelmy123
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name2</span>
+lifelmy456
+
+<span class="c1"># 命令的结果赋值给变量</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># now=$(date)</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $now</span>
+2021年 11月 14日 星期日 13:48:43 CST
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>变量调用</strong></p>
+<p>使用 <code>$变量名</code> 可以调用变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=lifelmy</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name</span>
+lifelmy
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>变量查看</strong></p>
+<p>使用 <code>set</code> 命令可以查看所有变量（包括环境变量）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep name</span>
+<span class="nv">_name</span><span class="o">=</span>lifelmy
+<span class="nv">name</span><span class="o">=</span>lifelmy
+<span class="nv">name1</span><span class="o">=</span>lifelmy123
+<span class="nv">name2</span><span class="o">=</span>lifelmy456
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>变量删除</strong></p>
+<p>使用 <code>unset</code> 可以删除变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=lifelmy</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name</span>
+lifelmy
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># unset name</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $name</span>
+
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="数值运算">数值运算</h3>
+<p>自定义变量的类型默认是字符串类型，无法进行数值计算：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># aa=1</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># bb=2</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cc=$aa+$bb</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $cc</span>
+1+2
+</code></pre></td></tr></table>
+</div>
+</div><p>那么如何进行数值运算呢？在介绍之前，我们先来学习一个命令，该命令用于查看、设置变量的类型：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">declare</span> <span class="o">[</span>+/-<span class="o">]</span> <span class="o">[</span>选项<span class="o">]</span> 变量名
+
+选项：
+-: 给变量设定属性类型
++: 取消变量的类型属性
+-i: 将变量声明为整数型（integer）
+-x: 将变量声明为环境变量
+-p: 显示指定变量被声明的类型
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>declare示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=lifelmy</span>
+
+<span class="c1"># 默认是字符串类型</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># declare -p name</span>
+<span class="nb">declare</span> -- <span class="nv">name</span><span class="o">=</span><span class="s2">&#34;lifelmy&#34;</span>
+
+<span class="c1"># 声明为环境变量后，再次查看变成了 -x</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># export name</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># declare -p name</span>
+<span class="nb">declare</span> -x <span class="nv">name</span><span class="o">=</span><span class="s2">&#34;lifelmy&#34;</span>
+
+<span class="c1"># 声明为整数类型</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># declare -i age</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># age=18</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># declare -p age</span>
+<span class="nb">declare</span> -i <span class="nv">age</span><span class="o">=</span><span class="s2">&#34;18&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>接下来我们介绍三种数值计算的方法：</p>
+<ol>
+<li>使用 <code>declare</code> 声明</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># a=11</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># b=12</span>
+
+<span class="c1"># 声明c为整数</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># declare -i c</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># c=$a+$b</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $c</span>
+<span class="m">23</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>使用 <code>expr</code> 或 <code>let</code> 运算工具</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># a=1</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># b=2</span>
+
+<span class="c1"># 注意：&#39;+&#39;号左右两侧必须有空格</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># c=$(expr $a + $b)</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $c</span>
+
+<span class="c1"># 不需要有空格</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># let d=$a*$b</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $d</span>
+<span class="m">2</span>
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>使用运算式</li>
+</ol>
+<p>使用 <code>$((运算式))</code>  或  <code>$[运算式]</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># $((运算式))  或 $[运算式]</span>
+
+<span class="o">[</span>root@9c12e0d24857 /<span class="o">]</span><span class="c1"># a=2</span>
+<span class="o">[</span>root@9c12e0d24857 /<span class="o">]</span><span class="c1"># b=3</span>
+<span class="o">[</span>root@9c12e0d24857 /<span class="o">]</span><span class="c1"># c=$(($a+$b))</span>
+<span class="o">[</span>root@9c12e0d24857 /<span class="o">]</span><span class="c1"># echo $c</span>
+<span class="m">5</span>
+<span class="o">[</span>root@9c12e0d24857 /<span class="o">]</span><span class="c1"># d=$[$a+$b]</span>
+<span class="o">[</span>root@9c12e0d24857 /<span class="o">]</span><span class="c1"># echo $d</span>
+<span class="m">5</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在实际使用中，最常用的是第三种方式。</p>
+<h2 id="环境变量">环境变量</h2>
+<p>前面讨论的自定义变量，只会在 <code>当前Shell</code> 中生效，而环境变量会在 <code>当前Shell</code> 以及这个 Shell 的所有 <code>子Shell</code> 中生效。如果把环境变量写入相应的配置文件，那么这个环境变量就会在所有的 Shell 中生效。</p>
+<p>什么叫做 子Shell 呢？ 我们在 <a href="http://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;mid=2247484583&amp;idx=1&amp;sn=4eee745f0bcdc0f18026e08e3714897b&amp;chksm=fe50cfe8c92746fe819c94517fdfb3b3c913b670d45a35ef9a11b592b9a93b66150491976e19&amp;scene=21#wechat_redirect">Shell 编程初体验</a> <em>查看支持的Shell</em> 章节讨论过，可以通过执行命令切换到其他 Shell 中，那么当前 Shell 就是 <code>父Shell</code>，切换后的 Shell 就是 <code>子Shell</code>。</p>
+<p><strong>设置环境变量</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> <span class="nv">变量名</span><span class="o">=</span>变量值
+</code></pre></td></tr></table>
+</div>
+</div><p>如果变量已经存在，可直接使用 <code>export</code> 声明</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">export</span> 变量名
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>查询环境变量</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">env
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>删除环境变量</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">unset</span> 变量名
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>使用环境变量</strong></p>
+<p>和自定义变量类似，使用 <code>$变量名</code> 取值</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">echo</span> $变量名
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例一</strong></p>
+<p>创建并通过进程树查看 <code>子Shell</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 在当前Bash中执行该命令，能够找到如下输出的一条链路</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># pstree</span>
+systemd──sshd──sshd───bash───pstree
+
+<span class="c1"># 2. 然后在当前Bash中开启一个新的Bash，即一个子Shell</span>
+<span class="c1">#    再查看进程树相应链路，发现多了个bash</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># bash</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># pstree</span>
+systemd─sshd─┬─sshd───bash───bash───pstree
+
+
+<span class="c1"># 3. 退出子Shell，查看进程树，发现子Shell没有了</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># exit</span>
+<span class="nb">exit</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># pstree</span>
+systemd──sshd──sshd───bash───pstree
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例二</strong></p>
+<p>设置环境变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 设置了一个自定义变量，并通过两种方式设置了两个环境变量age 和 gender</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=lifelmy</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># age=18</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># export gender=male</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># export age</span>
+
+<span class="c1"># 2. 通过 set 命令查看所有变量，都可以查到</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep name=</span>
+<span class="nv">name</span><span class="o">=</span>lifelmy
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep age=</span>
+<span class="nv">age</span><span class="o">=</span><span class="m">18</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep gender=</span>
+<span class="nv">gender</span><span class="o">=</span>male
+
+<span class="c1"># 3. 进入一个 子Shell</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># bash</span>
+
+<span class="c1"># 4. 发现只有两个环境变量，可以在子Shell中可以查询到</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep name=</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep age=</span>
+<span class="nv">age</span><span class="o">=</span><span class="m">18</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep gender=</span>
+<span class="nv">gender</span><span class="o">=</span>male
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例三</strong></p>
+<p>查看、使用、删除环境变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 使用 env 命令查看环境变量</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># env</span>
+<span class="nv">gender</span><span class="o">=</span>male
+<span class="nv">age</span><span class="o">=</span><span class="m">18</span>
+<span class="nv">SHELL</span><span class="o">=</span>/bin/bash
+<span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+......
+
+<span class="c1"># 使用环境变量</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $age</span>
+<span class="m">18</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $gender</span>
+male
+
+<span class="c1"># 删除环境变量</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># unset age</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="常见系统环境变量-path">常见系统环境变量-PATH</h3>
+<p>PATH下面的内容，是系统用于查找命令的路径（使用&quot;:&ldquo;分隔）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># env | grep PATH</span>
+<span class="nv">PATH</span><span class="o">=</span>/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin
+</code></pre></td></tr></table>
+</div>
+</div><p>我们可以在PATH后，按照规定的格式，追加自定义的文件夹</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">PATH</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$PATH</span><span class="s2">&#34;</span>:/root/hello
+</code></pre></td></tr></table>
+</div>
+</div><p><a href="http://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;mid=2247484583&amp;idx=1&amp;sn=4eee745f0bcdc0f18026e08e3714897b&amp;chksm=fe50cfe8c92746fe819c94517fdfb3b3c913b670d45a35ef9a11b592b9a93b66150491976e19&amp;scene=21#wechat_redirect">Shell 编程初体验</a> <em>编写第一个Shell脚本</em> 章节介绍过，想要执行脚本，必须使用相对路径或者绝对路径。对于 Linux 中的这些系统命令，例如 ls、cd、mkdir，和我们自己写的脚本文件一样，也是可执行程序，为什么输入这些命令时，不需要使用相对或绝对路径呢？那是因为当我们输入了一个命令后，Linux 会在 PATH 下所有文件夹中寻找这个可执行程序，如果找到了就可以执行，如果找不到就会报错 &ldquo;未找到命令&rdquo;，这里的未找到，就是在 PATH 对应的路径中未找到。</p>
+<p>比如我们写一个脚本，输出 &ldquo;hello world&rdquo;，默认只能使用相对或绝对路径执行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># vim hello.sh</span>
+
+<span class="c1">#!/bin/bash</span>
+<span class="nb">echo</span> <span class="s2">&#34;hello world&#34;</span>
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># chmod 755 hello.sh</span>
+<span class="c1"># 相对路径</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ./hello.sh</span>
+hello world
+<span class="c1"># 绝对路径</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># /root/hello.sh</span>
+hello world
+
+</code></pre></td></tr></table>
+</div>
+</div><p>但是如果我们把该脚本添加到 <code>PATH</code> 下面的一个文件夹中，就可以直接使用了！同时按 &ldquo;TAB&rdquo; 键也会进行补全！ 可见 &ldquo;TAB&rdquo; 键也是在 PATH 下面的路径中查找的！</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cp hello.sh /sbin/</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># hello.sh</span>
+hello world
+</code></pre></td></tr></table>
+</div>
+</div><p>但是我们并不推荐使用这种方式，因为 &ldquo;/sbin&rdquo; 目录就是用来保存系统命令的，把我们自定义的命令脚本放进去，会将文件搞混。而更优雅的方式，则是将我们脚本所在的文件夹，追加到 PATH 中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 删除上一步复制的hello.sh</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># rm /sbin/hello.sh</span>
+rm：是否删除普通文件 <span class="s2">&#34;/sbin/hello.sh&#34;</span>？y
+
+<span class="c1"># 将当前脚本文件所在目录，添加到 PATH 中</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># PATH=&#34;$PATH&#34;:/root</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $PATH</span>
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin:/root
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># hello.sh</span>
+hello world
+</code></pre></td></tr></table>
+</div>
+</div><p>以上的改动只会在当前Shell以及子Shell中生效，因为我们暂未将其写入环境变量配置文件中去。</p>
+<h3 id="常见系统环境变量-ps1">常见系统环境变量-PS1</h3>
+<p>定义系统提示符的变量，就是我们输入命令前的提示符，当前我的就是 [root@VM-0-5-centos ~]</p>
+<p>PS1 也是属于环境变量的一种，但是使用 <code>env</code> 命令查询不到，使用 <code>set</code> 可以查找到</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># set | grep PS1</span>
+<span class="nv">PS1</span><span class="o">=</span><span class="s1">&#39;[\u@\h \W]\$ &#39;</span>
+</code></pre></td></tr></table>
+</div>
+</div><table>
+<thead>
+<tr>
+<th>代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>\d</td>
+<td>显示日期，格式为 &ldquo;星期 月 日&rdquo;</td>
+</tr>
+<tr>
+<td>\h</td>
+<td>显示简写主机名，如默认主机名为&quot;localhost&rdquo;</td>
+</tr>
+<tr>
+<td>\t</td>
+<td>显示24小时制事件，格式为&quot;HH:MM:SS&quot;</td>
+</tr>
+<tr>
+<td>\T</td>
+<td>显示12小时制事件，格式为&quot;HH:MM:SS&quot;</td>
+</tr>
+<tr>
+<td>\A</td>
+<td>显示24小时制事件，格式为&quot;HH:MM&quot;</td>
+</tr>
+<tr>
+<td>\u</td>
+<td>显示当前用户名</td>
+</tr>
+<tr>
+<td>\w</td>
+<td>显示当前所在目录的完整名称</td>
+</tr>
+<tr>
+<td>\W</td>
+<td>显示当前所在目录的最后一个目录</td>
+</tr>
+<tr>
+<td>\#</td>
+<td>执行的第几个命令</td>
+</tr>
+<tr>
+<td>\$</td>
+<td>提示符，如果是root用户显示&quot;#&quot;，普通用户提示符为&quot;$&quot;</td>
+</tr>
+</tbody>
+</table>
+<p>我们可以改动下PS1的值来看下效果：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># PS1=&#39;[\u@ \t \W]\$ &#39;</span>
+<span class="o">[</span>root@ 15:47:59 ~<span class="o">]</span><span class="c1"># ls</span>
+hello.sh
+</code></pre></td></tr></table>
+</div>
+</div><p>这种改动也是只是临时生效，需要永久生效需要写入配置文件。当然这里只是体验下，系统默认的已经够用了，其实也无需更改。</p>
+<h2 id="总结">总结</h2>
+<p>本篇文章介绍了Bash 中的变量分类：自定义变量、环境变量、位置参数变量和预定义变量，并详细介绍了前两种：</p>
+<ol>
+<li>自定义变量的定义、查看、调用以及如何进行数值计算；</li>
+<li>环境变量的设置、查看、使用，并介绍了两种常见的环境变量：PATH 和 PS1。</li>
+</ol>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-11-14
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/linux/">Linux</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2021_11_09_linux_bash_02/">
+            <span class="next-text nav-default">Bash的基本功能-2</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

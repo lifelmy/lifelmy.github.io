@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/linux/</link>
     <description>Recent content in Linux on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 10 Nov 2021 00:00:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 14 Nov 2021 20:25:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Bash中的变量类型，你知道几种？</title>
+      <link>https://lifelmy.github.io/post/2021_11_14_linux_variables_1/</link>
+      <pubDate>Sun, 14 Nov 2021 20:25:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_14_linux_variables_1/</guid>
+      <description>前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供</description>
+    </item>
+    
     <item>
       <title>Bash的基本功能-2</title>
       <link>https://lifelmy.github.io/post/2021_11_09_linux_bash_02/</link>
