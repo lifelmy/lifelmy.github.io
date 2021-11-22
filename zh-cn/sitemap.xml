@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lifelmy.github.io/post/2021_11_22_linux_text_process/</loc>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lifelmy.github.io/post/2021_11_17_linux_variables_2/</loc>
     <lastmod>2021-11-17T22:25:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -199,42 +206,42 @@
   
   <url>
     <loc>https://lifelmy.github.io/categories/</loc>
-    <lastmod>2021-11-17T22:25:23+08:00</lastmod>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/</loc>
-    <lastmod>2021-11-17T22:25:23+08:00</lastmod>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/linux/</loc>
-    <lastmod>2021-11-17T22:25:23+08:00</lastmod>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/categories/linux/</loc>
-    <lastmod>2021-11-17T22:25:23+08:00</lastmod>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/post/</loc>
-    <lastmod>2021-11-17T22:25:23+08:00</lastmod>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/</loc>
-    <lastmod>2021-11-17T22:25:23+08:00</lastmod>
+    <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

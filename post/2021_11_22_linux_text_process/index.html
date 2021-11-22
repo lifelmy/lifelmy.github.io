@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Shell编程之文本处理 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 在日常工作学习中，不免经常要对文本文件（例如日志文件）进行处理工作，包括但不限于分割、查找、替换、删除等操作，Shell 中有没有相应的命" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_11_22_linux_text_process/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Shell编程之文本处理" />
+<meta property="og:description" content="前言 在日常工作学习中，不免经常要对文本文件（例如日志文件）进行处理工作，包括但不限于分割、查找、替换、删除等操作，Shell 中有没有相应的命" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_11_22_linux_text_process/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-11-22T17:00:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-11-22T17:00:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Shell编程之文本处理">
+<meta itemprop="description" content="前言 在日常工作学习中，不免经常要对文本文件（例如日志文件）进行处理工作，包括但不限于分割、查找、替换、删除等操作，Shell 中有没有相应的命"><meta itemprop="datePublished" content="2021-11-22T17:00:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-11-22T17:00:23&#43;08:00" />
+<meta itemprop="wordCount" content="3682">
+<meta itemprop="keywords" content="Linux," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Shell编程之文本处理"/>
+<meta name="twitter:description" content="前言 在日常工作学习中，不免经常要对文本文件（例如日志文件）进行处理工作，包括但不限于分割、查找、替换、删除等操作，Shell 中有没有相应的命"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Shell编程之文本处理</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-11-22" class="post-time">
+          2021-11-22
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/linux/"> Linux </a>
+            
+          </div>
+        <span class="more-meta"> 约 3682 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#cut">cut</a></li>
+    <li><a href="#awk">awk</a></li>
+    <li><a href="#sed">sed</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>在日常工作学习中，不免经常要对文本文件（例如日志文件）进行处理工作，包括但不限于分割、查找、替换、删除等操作，<code>Shell</code> 中有没有相应的命令供我们使用呢？那么本篇文章，我们就一起来学习下吧！</p>
+<h2 id="cut">cut</h2>
+<p><code>grep</code> 命令可以查找文件中符合条件的行，<code>cut</code> 命令则可以根据分隔符，提取行中的列，默认分隔符为 <code>TAB</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># cut [选项]  文件名</span>
+
+选项
+
+-f 列号：	提取第几列
+-d 分隔符:	按照指定分隔符分割列
+
+
+<span class="c1"># cut默认分隔符是TAB</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>测试一下这个命令就容易理解了。我们首先新建一个文件，然后使用 <code>TAB</code> 分隔，然后使用 <code>cut</code> 命令提取列。</p>
+<p><strong>示例一</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># vim student.txt</span>
+ID      NAME    Gender  MARK
+<span class="m">1</span>       zs      M       <span class="m">98</span>
+<span class="m">2</span>       ls      F       <span class="m">99</span>
+
+<span class="c1"># 1. 提取第二列</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cut -f 2 student.txt</span>
+NAME
+zs
+ls
+
+<span class="c1"># 2. 提取第二列和第四列</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cut -f 2,4 student.txt</span>
+NAME	MARK
+zs	<span class="m">98</span>
+ls	<span class="m">99</span>
+
+<span class="c1"># 3. 测试使用分隔符提取列</span>
+
+<span class="c1"># 3.1 这是我们需要处理的文本</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat /etc/passwd | grep /bin/bash | grep -v root</span>
+lifelmy❌1000:1000::/home/lifelmy:/bin/bash
+user1❌1001:1001::/home/user1:/bin/bash
+user3❌1002:1003::/home/user3:/bin/bash
+
+<span class="c1"># 3.2 提取第一列</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat /etc/passwd | grep /bin/bash | grep -v root | cut -f 1 -d :</span>
+lifelmy
+user1
+user3
+</code></pre></td></tr></table>
+</div>
+</div><p>从上面的例子我们可以看出，<code>cut</code> 命令可以提取行中的列，但是 <code>cut</code> 命令有一个缺点，就是分隔符的长度必须一致。如果列与列之间，有的是一个空格符，有的是两个空格符的话，<code>cut</code> 命令就不能正确划分列了。</p>
+<p><strong>示例二</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># df  -h</span>
+文件系统        容量  已用  可用 已用% 挂载点
+devtmpfs        909M     <span class="m">0</span>  909M    0% /dev
+tmpfs           919M   24K  919M    1% /dev/shm
+tmpfs           919M  540K  919M    1% /run
+tmpfs           919M     <span class="m">0</span>  919M    0% /sys/fs/cgroup
+/dev/vda1        50G  5.6G   42G   12% /
+tmpfs           184M     <span class="m">0</span>  184M    0% /run/user/0
+
+<span class="c1"># 使用 空格 作为分隔符，查出第一列</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># df  -h | cut -f 1 -d &#34; &#34;</span>
+文件系统
+devtmpfs
+tmpfs
+tmpfs
+tmpfs
+/dev/vda1
+tmpfs
+
+<span class="c1"># 但是查第二列的时候，得到的都是空格，不是我们想要的&#34;容量&#34;那一列</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># df  -h | cut -f 2 -d &#34; &#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="awk">awk</h2>
+<p>从上面的示例二可以看出，<code>cut</code> 还是有些缺点的，那么这个问题有没有其他命令可以解决呢，这就轮到我们的 <code>awk</code> 命令出场了。在详细介绍 <code>awk</code> 命令前，我们先来看一下标准输出命令。</p>
+<p>在awk命令的输出中支持 <code>print</code> 和 <code>printf</code> 命令</p>
+<ul>
+<li>
+<p>print: print会在每个输出之后自动加入一个换行符（Linux默认没有print命令）</p>
+</li>
+<li>
+<p>printf: printf是标准格式输出命令，并不会自动加入换行符，如果需要换行，需要手动加入换行符</p>
+</li>
+</ul>
+<p><strong>printf</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="nb">printf</span> <span class="s2">&#34;输出类型 输出格式&#34;</span> 输出内容
+
+<span class="o">[</span>输出类型<span class="o">]</span>:
+
+%ns:	输出字符串，n表示输出几个字符
+%ni:	输出整数，n表示输出几个数字
+%m.nf:	输出浮点数，m、n分别表示输出的位数以及其中的小数位数. %8.2f表示共输出8位数，其中2位是小数，6位整数
+
+
+
+<span class="o">[</span>输出格式<span class="o">]</span>:
+
+<span class="se">\a</span>: 输出警告声音
+<span class="se">\b</span>:	输出退格键
+<span class="se">\f</span>:	清除屏幕
+<span class="se">\n</span>:	换行
+<span class="se">\r</span>:	回车
+<span class="se">\t</span>:	水平输出制表符
+<span class="se">\v</span>:	垂直输出制表符
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>示例</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># %-5s 格式为左对齐且宽度为5的字符串代替（&#39;-&#39;表示左对齐），不使用则默认右对齐。</span>
+<span class="c1"># %-4.2f 格式为左对齐宽度为4，保留两位小数。</span>
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># printf &#34;%-5s %-10s %-4s\n&#34; NO Name Mark</span>
+NO    Name       Mark
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># printf &#34;%-5s %-10s %-4.2f\n&#34; 01 Tom 90.3456</span>
+<span class="m">01</span>    Tom        90.35
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># printf &#34;%-5s %-10s %-4.2f\n&#34; 02 Jack 89.2345</span>
+<span class="m">02</span>    Jack       89.23
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># printf &#34;%-5s %-10s %-4.2f\n&#34; 03 Jeff 98.4323</span>
+<span class="m">03</span>    Jeff       98.43
+
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># printf &#39;%d %d %d\n&#39; 12 34 56</span>
+<span class="m">12</span> <span class="m">34</span> <span class="m">56</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p><code>awk</code> 是一种编程语言，用于在linux/unix下对文本和数据进行处理。数据可以来自标准输入(stdin)、一个或多个文件，或其它命令的输出。它支持用户自定义函数和动态正则表达式等先进功能，是linux/unix下的一个强大编程工具。它在命令行中使用，但更多是作为脚本来使用。awk有很多内建的功能，比如数组、函数等，这是它和C语言的相同之处，灵活性是awk最大的优势。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">awk <span class="s1">&#39;BEGIN{动作} 条件1{动作1} 条件2{动作2} END{动作}&#39;</span> file
+
+
+条件（Pattern）：
+     一般使用关系表达式作为条件
+     x&gt;10
+     x&lt;<span class="o">=</span><span class="m">10</span>
+ 
+动作（Action）:
+ 		格式化输出
+ 		流程控制语句
+</code></pre></td></tr></table>
+</div>
+</div><blockquote>
+<p>一个awk脚本由三部分组成：BEGIN语句块、能够使用条件匹配的通用语句块、END语句块3部分组成，这三个部分是可选的。任意一个部分都可以不出现在脚本中。</p>
+<p>BEGIN条件，会在读取文件第一行之前执行相应的动作；END条件，读取完文件后执行。</p>
+</blockquote>
+<p><strong>测试</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">
+<span class="c1"># 1. 在处理第一行文件时先执行BEGIN对应的动作，然后无条件对每一行使用默认的空格分隔后取出第5列，最后执行 END 对应的动作</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># df -h | awk &#39;BEGIN{printf &#34;this is begin \n&#34;} {printf $5 &#34;\n&#34;} END{printf &#34;this is end \n&#34;}&#39;</span>
+this is begin
+已用%
+0%
+1%
+1%
+0%
+12%
+0%
+this is end
+
+<span class="c1"># 2. 在处理第一行文件前赋值 i=0，然后每处理一行就将i加一，最后输出i的值</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># df -h | awk &#39;BEGIN{ i=0 } { i++ } END{ print i }&#39;</span>
+<span class="m">7</span>
+
+<span class="c1"># 3. 将1、2两个例子结合起来</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># df -h | awk &#39;BEGIN{i=0 ;printf &#34;start \n&#34;} {printf $5 &#34;\t&#34;} {i++;  printf i &#34;\n&#34;}  END{printf &#34;end\n&#34;}&#39;</span>
+start
+已用%	<span class="m">1</span>
+0%	<span class="m">2</span>
+1%	<span class="m">3</span>
+1%	<span class="m">4</span>
+0%	<span class="m">5</span>
+12%	<span class="m">6</span>
+0%	<span class="m">7</span>
+end
+</code></pre></td></tr></table>
+</div>
+</div><p>由于 <code>awk</code> 命令的默认分隔符是空格(没有数量限制)，因此对于分隔符不是空格的文件来说，<code>BEGIN</code> 的主要作用就是在处理文件前设置分隔符，其中<code>FS</code> 用来设置分隔符。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 要处理的数据</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat /etc/passwd | grep syslog</span>
+syslog❌996:994::/home/syslog:/bin/false
+
+<span class="c1"># 使用 BEGIN 设置分隔符为&#34;:&#34;，然后输出第三列数据</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat /etc/passwd | grep syslog | awk &#39;BEGIN {FS=&#34;:&#34;} {printf $3 &#34;\n&#34;}&#39;</span>
+<span class="m">996</span>
+
+<span class="c1"># 使用关系运算符条件</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat /etc/passwd  | awk &#39;BEGIN {FS=&#34;:&#34;} $3&gt;995{printf $3 &#34;\n&#34;}&#39;</span>
+<span class="m">999</span>
+<span class="m">998</span>
+<span class="m">997</span>
+<span class="m">996</span>
+<span class="m">1000</span>
+<span class="m">1001</span>
+<span class="m">1002</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>下面给出一个具体问题，思考下你会怎么处理。上面我们已经使用过了 <code>df -h</code> 命令，该命令是用于查看Linux的磁盘占用情况，我们想要设置个定时任务，每天去检查某个磁盘的占用情况，如果磁盘占用比例到了80%，就发送邮件报警。这里我们只处理第一步，就是判断磁盘占用情况是否超出了设置的阈值。</p>
+<p><strong>脚本文件</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="cp">#!/bin/bash
+</span><span class="cp"></span>
+<span class="nb">read</span> -p <span class="s1">&#39;please input rate: &#39;</span> r
+<span class="nv">rate</span><span class="o">=</span><span class="k">$(</span>df -h <span class="p">|</span> grep <span class="s1">&#39;vda1&#39;</span><span class="p">|</span> awk <span class="s1">&#39;{printf $5}&#39;</span> <span class="p">|</span> cut -d <span class="s1">&#39;%&#39;</span> -f 1<span class="k">)</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$rate</span> -gt <span class="nv">$r</span> <span class="o">]</span>
+        <span class="k">then</span>
+                <span class="nb">echo</span> <span class="s1">&#39;alarm&#39;</span>
+<span class="k">fi</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>测试</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># chmod 755 test.sh</span>
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ./test.sh</span>
+please input rate: <span class="m">20</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ./test.sh</span>
+please input rate: <span class="m">10</span>
+alarm
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="sed">sed</h2>
+<p><code>sed</code> 是一种几乎包括所有unix平台（包括Linux）的轻量级流编辑器，它是文本处理中非常重要的工具，能够完美的配合正则表达式使用，功能不同凡响。</p>
+<p>处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用 <code>sed</code> 命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有改变，除非你使用重定向存储输出。<code>sed</code> 主要用来自动编辑一个或多个文件；简化对文件的反复操作；编写转换程序等。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># sed [选项] &#39;动作&#39; 文件名</span>
+
+选项：
+
+-n  一般sed命令会把所有数据都输出到屏幕，如果加入此选择，则只会把经过sed命令处理的行输出到屏幕
+-e	允许对输入数据应用多条sed命令编辑
+-i  用sed的修改结果直接修改读取数据的文件，而不是由屏幕输出
+
+动作:
+
+a:  追加，在当前行后添加一行或多行。添加多行时，除最后一行外，每行末尾需要用<span class="s1">&#39;\&#39;</span> 代表数据未完结
+c:  行替换，用<span class="s1">&#39;c&#39;</span> 后面的字符串替换原数据行，替换多行时，除最后一行外，每行末尾用<span class="s1">&#39;\&#39;</span> 表示数据未完结
+i:  插入，在当前行前插入一行或多行。插入多行时，除最后一行外，每行末尾用<span class="s1">&#39;\&#39;</span> 表示数据未完结
+d:	 删除，删除指定的行
+p:   打印，输出指定的行
+s:   字符串替换，用一个字符串替换另一个字符串。格式为 <span class="s2">&#34;第几行s/旧字串/新字串/g&#34;</span>，使用 <span class="s1">&#39;/g&#39;</span>表示替换该行中的所有匹配  <span class="o">(</span>与vim类似<span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>测试</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 要处理的文件</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">98</span>
+2	ls	F	<span class="m">99</span>
+
+<span class="c1"># 打印输出第2行，默认不仅会输出指定的行，还会输出原有文件中的所有行</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed &#39;2p&#39; student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">98</span>
+1	zs	M	<span class="m">98</span>
+2	ls	F	<span class="m">99</span>
+
+<span class="c1"># -n，只输出sed处理的数据</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed -n &#39;2p&#39; student.txt</span>
+1	zs	M	<span class="m">98</span>
+
+<span class="c1"># 删除第2行的数据，但不修改原文件 （在缓冲区修改的）</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed &#39;2d&#39; student.txt</span>
+ID	NAME	Gender	MARK
+2	ls	F	<span class="m">99</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">98</span>
+2	ls	F	<span class="m">99</span>
+
+<span class="c1"># 在第3行后追加一条数据，不修改原数据 （在缓冲区修改的）</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed &#39;3a hello world&#39; student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">98</span>
+2	ls	F	<span class="m">99</span>
+hello world
+
+<span class="c1"># 在第3行前插入一条数据，不修改原数据 （在缓冲区修改的）</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed &#39;3i hello world&#39; student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">98</span>
+hello world
+2	ls	F	<span class="m">99</span>
+
+<span class="c1"># 替换第3行的数据，不修改原数据 （在缓冲区修改的）</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed &#39;3c hello world&#39; student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">98</span>
+hello world
+
+<span class="c1"># 替换字符串字段，不修改原数据 （在缓冲区修改的）</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed  &#39;2s/98/100/g&#39; student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">100</span>
+2	ls	F	<span class="m">99</span>
+
+<span class="c1"># 字符串替换，直接修改文件</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed -i &#39;2s/98/100/g&#39; student.txt</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat student.txt</span>
+ID	NAME	Gender	MARK
+1	zs	M	<span class="m">100</span>
+2	ls	F	<span class="m">99</span>
+
+<span class="c1"># 替换多处</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># sed -i &#39;2s/M/F/; 2s/zs/ww/&#39; student.txt</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># cat student.txt</span>
+ID	NAME	Gender	MARK
+1	ww	F	<span class="m">100</span>
+2	ls	F	<span class="m">99</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章一共学习了三个命令：</p>
+<ul>
+<li>
+<p>cut：用于提取一行文本中的列，默认分隔符是 <code>TAB</code> ,同时也可以指定分隔符。如果分隔符是空格，需要保证每列之间的空格数相同；</p>
+</li>
+<li>
+<p>awk：一种编程语言，功能强大，支持数组、函数等，类似 C语言；</p>
+</li>
+<li>
+<p>sed：功能强大的流式文本编辑器，可以很方便的处理文件中的每一行数据。</p>
+</li>
+</ul>
+<p>PS：本文只是简单的介绍了命令的常用部分，如果想要更加深入了解，可以去<a href="https://wangchujiang.com/linux-command/">这里</a>学习。</p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-11-22
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/linux/">Linux</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2021_11_17_linux_variables_2/">
+            <span class="next-text nav-default">Bash中的变量类型，还有这两种！</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
