@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Shell 脚本中的 if 条件判断 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 if&amp;hellip;else&amp;hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_11_25_linux_if/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Shell 脚本中的 if 条件判断" />
+<meta property="og:description" content="前言 if&hellip;else&hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_11_25_linux_if/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-11-25T00:20:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-11-25T00:20:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Shell 脚本中的 if 条件判断">
+<meta itemprop="description" content="前言 if&hellip;else&hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来"><meta itemprop="datePublished" content="2021-11-25T00:20:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-11-25T00:20:23&#43;08:00" />
+<meta itemprop="wordCount" content="1803">
+<meta itemprop="keywords" content="Linux," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Shell 脚本中的 if 条件判断"/>
+<meta name="twitter:description" content="前言 if&hellip;else&hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Shell 脚本中的 if 条件判断</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-11-25" class="post-time">
+          2021-11-25
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/linux/"> Linux </a>
+            
+          </div>
+        <span class="more-meta"> 约 1803 字 </span>
+          <span class="more-meta"> 预计阅读 4 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#条件判断格式">条件判断格式</a></li>
+    <li><a href="#if-语句">if 语句</a></li>
+    <li><a href="#条件判断类型">条件判断类型</a>
+      <ul>
+        <li><a href="#按照文件类型进行判断">按照文件类型进行判断</a></li>
+        <li><a href="#按照文件权限进行判断">按照文件权限进行判断</a></li>
+        <li><a href="#文件之间比较">文件之间比较</a></li>
+        <li><a href="#整数之间比较">整数之间比较</a></li>
+        <li><a href="#字符串的判断">字符串的判断</a></li>
+        <li><a href="#多重条件判断">多重条件判断</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>if&hellip;else&hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 <code>Shell</code> 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来学习吧！</p>
+<h2 id="条件判断格式">条件判断格式</h2>
+<p>在 Shell 中有两种判断格式，分别如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 第一种</span>
+<span class="nb">test</span>  条件判断式
+
+<span class="c1"># 2. 第二种，注意括号两端必须有空格</span>
+<span class="o">[</span>  条件判断式 <span class="o">]</span>    
+</code></pre></td></tr></table>
+</div>
+</div><p>第二种方式相当于第一种的简化。那么我们如何知道一个条件判断语句是否为真呢？其实在 <a href="https://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;mid=2247484700&amp;idx=1&amp;sn=947ec3caf53f30e8b3417962c59c6c26&amp;chksm=fe50ce53c92747450eaa6e0ba125b32e65bfa6a3e1244784539d1c2b0aa3aa421daa783d5a72&amp;token=1646453839&amp;lang=zh_CN#rd">Bash中的变量类型，还有这两种！</a> 的预定义变量部分 ，我们学习过如何判断一个命令是否执行成功，即 <code>$?</code> 是否等于 <code>0</code>，<code>0</code>表示执行成功，否则表示上个命令失败，条件判断也是使用这种方式。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 查看文件列表</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ls</span>
+<span class="k">if</span>.sh  student.txt  test.sh
+
+<span class="c1"># -e 文件名，用于判断文件是否存在</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># test -e if.sh</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $?</span>
+<span class="m">0</span>
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># test -e if.ssss</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $?</span>
+<span class="m">1</span>
+
+<span class="c1"># 换个姿势，再来测试一遍</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -e if.sh ]</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $?</span>
+<span class="m">0</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -e if.ssss ]</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># echo $?</span>
+<span class="m">1</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="if-语句">if 语句</h2>
+<ul>
+<li><code>if</code> 开头，<code>fi</code> 结尾</li>
+<li><code>[ 条件判断 ]</code> 就是使用 <code>test</code> 命令判断，两端必须有空格</li>
+<li><code>if</code> 如果 和 <code>then</code> 在一行，需要加 <code>;</code></li>
+</ul>
+<p><strong>单分支</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">if</span> <span class="o">[</span>  条件判断式 <span class="o">]</span><span class="p">;</span><span class="k">then</span>
+	命令
+<span class="k">fi</span>
+
+或者 
+
+<span class="k">if</span> <span class="o">[</span>  条件判断式 <span class="o">]</span>
+	<span class="k">then</span>
+		命令
+<span class="k">fi</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>双分支</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">if</span> <span class="o">[</span>  条件判断式 <span class="o">]</span>
+	<span class="k">then</span>
+		命令
+<span class="k">else</span>
+		命令
+<span class="k">fi</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>多分支</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="k">if</span> <span class="o">[</span> 条件判断式1 <span class="o">]</span>
+	<span class="k">then</span>
+		命令
+<span class="k">elif</span> <span class="o">[</span> 条件判断式2 <span class="o">]</span>
+	<span class="k">then</span> 
+		命令
+...
+
+<span class="k">else</span>
+	命令
+<span class="k">fi</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="条件判断类型">条件判断类型</h2>
+<h3 id="按照文件类型进行判断">按照文件类型进行判断</h3>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-b 文件</td>
+<td>判断该文件是否存在，并且是否为块设备文件</td>
+</tr>
+<tr>
+<td>-c 文件</td>
+<td>判断该文件是否存在，并且是否为字符设备文件</td>
+</tr>
+<tr>
+<td>-d 文件</td>
+<td>判断该文件是否存在，并且是否为目录文件</td>
+</tr>
+<tr>
+<td>-e 文件</td>
+<td>判断该文件是否存在</td>
+</tr>
+<tr>
+<td>-f 文件</td>
+<td>判断该文件是否存在，并且是否为普通文件</td>
+</tr>
+<tr>
+<td>-L 文件</td>
+<td>判断该文件是否存在，并且是否为符号链接文件</td>
+</tr>
+<tr>
+<td>-p 文件</td>
+<td>判断该文件是否存在，并且是否为管道文件</td>
+</tr>
+<tr>
+<td>-s 文件</td>
+<td>判断该文件是否存在，并且是否为空</td>
+</tr>
+<tr>
+<td>-S 文件</td>
+<td>判断该文件是否存在，并且是否为套接字文件</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 1. 新建一个脚本文件</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># vim file_test.sh</span>
+
+<span class="c1">#!/bin/bash</span>
+
+<span class="nb">read</span> -p <span class="s2">&#34;please input filename: &#34;</span> filename
+
+<span class="k">if</span> <span class="o">[</span> -e <span class="nv">$filename</span> <span class="o">]</span>
+  <span class="k">then</span>
+        <span class="nb">echo</span> <span class="s2">&#34;yes&#34;</span>
+<span class="k">else</span>
+        <span class="nb">echo</span> <span class="s2">&#34;no&#34;</span>
+<span class="k">fi</span>
+
+<span class="c1"># 2. 添加可执行权限</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># chmod 755 file_test.sh</span>
+
+<span class="c1"># 3. 测试执行</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ./file_test.sh</span>
+please input filename: student.txt
+yes
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ./file_test.sh</span>
+please input filename: falsfja
+no
+
+</code></pre></td></tr></table>
+</div>
+</div><p>为了测试各种判断类型方便，我们可以直接使用如下方式测试，避免每次写脚本了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 一个命令正确执行，输出yes，否则输出no</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -e student.txt ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -e sss ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -d mydir/ ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -d student.txt ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="按照文件权限进行判断">按照文件权限进行判断</h3>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-r 文件</td>
+<td>判断该文件是否存在，并且是否拥有读权限</td>
+</tr>
+<tr>
+<td>-w 文件</td>
+<td>判断该文件是否存在，并且是否拥有写权限</td>
+</tr>
+<tr>
+<td>-x 文件</td>
+<td>判断该文件是否存在，并且是否拥有执行权限</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -x file_test.sh ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -x student.txt ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="文件之间比较">文件之间比较</h3>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>文件1 -nt 文件2</td>
+<td>判断文件1的修改时间是否比文件2的新</td>
+</tr>
+<tr>
+<td>文件1 -ot 文件2</td>
+<td>判断文件1的修改时间是否比文件2的旧</td>
+</tr>
+<tr>
+<td>文件1 -ef 文件2</td>
+<td>判断文件1是否和文件2的Inode号一致，可以理解两个文件是否为同一个文件。这个判断用于判断硬链接是个很好的方法。</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 创建硬链接后测试</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># ln student.txt /tmp/student.txt</span>
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ student.txt -ef /tmp/student.txt ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ student.txt -ef /tmp/stargate.lock ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="整数之间比较">整数之间比较</h3>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>整数1 -eq 整数2</td>
+<td>整数1是否和整数2相等</td>
+</tr>
+<tr>
+<td>整数1 -ne 整数2</td>
+<td>整数1是否和整数2不等</td>
+</tr>
+<tr>
+<td>整数1 -gt 整数2</td>
+<td>整数1是否大于整数2</td>
+</tr>
+<tr>
+<td>整数1 -lt 整数2</td>
+<td>整数1是否小于整数2</td>
+</tr>
+<tr>
+<td>整数1 -ge 整数2</td>
+<td>整数1是否大于等于整数2</td>
+</tr>
+<tr>
+<td>整数1 -le 整数2</td>
+<td>整数1是否小于等于整数2</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ 10 -eq 10 ]  &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ 10 -gt 5 ]  &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ 10 -lt 5 ]  &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="字符串的判断">字符串的判断</h3>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-z 字符串</td>
+<td>字符串是否为空</td>
+</tr>
+<tr>
+<td>-n 字符串</td>
+<td>字符串是否非空</td>
+</tr>
+<tr>
+<td>字符串1 == 字符串2</td>
+<td>字符串是否相等</td>
+</tr>
+<tr>
+<td>字符串1 != 字符串2</td>
+<td>字符串是否不等</td>
+</tr>
+</tbody>
+</table>
+<p><code>if</code> 判断中对于变量的处理，需要加引号，如果没有加双引号，可能会在判断含空格的字符串变量的时候产生错误。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name=&#34;&#34;</span>
+
+<span class="c1"># 不见引号，判断出的 name 是非空，其实是空</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1">#  [ -n $name ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+
+<span class="c1"># 加上引号就对了</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1">#  [ -n &#34;$name&#34; ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name1=hello</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># name2=world</span>
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ &#34;$name1&#34; != &#34;$name2&#34; ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ &#34;$name1&#34; == &#34;$name2&#34; ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="多重条件判断">多重条件判断</h3>
+<table>
+<thead>
+<tr>
+<th>测试选项</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>判断1 -a 判断2</td>
+<td>逻辑与</td>
+</tr>
+<tr>
+<td>判断1 -o 判断2</td>
+<td>逻辑或</td>
+</tr>
+<tr>
+<td>!判断</td>
+<td>逻辑非</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># a=hello</span>
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -n &#34;$a&#34; -a &#34;$a&#34; == &#34;hello&#34; ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+yes
+
+<span class="o">[</span>root@VM-0-5-centos ~<span class="o">]</span><span class="c1"># [ -n &#34;$a&#34; -a &#34;$a&#34; == &#34;world&#34; ] &amp;&amp; echo &#39;yes&#39; || echo &#39;no&#39;</span>
+no
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章首先介绍了条件判断的格式以及原理，然后介绍了 if 语句的格式，最后介绍了多个条件判断类型。内容比较多，熟能生巧，快操练起来吧！</p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-11-25
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/linux/">Linux</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2021_11_22_linux_text_process/">
+            <span class="next-text nav-default">Shell编程之文本处理</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

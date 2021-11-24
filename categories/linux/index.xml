@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/linux/</link>
     <description>Recent content in Linux on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 22 Nov 2021 17:00:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 25 Nov 2021 00:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell 脚本中的 if 条件判断</title>
+      <link>https://lifelmy.github.io/post/2021_11_25_linux_if/</link>
+      <pubDate>Thu, 25 Nov 2021 00:20:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_25_linux_if/</guid>
+      <description>前言 if&amp;hellip;else&amp;hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来</description>
+    </item>
+    
     <item>
       <title>Shell编程之文本处理</title>
       <link>https://lifelmy.github.io/post/2021_11_22_linux_text_process/</link>

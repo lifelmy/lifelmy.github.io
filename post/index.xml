@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 22 Nov 2021 17:00:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 25 Nov 2021 00:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell 脚本中的 if 条件判断</title>
+      <link>https://lifelmy.github.io/post/2021_11_25_linux_if/</link>
+      <pubDate>Thu, 25 Nov 2021 00:20:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_25_linux_if/</guid>
+      <description>前言 if&amp;hellip;else&amp;hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来</description>
+    </item>
+    
     <item>
       <title>Shell编程之文本处理</title>
       <link>https://lifelmy.github.io/post/2021_11_22_linux_text_process/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/redis_bitmap/</guid>
       <description>前言 Bitmap，即位图，是一串连续的二进制数组（0和1），可以通过偏移量（offset）定位元素。BitMap通过最小的单位bit来进行0</description>
-    </item>
-    
-    <item>
-      <title>Redis基本类型学习之Sorted Set(3)</title>
-      <link>https://lifelmy.github.io/post/redis_sorted_set_3/</link>
-      <pubDate>Tue, 17 Aug 2021 14:39:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_sorted_set_3/</guid>
-      <description>前言 本篇是有序集合的最后一篇命令学习，主要是针对多个集合之间的操作。话不多说，直接上手搞起！ ZUNIONSTORE 可用版本：&amp;gt;= 2.0.0 时间复杂度： O(N)+O</description>
     </item>
     
   </channel>
