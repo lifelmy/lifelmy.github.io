@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 25 Nov 2021 00:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 Nov 2021 21:15:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Shell 脚本之流程控制</title>
+      <link>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</link>
+      <pubDate>Sun, 28 Nov 2021 21:15:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</guid>
+      <description>前言 上一篇文章，我们一起学习了 Shell 脚本中的 if 条件控制，以及多种条件判断，本篇文章我们一起来学习下剩余的流程控制语句。 流程控制语句 我们先来看下 Shell</description>
+    </item>
+    
     <item>
       <title>Shell 脚本中的 if 条件判断</title>
       <link>https://lifelmy.github.io/post/2021_11_25_linux_if/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/redis_hpll/</guid>
       <description>关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统</description>
-    </item>
-    
-    <item>
-      <title>Redis Bitmap 学习和使用</title>
-      <link>https://lifelmy.github.io/post/redis_bitmap/</link>
-      <pubDate>Fri, 20 Aug 2021 11:38:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_bitmap/</guid>
-      <description>前言 Bitmap，即位图，是一串连续的二进制数组（0和1），可以通过偏移量（offset）定位元素。BitMap通过最小的单位bit来进行0</description>
     </item>
     
   </channel>

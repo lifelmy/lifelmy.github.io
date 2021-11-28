@@ -5,10 +5,561 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 25 Nov 2021 00:20:23 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 28 Nov 2021 21:15:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Shell 脚本之流程控制</title>
+      <link>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</link>
+      <pubDate>Sun, 28 Nov 2021 21:15:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;http://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;amp;mid=2247484756&amp;amp;idx=1&amp;amp;sn=6dde3844106fc910e716cf22d75bc183&amp;amp;chksm=fe50ce1bc927470ddafe857368a2639290b913baa041288ea72836291e3bd12e7b844da81290&amp;amp;scene=21#wechat_redirect&#34;&gt;上一篇文章&lt;/a&gt;，我们一起学习了 &lt;code&gt;Shell&lt;/code&gt; 脚本中的 &lt;code&gt;if&lt;/code&gt; 条件控制，以及多种条件判断，本篇文章我们一起来学习下剩余的流程控制语句。&lt;/p&gt;
+&lt;h2 id=&#34;流程控制语句&#34;&gt;流程控制语句&lt;/h2&gt;
+&lt;p&gt;我们先来看下 &lt;code&gt;Shell&lt;/code&gt; 中常见的流程控制：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;if&amp;hellip;else：和所有语言的if&amp;hellip;else&amp;hellip;类型一样&lt;/li&gt;
+&lt;li&gt;case&amp;hellip;esac：与其他语言中的 switch &amp;hellip; case 语句类似&lt;/li&gt;
+&lt;li&gt;for：与其他语言中的 for 循环一样&lt;/li&gt;
+&lt;li&gt;while：和其他语言的 while 循环一样&lt;/li&gt;
+&lt;li&gt;until循环：与 while 的循环处理方式相反&lt;/li&gt;
+&lt;li&gt;break：跳出循环&lt;/li&gt;
+&lt;li&gt;continue：跳出本次循环&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;caseesac语句&#34;&gt;case&amp;hellip;esac语句&lt;/h2&gt;
+&lt;p&gt;和 &lt;code&gt;if...fi&lt;/code&gt; 类似，&lt;code&gt;Shell&lt;/code&gt; 中的分支选择以 &lt;code&gt;case&lt;/code&gt; 开始，以 &lt;code&gt;esac&lt;/code&gt; 结束，结束标志都为开始语句的单词的倒序输入。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; $变量名 in
+	&lt;span class=&#34;s2&#34;&gt;&amp;#34;值1&amp;#34;&lt;/span&gt;）
+			程序1
+			&lt;span class=&#34;p&#34;&gt;;;&lt;/span&gt;
+	&lt;span class=&#34;s2&#34;&gt;&amp;#34;值2&amp;#34;&lt;/span&gt;）
+			程序2
+			&lt;span class=&#34;p&#34;&gt;;;&lt;/span&gt;
+	 ...
+	 
+	 *）
+	 		都不成立，执行
+	 		&lt;span class=&#34;p&#34;&gt;;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;esac&lt;/span&gt;
+	 	
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim case.sh&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;read&lt;/span&gt; -t &lt;span class=&#34;m&#34;&gt;30&lt;/span&gt; -p &lt;span class=&#34;s2&#34;&gt;&amp;#34;please input your age: &amp;#34;&lt;/span&gt; age
+&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$age&lt;/span&gt; in
+        18&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;18&amp;#34;&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;;;&lt;/span&gt;
+        20&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;20&amp;#34;&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;;;&lt;/span&gt;
+        *&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;others&amp;#34;&lt;/span&gt;
+        &lt;span class=&#34;p&#34;&gt;;;&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;esac&lt;/span&gt;
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 case.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./case.sh&lt;/span&gt;
+please input your age: &lt;span class=&#34;m&#34;&gt;20&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;20&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./case.sh&lt;/span&gt;
+please input your age: &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt;
+others
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./case.sh&lt;/span&gt;
+please input your age: &lt;span class=&#34;m&#34;&gt;18&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;18&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;for循环&#34;&gt;for循环&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;语法一&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;for&lt;/code&gt; 循环遍历整个列表进行循环，列表内可以是数字、字符串等。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; 变量 in 值1 值2 值3...
+	&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+		程序
+	&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#  累加示例&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim for_test.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; i in &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+                &lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$((&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;))&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 for_test.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./for_test.sh&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;21&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 批量解压数据示例&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim example.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+ls *.tar.gz &amp;gt;&amp;gt; ls.log
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; i in &lt;span class=&#34;k&#34;&gt;$(&lt;/span&gt;cat ls.log&lt;span class=&#34;k&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+        &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;
+        tar -zxvf &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;&amp;amp;&lt;/span&gt;&amp;gt;/dev/null
+&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+
+rm -rf ls.log
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 example.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./example.sh&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt;.tar.gz
+fot_test.tar.gz
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;case&lt;/span&gt;.sh  &lt;span class=&#34;k&#34;&gt;case&lt;/span&gt;.tar.gz  example.sh  for_test.sh  fot_test.tar.gz
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;语法二&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;使用变量控制的方式，来进行 &lt;code&gt;for&lt;/code&gt;  循环&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;初始值&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;循环控制&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;变量变化&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+		程序
+	&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 测试累加1到100&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim for_test_2.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;i&amp;lt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;100&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;i++&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+                &lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;i&lt;span class=&#34;k&#34;&gt;))&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;
+
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 for_test_2.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./for_test_2.sh&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;5050&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;while循环&#34;&gt;while循环&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;while&lt;/code&gt; 循环，是在条件成立时进入循环&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; 条件判断式 &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+		程序
+	&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#  测试1加到100&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim while_test.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;while&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt; -le &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+	&lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;))&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 while_test.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./while_test.sh&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;5050&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;until循环&#34;&gt;until循环&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;until&lt;/code&gt; 在条件不成立时进入循环，条件成立则终止循环&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;k&#34;&gt;until&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; 条件判断式 &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+		程序
+	&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 测试1加到100&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim until_test.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;until&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt; -gt &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+	&lt;span class=&#34;nv&#34;&gt;sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;$((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;))&lt;/span&gt;
+&lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$sum&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 until_test.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./until_test.sh&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;5050&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;break&#34;&gt;break&lt;/h2&gt;
+&lt;p&gt;和其他语言类似，&lt;code&gt;break&lt;/code&gt; 用于跳出循环&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 当循环到10之后，跳出循环&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim break_test.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;i&amp;lt;100&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;i++&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt; -eq &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+                        &lt;span class=&#34;k&#34;&gt;then&lt;/span&gt;
+                                &lt;span class=&#34;nb&#34;&gt;break&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;fi&lt;/span&gt;
+         &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 break_test.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./break_test.sh&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;9&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;continue&#34;&gt;continue&lt;/h2&gt;
+&lt;p&gt;和其他语言类似，&lt;code&gt;continue&lt;/code&gt; 用于跳出当前循环&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 跳出循环，不打印3&lt;/span&gt;
+
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# vim continue_test.sh&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;#!/bin/bash&lt;/span&gt;
+
+&lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;((&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;0&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;i&amp;lt;5&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;i++&lt;span class=&#34;o&#34;&gt;))&lt;/span&gt;
+        &lt;span class=&#34;k&#34;&gt;do&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt; -eq &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+                        &lt;span class=&#34;k&#34;&gt;then&lt;/span&gt;
+                                &lt;span class=&#34;k&#34;&gt;continue&lt;/span&gt;
+                &lt;span class=&#34;k&#34;&gt;fi&lt;/span&gt;
+                &lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;$i&lt;/span&gt;
+         &lt;span class=&#34;k&#34;&gt;done&lt;/span&gt;
+         
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 755 continue_test.sh&lt;/span&gt;
+&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ./continue_test.sh&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
+&lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本篇文章我们学习了 &lt;code&gt;Shell&lt;/code&gt; 脚本中的剩余流程控制语句，包括以下几种：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;if&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;case&amp;hellip;esac&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;for&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;while&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;until&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;break&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;continue&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;学到这里，加上我们之前学习的 if 流程控制，条件判断、Bash中的变量类型、再加上更早之前的各种 Linux 命令，我们就可以编写简单的脚本去完成一些功能了。当然如果需要完成复杂功能的脚本，还需要我们去学习更多的 Linux 命令，在日积月累中完成蜕变。你必须非常努力，才能看起来毫不费力，一起 from zero to zero !!!&lt;/p&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Shell 脚本中的 if 条件判断</title>
@@ -8918,815 +9469,6 @@ OK
 &lt;li&gt;&lt;a href=&#34;https://juejin.cn/post/6844903869965664264#heading-4&#34;&gt;https://juejin.cn/post/6844903869965664264#heading-4&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/53416615&#34;&gt;https://www.zhihu.com/question/53416615&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Redis Bitmap 学习和使用</title>
-      <link>https://lifelmy.github.io/post/redis_bitmap/</link>
-      <pubDate>Fri, 20 Aug 2021 11:38:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_bitmap/</guid>
-      
-        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;Bitmap，即位图，是一串连续的二进制数组（0和1），可以通过偏移量（offset）定位元素。BitMap通过最小的单位bit来进行&lt;code&gt;0|1&lt;/code&gt;的设置，表示某个元素的值或者状态，时间复杂度为O(1)。由于bit是计算机中最小的单位，使用它进行储存将非常节省空间，特别适合一些数据量大且使用二值统计的场景。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtjyy5qv5nj619c068t9302.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;这里的二值状态就是指集合元素的取值就只有 0 和 1 两种。例如在签到打卡的场景中，我们只用记录签到（1）或未签到（0），所以它就是非常典型的二值状态。在签到统计时，每个用户一天的签到用 1 个 bit 位就能表示，一个月（假设是 31 天）的签到情况用 31 个 bit 位就可以，而一年的签到也只需要用 365 个 bit 位，根本不用太复杂的集合类型。这个时候，我们就可以选择 Bitmap。&lt;/p&gt;
-&lt;p&gt;Bitmap不属于Redis的基本数据类型，而是基于String类型进行的位操作。而Redis中字符串的最大长度是 512M，所以 BitMap 的 offset 值也是有上限的，其最大值是：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;m&#34;&gt;8&lt;/span&gt; * &lt;span class=&#34;m&#34;&gt;1024&lt;/span&gt; * &lt;span class=&#34;m&#34;&gt;1024&lt;/span&gt; * &lt;span class=&#34;nv&#34;&gt;512&lt;/span&gt;  &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;  2^32
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;下面我们就来看下Bitmap的相关操作吧！&lt;/p&gt;
-&lt;h2 id=&#34;setbit&#34;&gt;SETBIT&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;SETBIT key offset value
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;针对key存储的字符串值，设置或清除指定偏移量offset上的位(bit)&lt;/li&gt;
-&lt;li&gt;位的设置或清除取决于value值，即1或0&lt;/li&gt;
-&lt;li&gt;当key不存在时，会创建一个新的字符串。而且这个字符串的长度会伸展，直到可以满足指定的偏移量offset（0 ≤offset&amp;lt; 2^32），在伸展过程中，新增的位的值被设置为0&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote&gt;
-&lt;p&gt;警告！&lt;/p&gt;
-&lt;p&gt;如果设置较大的offset，内存分配可能会导致Redis阻塞。&lt;/p&gt;
-&lt;p&gt;如果key对应的字符串不存在或长度较短，但是设置的offset较大（比如最大为 &lt;code&gt;2^32 -1&lt;/code&gt;），Redis需要对中间的位数进行内存分配，Redis可能会阻塞。&lt;/p&gt;
-&lt;p&gt;拿2010 MacBook Pro举例，offset = 2^32 -1 (分配512MB内存)，需要耗时300ms左右；offset = 2^30 -1 (分配128内存)，需要耗时80ms左右；offset = 2^28 -1 (分配32MB内存)，需要耗时30ms左右；offset = 2^26 -1 (分配8MB内存)，需要耗时80ms左右。&lt;/p&gt;
-&lt;p&gt;第一次分配内存后，后续对该key的相同操作不会再有内存分配开销。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;设置Bitmap&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;如果想要设置&lt;code&gt;Bitmap&lt;/code&gt;的非零初值，该怎么设置呢？一种方式就是将每个位挨个设置为&lt;code&gt;0&lt;/code&gt;或&lt;code&gt;1&lt;/code&gt;，但是这种方式比较麻烦，我们可以考虑直接使用&lt;code&gt;SET&lt;/code&gt;命令存储一个字符串。&lt;/p&gt;
-&lt;p&gt;由于&lt;code&gt;Bitmap&lt;/code&gt;就是基于&lt;code&gt;String&lt;/code&gt;类型，因此&lt;code&gt;Bitmap&lt;/code&gt;类型的数据也可以使用&lt;code&gt;String&lt;/code&gt;类型的命令，主要是&lt;code&gt;SET&lt;/code&gt;和&lt;code&gt;GET&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;比如对于字符串‘&lt;code&gt;42&lt;/code&gt;’，底层保存数据时，使用0-7位保存‘&lt;code&gt;4&lt;/code&gt;’，使用8-15位保存‘&lt;code&gt;2&lt;/code&gt;’，‘&lt;code&gt;4&lt;/code&gt;’对应的ASCII码为0011 0100，‘&lt;code&gt;2&lt;/code&gt;’对应的ASCII码为0011 0010，我们通过挨个设置Bitmap来观察下：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; SETBIT bitmapsarestrings &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SETBIT bitmapsarestrings &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SETBIT bitmapsarestrings &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SETBIT bitmapsarestrings &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SETBIT bitmapsarestrings &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SETBIT bitmapsarestrings &lt;span class=&#34;m&#34;&gt;14&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 通过挨个设置比特位，GET数据就是字符串”42“&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GET bitmapsarestrings
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;42&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 直接设置字符串，查出来bit位也是一致的&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; bitkey &lt;span class=&#34;s2&#34;&gt;&amp;#34;42&amp;#34;&lt;/span&gt;
-OK
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;12&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;13&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;14&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit bitkey &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;因此通过上述例子我们可以明白，在设置非零初值时，不需要挨个设置比特位，只需要给定一个字符串就可以了。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数：偏移量offset位置的原始值&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 8对应的ASCII码为：0011 1000&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;8&amp;#34;&lt;/span&gt;
-OK
-
-&lt;span class=&#34;c1&#34;&gt;# 8对应的ASCII码为：0011 1000&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 将第8位（索引为7）的位设置为1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; setbit mykey &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;getbit&#34;&gt;GETBIT&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(1)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GETBIT key offset
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;返回key对应的字符串，&lt;code&gt;offset&lt;/code&gt;位置的位（bit）&lt;/li&gt;
-&lt;li&gt;当&lt;code&gt;offset&lt;/code&gt;大于值的长度时，返回&lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;当&lt;code&gt;key&lt;/code&gt;不存在时，可以认为value为空字符串，此时&lt;code&gt;offset&lt;/code&gt;肯定大于空字符串长度，参考上一条，也返回&lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数：偏移量offset位置的bit值&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 8对应的ASCII码为：0011 1000&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;8&amp;#34;&lt;/span&gt;
-OK
-
-&lt;span class=&#34;c1&#34;&gt;# 8对应的ASCII码为：0011 1000&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; getbit mykey &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;bitcount&#34;&gt;BITCOUNT&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.6.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;BITCOUNT key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;start end&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;统计给定字符串中，比特值为&lt;code&gt;1&lt;/code&gt;的数量&lt;/li&gt;
-&lt;li&gt;默认会统计整个字符串，同时也可以通过指定 &lt;code&gt;start&lt;/code&gt; 和 &lt;code&gt;end&lt;/code&gt; 来限定范围&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;start&lt;/code&gt; 和 &lt;code&gt;end&lt;/code&gt; 也可以是负数，&lt;code&gt;-1&lt;/code&gt;表示最后一个&lt;code&gt;字节&lt;/code&gt;，-2表示倒数第二个字节。注意这里是&lt;code&gt;字节&lt;/code&gt;，1字节=8比特&lt;/li&gt;
-&lt;li&gt;如果key不存在，返回&lt;code&gt;0&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数：bit值为1的数量&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# a: 0110 0001	&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# b: 0110 0010	&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# c: 0110 0011&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# mykey: 01100001 01100010 01100011&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey &lt;span class=&#34;s1&#34;&gt;&amp;#39;abc&amp;#39;&lt;/span&gt;
-OK
-
-&lt;span class=&#34;c1&#34;&gt;# 统计整个字符串对应的bit=1的数量&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitcount mykey
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# a&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitcount mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# ab&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitcount mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# c&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitcount mykey &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用场景&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;比如我们有一个App，需要统计2021年每个用户登录的情况，针对这个需求，我们以用户id+2021作为key，将用户上线那天对应的offset设置为1，这样就可以统计每个用户在本年度登录的情况，使用bitcount可以统计登录天数。&lt;/p&gt;
-&lt;p&gt;举个例子，今天是2021年第100天，而&lt;code&gt;user_id:10001&lt;/code&gt;在今天阅览过网站，那么执行命令 &lt;code&gt;SETBIT 2021:user_id:10001 100 1&lt;/code&gt; ；如果明天  该用户也登录的App，那么执行命令 &lt;code&gt;SETBIT 2021:user_id:10001 101 1&lt;/code&gt; ，以此类推。&lt;/p&gt;
-&lt;p&gt;最后使用 &lt;code&gt;BITCOUNT 2021:user_id:10001&lt;/code&gt;，就可以统计该用户本年度登录App的次数了&lt;/p&gt;
-&lt;p&gt;通过上例我们可以看出，使用Bitmap来统计二值数据非常节省内存，一个用户一年只需要占用 365个比特，10年也只需要 365*10/8=456个字节。&lt;/p&gt;
-&lt;h2 id=&#34;bitpos&#34;&gt;BITPOS&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.8.7&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;BITPOS key bit &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;start &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;end&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;返回字符串中，从左到右，第一个比特值为&lt;code&gt;bit&lt;/code&gt;（0或1）的偏移量&lt;/li&gt;
-&lt;li&gt;默认情况下会检查整个字符串，但是也可以通过指定&lt;code&gt;start&lt;/code&gt;和&lt;code&gt;end&lt;/code&gt;变量来指定&lt;code&gt;字节&lt;/code&gt;范围，与BITCOUNT中的范围描述一致&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;SETBIT&lt;/code&gt;和&lt;code&gt;GETBIT&lt;/code&gt;指定的都是&lt;code&gt;比特&lt;/code&gt;偏移量，&lt;code&gt;BITCOUNT&lt;/code&gt;和&lt;code&gt;BITPOS&lt;/code&gt;指定的是&lt;code&gt;字节&lt;/code&gt;范围&lt;/li&gt;
-&lt;li&gt;不论是否指定查询范围，该命令返回的偏移量都是基于0开始的&lt;/li&gt;
-&lt;li&gt;如果key不存在，认为是空字符串&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数：第一个比特值为指定bit（0或1）的偏移量&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;如果命令中参数bit=1，但是字符串为空，此时返回 -1 ；&lt;/li&gt;
-&lt;li&gt;如果命令中参数bit=0,但是字符串中所有的比特值都为1，此时命令返回字符串最大的offset+1。例如字符串对应的比特值为’11111111‘，那么此时会返回8。&lt;/li&gt;
-&lt;li&gt;默认情况下，如果查询bit=0，且没有指定范围，或者只指定了start，命令默认在字符串后面补0用于查询bit=0的offset。但是如果指定了start和end，且范围内所有值都为0，此时会返回-1，因为用户指定了范围且范围内没有0，不会在后面补充&lt;/li&gt;
-&lt;li&gt;如果查询bit=1，始终不会在字符串后面补充1，查询不到就会返回-1&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 例1&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# a: 0110 0001	&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SET mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;a&amp;#34;&lt;/span&gt;
-OK
-&lt;span class=&#34;c1&#34;&gt;# 第一个bit=1的偏移量&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 第一个bit=0的偏移量&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 例2&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# &amp;#39;\xff&amp;#39;: 1111 1111&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  全为1时，查询bit=1和bit=0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SET mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;\xff&amp;#34;&lt;/span&gt;   
-OK
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;      
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 例3&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# &amp;#39;\xff&amp;#39;: 0000 0000&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;#  全为0时，查询bit=1和bit=0&lt;/span&gt;
-127.0.0.1:6379&amp;gt; SET mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;\x00&amp;#34;&lt;/span&gt;
-OK
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 例4&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 11111111 11111111 11111111&lt;/span&gt;
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;\xff\xff\xff&amp;#34;&lt;/span&gt;
-OK
-&lt;span class=&#34;c1&#34;&gt;# 指定前两个字节，都为1，不会补充0，返回-1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitpos mykey &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -1
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;bitop&#34;&gt;BITOP&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.6.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;BITOP operation destkey key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;key ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;对多个字符串进行位操作，并将结果保存到&lt;code&gt;destkey&lt;/code&gt;中&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;operation 可以是 AND、OR、XOR 或者 NOT&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITOP AND destkey srckey1 srckey2 srckey3 ... srckeyN&lt;/code&gt;，对多个key求逻辑与，并将结果保存到&lt;code&gt;destkey&lt;/code&gt;中&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITOP OR destkey srckey1 srckey2 srckey3 ... srckeyN&lt;/code&gt;，对多个key求逻辑或，并将结果保存到&lt;code&gt;destkey&lt;/code&gt;中&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITOP XOR destkey srckey1 srckey2 srckey3 ... srckeyN&lt;/code&gt;，对多个key求异或，并将结果保存到&lt;code&gt;destkey&lt;/code&gt;中&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITOP NOT destkey srckey&lt;/code&gt;，对key求逻辑非，并将结果保存到&lt;code&gt;destkey&lt;/code&gt;中&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;除了 &lt;code&gt;NOT&lt;/code&gt; 操作之外，其他操作都可以接受一个或多个 &lt;code&gt;key&lt;/code&gt; 作为输入。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;不同长度的字符串&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;当给定的参数中，字符串长度不同时，较短的那个字符串与最长字符串之间缺少的部分会被看作 &lt;code&gt;0&lt;/code&gt; 。&lt;/p&gt;
-&lt;p&gt;空的 &lt;code&gt;key&lt;/code&gt; 也被看作是包含 &lt;code&gt;0&lt;/code&gt; 的字符串序列。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数：保存到 &lt;code&gt;destkey&lt;/code&gt; 的字符串的长度（和参数给定的&lt;code&gt;key&lt;/code&gt;中最长的字符串长度相等）&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; key1 &lt;span class=&#34;s2&#34;&gt;&amp;#34;\xff&amp;#34;&lt;/span&gt;
-OK
-127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; key2 &lt;span class=&#34;s2&#34;&gt;&amp;#34;\x00&amp;#34;&lt;/span&gt;
-OK
-
-&lt;span class=&#34;c1&#34;&gt;# 逻辑与&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitop AND andkey key1 key2
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; get andkey
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;\x00&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 逻辑或&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitop OR orkey key1 key2
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; get orkey
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;\xff&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 异或&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitop XOR xorkey key1 key2
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; get xorkey
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;\xff&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 逻辑非&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitop not notkey key1
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; get notkey
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;\x00&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;bitfield&#34;&gt;BITFIELD&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.6.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：对于每个子命令，复杂度为O(1)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;BITFIELD key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;GET &lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt; offset&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;SET &lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt; offset value&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INCRBY &lt;span class=&#34;nb&#34;&gt;type&lt;/span&gt; offset increment&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;OVERFLOW WRAP&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;SAT&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;FAIL&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITFIELD&lt;/code&gt; 将Redis字符串看作一个由很多整数组成的数组，能够处理不同宽度的比特位，同时可以处理任意偏移量的字段。换句话说，通过这个命令，用户可以进行如下操作：“将从偏移量1234开始的5位有符号整数设置为一个值”、 “获取从偏移量4567开始的31位无符号整数”等&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITFIELD&lt;/code&gt; 命令还可以对指定的整数执行加法操作和减法操作， 并且这些操作可以通过设置，有好的地处理计算时的溢出情况&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;code&gt;BITFIELD&lt;/code&gt;可以在一个命令中，操作多个比特区间。即命令接受多个操作，并返回每个操作返回值组成的列表。&lt;/p&gt;
-&lt;p&gt;如下命令有两个操作：对从偏移量100处开始的5位有符号整数执行加法操作，获取偏移量0开始的4位无符号整数&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&amp;gt; BITFIELD mykey INCRBY i5 &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; GET u4 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;blockquote&gt;
-&lt;p&gt;注意：&lt;/p&gt;
-&lt;p&gt;使用GET超出当前当前字符串范围时（key不存在相当于空字符串，也属于这种情况），超出的部分会被当做0&lt;/p&gt;
-&lt;p&gt;使用INCRBY或SET命令，且超出字符串范围时，缺失部分会被填充0&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;支持的子命令和整数类型&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;GET &amp;lt;type&amp;gt; &amp;lt;offset&amp;gt;&lt;/code&gt; &amp;ndash; 返回指定的比特范围&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;SET &amp;lt;type&amp;gt; &amp;lt;offset&amp;gt; &amp;lt;value&amp;gt;&lt;/code&gt; &amp;ndash; 设置指定的比特范围并返回旧值&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;INCRBY &amp;lt;type&amp;gt; &amp;lt;offset&amp;gt; &amp;lt;increment&amp;gt;&lt;/code&gt; &amp;ndash; 增加或减少（如果increment参数为负数）指定的比特范围并返回新值&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;除了上面三个子命令外，还有一个子命令可以改变SET和INCRBY在发生溢出时的行为：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;OVERFLOW [WRAP|SAT|FAIL]&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;当被设置的二进制位范围值为整数时，我们可以在类型参数前面添加 &lt;code&gt;i&lt;/code&gt; 来表示有符号整数，或者使用 &lt;code&gt;u&lt;/code&gt; 来表示无符号整数。比如说，我们可以使用 &lt;code&gt;u8&lt;/code&gt; 来表示8位无符号整数，也可以使用&lt;code&gt;i16&lt;/code&gt;来表示 16 位有符号整数。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;比特值和位置偏移量&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;我们有两种方式来设置偏移量：如果数字前没有前缀，那么就是基于0的比特位偏移量；如果数字有带有 &lt;code&gt;‘#’&lt;/code&gt; 前缀，offset就等于提供的整数宽度乘以&lt;code&gt;’#‘&lt;/code&gt;后面的偏移量。例如：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;BITFIELD mystring SET i8 #0 100 SET i8 #1 200
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;第一个SET对应的偏移量为：8*0=0&lt;/p&gt;
-&lt;p&gt;第二个SET对应的偏移量为：8*1=8&lt;/p&gt;
-&lt;p&gt;使用 &lt;code&gt;#&lt;/code&gt; 前缀可以让我们免去手动计算被设置比特位所在位置的麻烦。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;溢出控制&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;通过&lt;code&gt;OVERFLOW&lt;/code&gt;命令，可以控制&lt;code&gt;BITFIELD&lt;/code&gt;在执行增加或减少时，发生向上溢出（overflow）或向下溢出（underflow）的情况时的行为：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;WRAP：使用环绕的方式来控制有符号和无符号整数的溢出。对于无符号整数来说，环绕就是使用数值本身与能够被储存的最大无符号整数取模，这也是 C 语言的标准行为。 对于有符号整数来说，上溢将导致数字从可以表示的最小负数开始计算，而下溢将导致数字从可以表示的最大正数开始计算。例如对一个值为 &lt;code&gt;127&lt;/code&gt; 的 &lt;code&gt;i8&lt;/code&gt; 整数执行加&lt;code&gt;1&lt;/code&gt;操作，那么将得到结果 &lt;code&gt;-128&lt;/code&gt; 。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;SAT： 使用饱和算法（saturation arithmetic）计算，也就是下溢结果为可以表示的最小的整数值， 而上溢的结果为可以表示的最大的整数值。例如对一个值为 &lt;code&gt;120&lt;/code&gt; 的 &lt;code&gt;i8&lt;/code&gt; 整数执行加 &lt;code&gt;10&lt;/code&gt; 计算， 那么命令的结果将为 &lt;code&gt;i8&lt;/code&gt; 类型所能储存的最大整数值 &lt;code&gt;127&lt;/code&gt;，如果继续增加，始终为&lt;code&gt;127&lt;/code&gt;不变 。 与此相反，如果一个针对 &lt;code&gt;i8&lt;/code&gt; 值的计算造成了下溢， 那么这个 &lt;code&gt;i8&lt;/code&gt; 值将被设置为 &lt;code&gt;-127&lt;/code&gt; 。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;FAIL：当发生上溢或者下溢情况时，不会执行操作，并向用户返回空值表示计算未被执行。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;需要注意的是，&lt;code&gt;OVERFLOW&lt;/code&gt;子命令只会影响在它之后的&lt;code&gt;SET&lt;/code&gt;和&lt;code&gt;INCRBY&lt;/code&gt;命令，直到遇到下一个&lt;code&gt;OVERFLOW&lt;/code&gt;就会停止作用。默认使用&lt;code&gt;WARP&lt;/code&gt;模式。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;
-&lt;span class=&#34;c1&#34;&gt;# 初始都为0，执行无符号加一操作，前一个incrby默认使用 WARP 模式，后一个指定 SAT 模式&lt;/span&gt;
-&amp;gt; BITFIELD mykey incrby u2 &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; OVERFLOW SAT incrby u2 &lt;span class=&#34;m&#34;&gt;102&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-
-&amp;gt; BITFIELD mykey incrby u2 &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; OVERFLOW SAT incrby u2 &lt;span class=&#34;m&#34;&gt;102&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-
-&amp;gt; BITFIELD mykey incrby u2 &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; OVERFLOW SAT incrby u2 &lt;span class=&#34;m&#34;&gt;102&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# u2最大表示为3，再加一会向上溢出。 WARP： (3+1)%4=0    SAT: 始终保持最大值&lt;/span&gt;
-&amp;gt; BITFIELD mykey incrby u2 &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; OVERFLOW SAT incrby u2 &lt;span class=&#34;m&#34;&gt;102&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;列表：每个子命令对应的返回值，&lt;code&gt;OVERFLOW&lt;/code&gt;不会返回数据，只会影响后续命令的返回值。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;动机&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;将很多小的整数储存到一个长度较大的位图中， 又或者将一个非常庞大的键分割为多个较小的键来进行储存，可以非常高效地使用内存，从而使得 Redis 能够得到更多不同的应用 —— 特别是在实时分析领域： &lt;code&gt;BITFIELD&lt;/code&gt; 能够以指定的方式对控制计算溢出， 使得它可以被应用于这一领域。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;性能考量&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;BITFIELD是一个较快的命令，但是需要注意的是：对较短的字符串，处理较大偏移量的比特位，会导致内存分配，进而导致耗时增加；而处理已存在的比特位耗时较少。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;比特位的顺序&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;BITFIELD&lt;/code&gt; 把位图第一个字节偏移量为 &lt;code&gt;0&lt;/code&gt; 的二进制位看作是 most significant 位，以此类推。 举个例子，如果我们对一个已经预先被全部设置为 0 的位图进行设置， 将它在偏移量为 &lt;code&gt;7&lt;/code&gt; 的值设置为 5 位无符号整数值 23 （二进制位为 &lt;code&gt;10111&lt;/code&gt; ）， 那么命令将生产出以下这个位图表示：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;+--------+--------+
-|00000001|01110000|
-+--------+--------+
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;当偏移量和整数长度与字节边界进行对齐时， &lt;code&gt;BITFIELD&lt;/code&gt; 表示二进制位的方式跟大端表示法（big endian）一致， 但是在没有对齐的情况下， 理解这些二进制位是如何进行排列也是非常重要的。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; mykey &lt;span class=&#34;s2&#34;&gt;&amp;#34;\x00&amp;#34;&lt;/span&gt;
-OK
-
-&lt;span class=&#34;c1&#34;&gt;# offset从0开始，获取前5位有符号正数&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitfield mykey get i5 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# offset从0开始，设置前5位有符号正数&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitfield mykey &lt;span class=&#34;nb&#34;&gt;set&lt;/span&gt; i5 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-127.0.0.1:6379&amp;gt; bitfield mykey get i5 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# offset从0开始，前5位有符号正数加一&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitfield mykey incrby i5 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt;
-127.0.0.1:6379&amp;gt; bitfield mykey get i5 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
-&lt;p&gt;本文介绍了Bitmap的相关操作，主要包括以下命令&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;SETBIT：设置比特位&lt;/li&gt;
-&lt;li&gt;GETBIT：查询比特值&lt;/li&gt;
-&lt;li&gt;BITCOUNT：统计比特值为1的数量&lt;/li&gt;
-&lt;li&gt;BITPOS：查询第一个比特值为0或1的偏移量&lt;/li&gt;
-&lt;li&gt;BITOP：对Bitmap做逻辑与、或、异或、非操作&lt;/li&gt;
-&lt;li&gt;BITFIELD：将Bitmap看作由多个整数组成的，对其中的整数操作&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
