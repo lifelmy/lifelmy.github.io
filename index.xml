@@ -5,10 +5,607 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 28 Nov 2021 21:15:23 +0800</lastBuildDate>
+    <lastBuildDate>Tue, 14 Dec 2021 23:16:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go语言 io包核心接口详解</title>
+      <link>https://lifelmy.github.io/post/2021_12_14_go_io_core/</link>
+      <pubDate>Tue, 14 Dec 2021 23:16:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_12_14_go_io_core/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;IO&lt;/code&gt; 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现相应的方法，提供更加丰富的功能。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Go&lt;/code&gt; 语言提倡&lt;code&gt;小接口&lt;/code&gt; + &lt;code&gt;接口组合&lt;/code&gt;的方式，来扩展程序的行为以及增加程序的灵活性。io代码包恰恰就可以作为这样的一个标杆，它可以成为我们运用这种技巧时的一个参考标准。io包中包含了大量接口，本篇文章我们就先来学习四个核心接口以及对应的接口组合。&lt;/p&gt;
+&lt;h2 id=&#34;reader&#34;&gt;Reader&lt;/h2&gt;
+&lt;p&gt;io.Reader接口定义了 &lt;code&gt;Read&lt;/code&gt; 方法，用于读取数据到字节数组中：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;入参：字节数组 p，会将数据读入到 p 中&lt;/li&gt;
+&lt;li&gt;返回值：本次读取的字节数 n，以及遇到的错误 err&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;Reader&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nf&#34;&gt;Read&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;方法功能详解&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;方法读取数据写入到字节数组 p 中，由于 p 是有大小的，所以一次至多读取 len(p) 个字节&lt;/li&gt;
+&lt;li&gt;方法返回读取的数据字节数 n(0 &amp;lt;= n &amp;lt;= len(p))，以及读取过程中遇到的 error&lt;/li&gt;
+&lt;li&gt;即使一次调用读取到的数据小于 len(p)，也可能会占用整个字节数组 p 作为暂存空间&lt;/li&gt;
+&lt;li&gt;如果数据源的数据量小于 len(p) 个字节，方法只会读取当前可用数据，不会等待更多数据的到来&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;何时返回error&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在成功读取了 n（n&amp;gt;0）个字节后，如果产生了 error 或者 读到文件末尾 （end-of-file），本次调用必须要返回读取的字节数 n，但对于err 的值，可以选择在本次直接返回 err（err!=nil），或者在下次调用的时候再返回 err (n=0, err!=nil)。常见的一个例子就是，读取到n个字节后到达文件末尾（EOF），此时可以返回 err=EOF 或者 err=nil，下次调用返回 n=0,err=EOF。&lt;/li&gt;
+&lt;li&gt;调用者需要注意，每次调用后，如果 n&amp;gt;0，应该先处理数据，再考虑 err 是否为 nil。因为上一点已经指出，如果读取到 n&amp;gt;0 个字节后遇到 error，会同时返回 n&amp;gt;0 和 err!=nil，此时就需要先处理数据再考虑 err。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;方法实现和调用需注意&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;如果想要实现该方法，不推荐同时返回 n=0 和 err=nil，除非 len(p)=0&lt;/li&gt;
+&lt;li&gt;如果调用该该方法返回 n=0 和 err=nil，可以认为什么都没有发生，不能认为是读到文件末尾了（end-of-file）&lt;/li&gt;
+&lt;li&gt;实现该方法后，一定不要持有字节数组p （保留下地址做他用）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;writer&#34;&gt;Writer&lt;/h2&gt;
+&lt;p&gt;io.Writer接口定义了 &lt;code&gt;Write&lt;/code&gt; 方法，用于写数据到文件中&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;入参：字节数组 p，会将 p 中的数据写入到文件中&lt;/li&gt;
+&lt;li&gt;返回值：成功写入完成的字节数 n，以及遇到的错误 err&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;Writer&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nf&#34;&gt;Write&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;[]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;n&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;方法功能详解&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;该方法将 p 中的数据写到文件中&lt;/li&gt;
+&lt;li&gt;方法返回成功写入的字节数 n（0 &amp;lt;= n &amp;lt;= len(p)），以及写入过程中遇到的错误 err&lt;/li&gt;
+&lt;li&gt;如果 n&amp;lt;len(p)，方法必须返回 err!=nil&lt;/li&gt;
+&lt;li&gt;方法一定不能修改字节数组 p，即使是临时修改也不被允许&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;方法实现需注意&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;实现该方法后，一定不要持有字节数组p，只是用来读取数据&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;closer&#34;&gt;Closer&lt;/h2&gt;
+&lt;p&gt;io.Closer接口定义了 &lt;code&gt;Close&lt;/code&gt; 方法，该方法用于关闭连接。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;方法实现需注意&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;第一次调用该方法后，再次调用该方法应该产生什么行为，该接口没有定义，依赖实现方法自定义。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;Closer&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nf&#34;&gt;Close&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;seeker&#34;&gt;Seeker&lt;/h2&gt;
+&lt;p&gt;io.Seeker接口定义了 &lt;code&gt;Seek&lt;/code&gt; 方法，该方法用于指定下次读取或者写入时的偏移量&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;入参：计算新偏移量的起始值 whence， 基于whence的偏移量offset&lt;/li&gt;
+&lt;li&gt;返回值：基于 whence 和 offset 计算后新的偏移量值，以及可能产生的错误&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;Seeker&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nf&#34;&gt;Seek&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;offset&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;whence&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;方法功能详解&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;io包中定义了如下三种 whence&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;SeekStart&lt;/span&gt;   &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 基于文件开始位置
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;SeekCurrent&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 基于当前偏移量 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;SeekEnd&lt;/span&gt;     &lt;span class=&#34;p&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 基于文件结束位置
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果计算后新的偏移量，在文件起始位置之前，返回 error!=nil&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;任意正数的偏移量都是合法的，但是对数据源如何进行I/O操作，依赖具体的实现方法&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;组合接口&#34;&gt;组合接口&lt;/h2&gt;
+&lt;p&gt;在go语言中，可以利用接口的组合，来囊括其他接口中的方法，类似于定义了一个父接口，可以包含多个子接口。如果一个 struct 实现了所有子接口的方法，也就相当于实现了父接口。&lt;code&gt;小接口&lt;/code&gt; + &lt;code&gt;接口组合&lt;/code&gt;的方式，很大程度上增加了程序的灵活性，在我们自己业务开发过程中，可以借鉴这种做法。&lt;/p&gt;
+&lt;p&gt;针对上面四个最小粒度的接口，io包定义了如下几种组合接口：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// ReadWriter 是 Read 和 Write 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;ReadWriter&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Reader&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Writer&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// ReadCloser 是 Read 和 Close 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;ReadCloser&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Reader&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Closer&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// WriteCloser 是 Write 和 Close 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;WriteCloser&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Writer&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Closer&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// ReadWriteCloser 是 Read、Write 和 Close 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;ReadWriteCloser&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Reader&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Writer&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Closer&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// ReadSeeker 是 Read 和 Seek 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;ReadSeeker&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Reader&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Seeker&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// WriteSeeker 是 Write 和 Seek 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;WriteSeeker&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Writer&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Seeker&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+
+&lt;span class=&#34;c1&#34;&gt;// ReadWriteSeeker 是 Read、Write 和 Seek 方法的组合
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;type&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;ReadWriteSeeker&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Reader&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Writer&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;Seeker&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本篇文章介绍了 io包 中的四大核心接口：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Reader : 读取文件中的数据到字节数组中&lt;/li&gt;
+&lt;li&gt;Writer : 将字节数组的数据写入到文件中&lt;/li&gt;
+&lt;li&gt;Closer : 用于关闭连接&lt;/li&gt;
+&lt;li&gt;Seeker : 给定 whence 和 offset，计算得出新的offset，用于在特定位置开始读写&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;可以看到 Reader 和 Writer 接口中定义的方法中，都有字节数组p，而底层要操作的文件在方法中都没有体现。Read方法是将文件的数据读入字节数组p，Write 是将字节数组p的数据写入文件，这一点不要记混。&lt;/p&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
+    
+    <item>
+      <title>go语言中 int、float、string相互转换</title>
+      <link>https://lifelmy.github.io/post/2021_12_07_go_type_transfer/</link>
+      <pubDate>Tue, 07 Dec 2021 00:16:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2021_12_07_go_type_transfer/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;Go 开发中经常设计到类型转换，本文就重点记录下 整形、浮点型和字符串类型互相转换的方法。&lt;/p&gt;
+&lt;h2 id=&#34;整形转字符串&#34;&gt;整形转字符串&lt;/h2&gt;
+&lt;h3 id=&#34;fmtsprintf&#34;&gt;fmt.Sprintf&lt;/h3&gt;
+&lt;p&gt;将整数转为字符串，字符串可以是2进制、8进制、10进制或者16进制的表示。&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;格式&lt;/th&gt;
+&lt;th&gt;描述&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;%b&lt;/td&gt;
+&lt;td&gt;整型以二进制方式显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;%o&lt;/td&gt;
+&lt;td&gt;整型以八进制方式显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;%d&lt;/td&gt;
+&lt;td&gt;整型以十进制方式显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;%x&lt;/td&gt;
+&lt;td&gt;整型以十六进制方式显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;%X&lt;/td&gt;
+&lt;td&gt;整型以十六进制、字母大写方式显示&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;
+&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Sprintf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;int32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;111&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;// 111
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Sprintf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;int64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;111&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;// 111
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Sprintf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;111&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;					&lt;span class=&#34;c1&#34;&gt;// 111
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Sprintf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%b&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;						&lt;span class=&#34;c1&#34;&gt;// 1010
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;strconvitoa&#34;&gt;strconv.Itoa&lt;/h3&gt;
+&lt;p&gt;将 int 类型的整数 转为 10进制的字符串表示，底层调用的就是下一个方法： &lt;code&gt;FormatInt(int64(i), 10)&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// Itoa is equivalent to FormatInt(int64(i), 10).
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;Itoa&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;FormatInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;int64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;我们可以把int32、int64 先转为 int，然后再使用该方法转换&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Itoa&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1123&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 1123
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;strconvformatint&#34;&gt;strconv.FormatInt&lt;/h3&gt;
+&lt;p&gt;将整数转为字符串，字符串可选2到36进制的字符串表示。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;入参&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;i: int64类型的整数&lt;/li&gt;
+&lt;li&gt;base: 表示要转为的进制，支持2到36进制，使用最多的就是转为10进制&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;FormatInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;base&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;我们可以把int32、int 先转为 int64，然后再使用该方法转换&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;FormatInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;123&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 123
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;FormatInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;123&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;// 1111011
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;浮点型转字符串&#34;&gt;浮点型转字符串&lt;/h2&gt;
+&lt;h3 id=&#34;fmtsprintf-1&#34;&gt;fmt.Sprintf&lt;/h3&gt;
+&lt;p&gt;支持 float32、float64 转 string&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Sprintf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%f&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;3.12344&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 3.123440
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// 控制输出小数位数
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Sprintf&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;%.2f&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mf&#34;&gt;323.12344&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 323.12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;strconvformatfloat&#34;&gt;strconv.FormatFloat&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;入参&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;f：float64类型的浮点数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;fmt: 转为字符串后，字符串的类型：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;b&amp;rsquo; (-ddddp±ddd)：二进制指数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;e&amp;rsquo; (-d.dddde±dd)：10进制指数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;E&amp;rsquo; (-d.ddddE±dd)：10进制指数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;f&amp;rsquo; (-ddd.dddd)：无指数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;g&amp;rsquo; ：指数很大时使用&amp;rsquo;e&#39;，其他使用 &amp;lsquo;f&amp;rsquo;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;G&amp;rsquo; ：指数很大时使用 &amp;lsquo;E&amp;rsquo;，其他使用&amp;rsquo;f&#39;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;x&amp;rsquo; (-0xd.ddddp±ddd)：十六进制分数和二进制指数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&amp;lsquo;X&amp;rsquo; (-0Xd.ddddP±ddd)：十六进制分数和二进制指数&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;prec：控制经度&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;如果格式标记为 &amp;lsquo;e&amp;rsquo;、&amp;lsquo;E&amp;rsquo;、&amp;lsquo;f&amp;rsquo;、&amp;lsquo;x&amp;rsquo;、&amp;lsquo;X&amp;rsquo;，则 prec 表示小数点后的数字位数&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;如果格式标记为 &amp;lsquo;g&amp;rsquo;，&amp;lsquo;G&amp;rsquo;，则 prec 表示总的数字位数（整数部分+小数部分）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;bitSize：表示f最初的类型。（虽然入参f是float64，有可能是float32转过来的）&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;FormatFloat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;f&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;float64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;prec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;bitSize&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;genericFtoa&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;make&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([]&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;max&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;prec&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;+&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;24&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;prec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;bitSize&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;FormatFloat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;3.1415926&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 3.14159
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;FormatFloat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mf&#34;&gt;3.1415926e5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;sc&#34;&gt;&amp;#39;f&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 314159.26000
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;字符串转整形&#34;&gt;字符串转整形&lt;/h2&gt;
+&lt;h3 id=&#34;strconvatoi&#34;&gt;strconv.Atoi&lt;/h3&gt;
+&lt;p&gt;string 转 int，默认字符串是10进制的，相当于是下个方法 &lt;code&gt;ParseInt(s, 10, 0)&lt;/code&gt; 的 10 进制转化简版&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;Atoi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Atoi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1234&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 1234 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Atoi&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;001&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 1 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;strconvparseint&#34;&gt;strconv.ParseInt&lt;/h3&gt;
+&lt;p&gt;string 转 int32 int64 int，字符串可以是不同进制类型的。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// s: 数字的字符串形式 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// base: 数字字符串的进制，支持0以及2-36。如果该字段为0，会根据字符串的前缀来推断进制，比如&amp;#34;0b&amp;#34;-&amp;gt;2进制、&amp;#34;0或0o&amp;#34;-&amp;gt;8进制、&amp;#34;0x&amp;#34; -&amp;gt; 16进制
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// bitSize: 返回结果的bit大小, 0 -&amp;gt; int, 8 -&amp;gt; int8、16 -&amp;gt; int16、32 -&amp;gt; int32、 64 -&amp;gt; int64。因为可以选择不同的 bitSize，所以统一转为int64，不会丢失精度。可根据需要的bitSize，自行转回去 
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;ParseInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;base&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;bitSize&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;i&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 转int32
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ParseInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;123&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;int32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 123 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// 转int64
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ParseInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;123&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 123 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// 转int
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ParseInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;123&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;    
+&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 123 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;c1&#34;&gt;// 二进制转int64
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ParseInt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0b1001&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;num&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 9 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;字符串转浮点型&#34;&gt;字符串转浮点型&lt;/h2&gt;
+&lt;h3 id=&#34;strconvparsefloat&#34;&gt;strconv.ParseFloat&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// s: 字符串
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// bitSize: 要返回结果的精度
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;// 方法始终返回float64，即使 bitSize=32，返回 float64 也不会丢失精度
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;span class=&#34;kd&#34;&gt;func&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;ParseFloat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;bitSize&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kt&#34;&gt;float64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;bitSize&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;32&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+		&lt;span class=&#34;nx&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;atof32&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+		&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;float64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;f&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;
+	&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+	&lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;atof64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;strong&gt;使用方法&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ParseFloat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;123.213&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;   &lt;span class=&#34;c1&#34;&gt;// 123.213 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+
+&lt;span class=&#34;nx&#34;&gt;strconv&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ParseFloat&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;123.213e3&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;// 123213 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本文介绍了整形、浮点型、字符串的互相转换方法，可以记住 fmt.Sprintf方法，以及 strconv 包，用到时根据 IDE 的方法提示就可以搞定了！&lt;/p&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Shell 脚本之流程控制</title>
@@ -8327,1148 +8924,6 @@ redis 127.0.0.1:6379&amp;gt; hscan &lt;span class=&#34;nb&#34;&gt;hash&lt;/span&
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Redis GEO 命令学习及原理浅析</title>
-      <link>https://lifelmy.github.io/post/redis_geo/</link>
-      <pubDate>Thu, 02 Sep 2021 00:24:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_geo/</guid>
-      
-        <description>&lt;p&gt;关注不迷路，一起 From Zero To Hero !&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-Based Service，LBS）的应用。此类应用都是基于经纬度来查询附近的目标，Redis GEO就适用于此类场景。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtvqwtj3t9j61ee0lyk0b02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;原理介绍&#34;&gt;原理介绍&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;Redis GEO&lt;/code&gt;并不是一种新的数据结构，而是基于&lt;code&gt;Sorted Set&lt;/code&gt;实现的。我们在之前的文章中学过&lt;code&gt;Sorted Set&lt;/code&gt;结构，该结构保存的数据形式是&lt;code&gt;key-score&lt;/code&gt;，即一个元素对应一个分值，默认是根据分值排序的，且可以进行范围查询。但是经纬度是一个数据对，比如（117.25，40.60），那么Redis是如何将经纬度转换成&lt;code&gt;score&lt;/code&gt;值的呢？转换成&lt;code&gt;score&lt;/code&gt;值之后，是如何保证分值相邻的元素距离也相近的呢？这一切就依赖于&lt;code&gt;GeoHash&lt;/code&gt;编码。&lt;/p&gt;
-&lt;p&gt;经度的范围是[-180,180]，纬度的范围是[-90,90]，当我们对经纬度进行编码时，先对经度和纬度分别进行GeoHash编码，然后再合并为一个编码值。下面我们就来介绍GeoHash的编码方法。&lt;/p&gt;
-&lt;p&gt;对于经度或纬度来说，GeoHash会将其编码为一个N为的二进制值，其实就是通过N次的分区得到的，N可以自定义。下面是具体的逻辑：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;第一次分区：我们把经度范围[-180,180]分为两个区间[-180,0) 和[0,180]，简称为左右区间。看当前的经度值落在哪个区间中，如果在左区间，记为一次0，否则记为1，这样我们就得到一位编码值了。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;第二次分区：假设第一次落在了[0,180]区间内，我们再把该区间分为两个区间[0,90) 和[90,180]，然后再根据落在左右区间，得到一个0或者1的编码值。&lt;/p&gt;
-&lt;p&gt;&amp;hellip;&amp;hellip;&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;重复N次之后，我们就得到了N个编码值。纬度也是一样的逻辑，可以得到N个编码值。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;举个具体的例子，给定经纬度[120,40]，N=5。&lt;/p&gt;
-&lt;p&gt;经度120：&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;分区次数&lt;/th&gt;
-&lt;th&gt;左区间&lt;/th&gt;
-&lt;th&gt;右区间&lt;/th&gt;
-&lt;th&gt;经度120所在区间&lt;/th&gt;
-&lt;th&gt;编码值&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;td&gt;[-180,0)&lt;/td&gt;
-&lt;td&gt;[0,180]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;[0,90)&lt;/td&gt;
-&lt;td&gt;[90,180]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;3&lt;/td&gt;
-&lt;td&gt;[90,135)&lt;/td&gt;
-&lt;td&gt;[135,180]&lt;/td&gt;
-&lt;td&gt;左&lt;/td&gt;
-&lt;td&gt;0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;[90,112.5)&lt;/td&gt;
-&lt;td&gt;[112.5,135]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;[112.5,123.75)&lt;/td&gt;
-&lt;td&gt;[123.75,135]&lt;/td&gt;
-&lt;td&gt;左&lt;/td&gt;
-&lt;td&gt;0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;纬度40：&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;分区次数&lt;/th&gt;
-&lt;th&gt;左区间&lt;/th&gt;
-&lt;th&gt;右区间&lt;/th&gt;
-&lt;th&gt;经度120所在区间&lt;/th&gt;
-&lt;th&gt;编码值&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;td&gt;[-90,0)&lt;/td&gt;
-&lt;td&gt;[0,90]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;2&lt;/td&gt;
-&lt;td&gt;[0,45)&lt;/td&gt;
-&lt;td&gt;[45,90]&lt;/td&gt;
-&lt;td&gt;左&lt;/td&gt;
-&lt;td&gt;0&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;3&lt;/td&gt;
-&lt;td&gt;[0,22.5)&lt;/td&gt;
-&lt;td&gt;[22.5,45]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;4&lt;/td&gt;
-&lt;td&gt;[22.5,33.75)&lt;/td&gt;
-&lt;td&gt;[33.75,45]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;5&lt;/td&gt;
-&lt;td&gt;[33.75,39.375)&lt;/td&gt;
-&lt;td&gt;[39.375,45]&lt;/td&gt;
-&lt;td&gt;右&lt;/td&gt;
-&lt;td&gt;1&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;分别得到了经度和纬度的N位编码值后，是如何合并为一个编码值的呢？规则就是：最终编码值的长度是2N，其中偶数位上依次是经度的编码值，奇数位上依次是纬度的编码值（从0开始计数，0为偶数），示意图如下：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtwxmhb9t7j613o0is75502.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;使用了GeoHash编码后，经纬度[120,40]就被编码成了1110011101，这个值就可以作为key对应的score值。&lt;/p&gt;
-&lt;p&gt;从上面的过程可以看出，在划分区间的过程中，我们其实是把整个空间划分成了一个一个的小方格。对经度和纬度分别做一次二分区的话，就会得到四个分区。这 4 个分区对应了 4 个方格，每个方格覆盖了一定范围内的经纬度值，分区越多，每个方格能覆盖到的地理空间就越小，也就越精准。我们把所有方格的编码值映射到一维空间时，相邻方格的 GeoHash 编码值基本也是接近的，如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtwyad1nhuj61eg0u0jtc02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;因此我们使用 Sorted Set 范围查询得到的相近编码值，在实际的地理空间上，也是相邻的方格，这就可以实现 LBS 应用“搜索附近的人或物”的功能了。&lt;/p&gt;
-&lt;p&gt;不过，有的编码值虽然在大小上接近，但实际对应的方格却距离比较远。例如，我们用 4 位来做 GeoHash 编码，把经度区间[-180,180]和纬度区间[-90,90]各分成了 4 个分区，一共 16 个分区，对应了 16 个方格。编码值为 0111 和 1000 的两个方格就离得比较远，如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtwyawvzyyj61db0u0whp02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;所以，为了避免查询不准确问题，我们可以同时查询给定经纬度所在的方格周围的 4 个或 8 个方格。&lt;/p&gt;
-&lt;p&gt;到这里我们就了解了Redis GEO的原理，通过GeoHash编码，将元素对应的经纬度编码，然后将该元素id作为key，编码值作为score值存入Sorted Set中，最后通过Sorted Set的范围查询就可以完成我们最初的需求。下面我们来看下Redis GEO相关的指令吧！&lt;/p&gt;
-&lt;h2 id=&#34;geoadd&#34;&gt;GEOADD&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：对每个要添加的元素，时间复杂度为O(log(N))，N为已存在的元素数量&lt;/p&gt;
-&lt;p&gt;版本变化：6.2.0版本后新增了NX、XX、CH参数&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOADD key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;NX&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;XX&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;CH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; longitude latitude member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;longitude latitude member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;将指定的空间元素（经度、纬度、元素名）添加到key对应的Sorted Set中，GeoHash编码会将经纬度转化为52位比特值&lt;/li&gt;
-&lt;li&gt;该命令的参数格式是固定的，即（longitude latitude member），经度要在纬度之前&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;GEOADD&lt;/code&gt; 坐标是有限的： 非常接近两极的区域是无法被索引的。坐标被 EPSG:900913 / EPSG:3785 / OSGEO:41001 规范限制， 合法值如下：
-&lt;ul&gt;
-&lt;li&gt;有效的经度介于 -180 度至 180 度之间&lt;/li&gt;
-&lt;li&gt;有效的纬度介于 -85.05112878 度至 85.05112878 度之间&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;当给定的经纬度超出上述合法范围时，会返回error&lt;/li&gt;
-&lt;li&gt;Redis GEO 没有删除命令 GEODEL，因为底层使用的是Sorted Set，所以完全可以使用 ZREM 命令删除&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;XX: 只更新已存在的元素，不添加新元素&lt;/li&gt;
-&lt;li&gt;NX: 只添加新元素，不更新已存在元素&lt;/li&gt;
-&lt;li&gt;CH: 改变命令返回值的逻辑（CH是change的缩写）。命令默认返回添加新元素的个数，不包含更新已存在的元素；但是如果使用了CH 参数，命令返回被改变的元素数量，包括 添加新元素的数量 + 已存在元素被更新的数量&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;默认：返回新增元素的数量&lt;/p&gt;
-&lt;p&gt;CH参数：被改变的元素数量&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-
-127.0.0.1:6379&amp;gt; geoadd city NX 116.41667 39.91667 beijing
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;geopos&#34;&gt;GEOPOS&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N)，N为给定的元素个数&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOPOS key member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;返回给定元素对应的经纬度&lt;/li&gt;
-&lt;li&gt;使用GEOADD添加的元素，会被GeoHash转化为52位比特值，因此使用GEOPOS取出值并转为经纬度时，可能与添加的经纬度值有少许差异&lt;/li&gt;
-&lt;li&gt;命令接收多个可变参数，返回值始终是数组形式&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;数组：存在的元素返回经纬度，不存在的元素返回nil&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-
-127.0.0.1:6379&amp;gt; geopos city beijing nanjing
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.41667157411575317&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.91667095273589183&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;nil&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;geodist&#34;&gt;GEODIST&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(log(N))&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEODIST key member1 member2 &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;返回两个给定元素之间的距离&lt;/li&gt;
-&lt;li&gt;距离度量支持如下参数：
-&lt;ul&gt;
-&lt;li&gt;m: 米（默认值）&lt;/li&gt;
-&lt;li&gt;km: 千米&lt;/li&gt;
-&lt;li&gt;ft: 英尺&lt;/li&gt;
-&lt;li&gt;mi：英里&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;在计算距离时会假设地球为完美的球形，在极限情况下最大会造成 0.5% 的误差&lt;/li&gt;
-&lt;li&gt;如果给定的元素中，有元素不存在，返回nil&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;字符串：双精度的距离，以字符串形式返回；如果其中一个元素不存在，返回nil&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.41667 39.91667 beijing  121.43333 34.50000 shanghai 117.20000 39.13333 tianjin
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-
-127.0.0.1:6379&amp;gt; geodist city beijing shanghai
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;748346.9287&amp;#34;&lt;/span&gt;
-127.0.0.1:6379&amp;gt; geodist city beijing shanghai km
-&lt;span class=&#34;s2&#34;&gt;&amp;#34;748.3469&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;geohash&#34;&gt;GEOHASH&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：对每个元素，时间复杂度为O(log(N))，N为已存在的元素数量&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOHASH key member &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;member ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;GEOADD命令会将经纬度编码为52bit，该命令返回GeoHash编码转换后的&lt;code&gt;11&lt;/code&gt;位字符串表示形式，该字符串形式，与 &lt;a href=&#34;https://en.wikipedia.org/wiki/Geohash&#34;&gt;维基百科&lt;/a&gt;描述一致，兼容 &lt;a href=&#34;http://geohash.org/&#34;&gt;geohash.org&lt;/a&gt;规范&lt;/li&gt;
-&lt;li&gt;使用该URL： &lt;a href=&#34;http://geohash.org/&#34;&gt;http://geohash.org/&lt;/a&gt;&lt;!-- raw HTML omitted --&gt;，可以反向解析出命令返回的11位字符串对应的经纬度，例如http://geohash.org/sqdtr74hy01。页面中显示对应的纬度和经度&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtx0l9f0spj61hq0bq0tp02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;数组：返回给定元素,GeoHash编码值对应的字符串表示&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 15.08723 37.50265 &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-
-127.0.0.1:6379&amp;gt; geohash city &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;sqdtr74hvb0&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;根据示例返回的字符串“sqdtr74hvb0”，去页面查询，得到的经纬度和添加的经纬度只有很小差异。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtx0ti5dtlj61aw0bagmj02.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;georadius&#34;&gt;GEORADIUS&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N+log(M))，N为指定范围内元素数量，M为元素数量&lt;/p&gt;
-&lt;p&gt;版本变化：6.2.0版本开始废弃该命令，考虑使用 GEOSEARCH 和 GEOSEARCHSTORE 命令&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEORADIUS key longitude latitude radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHCOORD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHHASH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STORE key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STOREDIST key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;通过给定的经纬度（&lt;code&gt;longitude&lt;/code&gt;,&lt;code&gt;latitude&lt;/code&gt;）和半径（&lt;code&gt;radius&lt;/code&gt;）得到一个圆形区域，返回在区域内的元素&lt;/li&gt;
-&lt;li&gt;简单来说就是查询指定位置一定距离内的元素，例如查询当前位置5公里内的银行&lt;/li&gt;
-&lt;li&gt;半径的单位有如下几种：
-&lt;ul&gt;
-&lt;li&gt;m: 米&lt;/li&gt;
-&lt;li&gt;km: 千米&lt;/li&gt;
-&lt;li&gt;ft: 英尺&lt;/li&gt;
-&lt;li&gt;mi：英里&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;附加信息&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;WITHDIST：返回元素的同时，返回与指定经纬度的距离，距离单位与上述给定单位一致&lt;/li&gt;
-&lt;li&gt;WITHCOORD：同时返回元素的经纬度信息&lt;/li&gt;
-&lt;li&gt;WITHHASH：返回Geohash值&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;命令默认返回无序结果集，可以使用如下两种参数来返回有序数据：&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;ASC：距给定经纬度由近及远的顺序&lt;/li&gt;
-&lt;li&gt;DESC：距给定经纬度由远及近的顺序&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&#34;3&#34;&gt;
-&lt;li&gt;命令默认返回所有符合条件的元素，同时也可以通过 &lt;code&gt;COUNT count&lt;/code&gt; 指定返回元素的数量&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;ANY：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;使用该可选参数，命令在查询时不用得到所有结果，过程中只要得到 &lt;code&gt;count&lt;/code&gt; 个元素，直接可以返回了，因此最终距离最近或最远的元素可能不会被包含在结果集中；&lt;/li&gt;
-&lt;li&gt;不使用该可选参数，会先得到所有结果，然后进行排序，然后再返回前 count 个。因此如果查询的范围较大，即使返回的元素较少，也会影响服务的性能。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&#34;4&#34;&gt;
-&lt;li&gt;命令默认只返回数据，如果想保存结果，可以使用如下两个参数：&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;STORE：保存结果到key对应的Sorted Set中，Store值为GeoHash值&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;STOREDIST：保存结果到key对应的Sorted Set中，Store为距离，单位与给定单位保持一致&lt;/p&gt;
-&lt;p&gt;注：使用以上两个该参数时，不能使用WITHDIST、WITHCOORD、WITHHASH&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;数组：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;未提供可选参数时：返回元素列表，如[&amp;ldquo;New York&amp;rdquo;,&amp;ldquo;Milan&amp;rdquo;,&amp;ldquo;Paris&amp;rdquo;]&lt;/li&gt;
-&lt;li&gt;提供可选参数时：返回数组的数组，每个子数组代表一个元素信息。每个元素信息的第一个值为name，后续的信息先后顺序为：距离、GeoHash编码、经纬度。例如 GEORADIUS Sicily 15 37 200 km WITHCOORD WITHDIST，即使WITHCOORD在前，但是返回结果中也会在后面的位置：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[&amp;#34;Palermo&amp;#34;,&amp;#34;190.4424&amp;#34;,[&amp;#34;13.361389338970184&amp;#34;,&amp;#34;38.115556395496299&amp;#34;]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;53
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;54
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;55
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;56
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;57
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;58
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;59
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;60
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;61
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;62
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;63
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;64
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;65
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;66
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;67
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;68
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;69
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;70
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;71
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;72
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;73
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;74
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;75
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;76
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;77
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;78
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;79
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;80
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;81
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;82
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;83
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;84
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;85
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.408 39.904 beijing
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; geoadd city 116.298 39.959 haidian
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; geoadd city 116.443 39.922 chaoyang
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; geoadd city 121.445 31.213 shanghai
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; geoadd city 121.23 31.07 minhang
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; geoadd city 117.246 39.117 tianjin
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-
-
-&lt;span class=&#34;c1&#34;&gt;# withdist&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# withdist withhash withcoord&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist withhash withcoord
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4069880423958265&lt;/span&gt;
-   4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.29799991846084595&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.95900079609685207&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4069885369376452&lt;/span&gt;
-   4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.40800267457962036&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.90399988166036138&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4069885695970869&lt;/span&gt;
-   4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;116.44300013780593872&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;39.92199893661282317&amp;#34;&lt;/span&gt;
- 
-&lt;span class=&#34;c1&#34;&gt;# DESC&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist DESC
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 提供any参数，会随机返回两个元素，并排序，可以看到结果中没有chaoyang&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist COUNT &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; any desc
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.8046&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 不使用any参数，会返回排序后的前两个元素&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km withdist COUNT &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;  desc
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.7507&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.3898&amp;#34;&lt;/span&gt;
-   
-&lt;span class=&#34;c1&#34;&gt;# 使用store，默认保存地理位置信息GeoHash&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km  store city_res
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-127.0.0.1:6379&amp;gt; zrange city_res &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4069880423958265&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4069885369376452&amp;#34;&lt;/span&gt;
-5&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-6&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4069885695970869&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# storedist，保存距离&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEORADIUS city &lt;span class=&#34;m&#34;&gt;116&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;40&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;100&lt;/span&gt; km  storedist city_res
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;
-127.0.0.1:6379&amp;gt; zrange city_res &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;25.80461312279574&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;36.389782386698734&amp;#34;&lt;/span&gt;
-5&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-6&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.750694603755257&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;georadiusbymember&#34;&gt;GEORADIUSBYMEMBER&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 3.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N+log(M))，N为指定范围内元素数量，M为元素数量&lt;/p&gt;
-&lt;p&gt;版本变化：6.2.0版本开始废弃该命令，考虑使用 GEOSEARCH 和 GEOSEARCHSTORE 命令&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEORADIUSBYMEMBER key member radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHCOORD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHHASH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STORE key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STOREDIST key&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;该命令与&lt;code&gt;GEORADIUS&lt;/code&gt;命令基本一样，唯一不同的是：&lt;code&gt;GEORADIUSBYMEMBER&lt;/code&gt;给定的是Sorted Set中的一个元素，而&lt;code&gt;GEORADIUS&lt;/code&gt;给定的是具体经纬度。通过给定元素，其实就可以得到存储的经纬度，进而进行查询。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; geoadd city 116.408 39.904 beijing 116.298 39.959 haidian 116.443 39.922 chaoyang 121.445 31.213 shanghai 121.23 31.07 minhang 117.246 39.117 tianjin
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt;
-
-127.0.0.1:6379&amp;gt; GEORADIUSBYMEMBER city beijing &lt;span class=&#34;m&#34;&gt;500&lt;/span&gt; km withdist asc
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;beijing&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;0.0000&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;chaoyang&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3.5948&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;haidian&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;11.2004&amp;#34;&lt;/span&gt;
-4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;tianjin&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;113.2837&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;geosearch&#34;&gt;GEOSEARCH&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 6.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N+log(M))&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOSEARCH key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMMEMBER member&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMLONLAT longitude latitude&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYRADIUS radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYBOX width height m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHCOORD&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WITHHASH&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;该命令是 GEORADIUS 和 GEORADIUSBYMEMBER 的整合，同时提供了额外功能。整体来说就是返回给定位置一定区域范围内的元素。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;必选参数&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;查询的中心点通过以下必选参数指定：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;FROMMEMBER：指定元素&lt;/li&gt;
-&lt;li&gt;FROMLONLAT：指定经纬度&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;查询的范围形状通过以下必选参数指定：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;BYRADIUS：圆形区域，通过半径radius指定半径&lt;/li&gt;
-&lt;li&gt;BYBOX：长方形区域，通过 width 和 height 指定宽和长&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;可选参数&lt;/strong&gt;&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;附加信息&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;WITHDIST：返回元素的同时，返回与指定经纬度的距离，距离单位与上述给定单位一致&lt;/li&gt;
-&lt;li&gt;WITHCOORD：同时返回元素的经纬度信息&lt;/li&gt;
-&lt;li&gt;WITHHASH：返回Geohash值&lt;/li&gt;
-&lt;/ul&gt;
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;命令默认返回无序结果集，可以使用如下两种参数来返回有序数据：&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
-&lt;li&gt;ASC：距给定经纬度由近及远的顺序&lt;/li&gt;
-&lt;li&gt;DESC：距给定经纬度由远及近的顺序&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;命令默认返回所有符合条件的元素，同时也可以通过 &lt;code&gt;COUNT count&lt;/code&gt; 指定返回元素的数量&lt;/p&gt;
-&lt;p&gt;ANY：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;使用该可选参数，命令在查询时不用得到所有结果，过程中只要得到 &lt;code&gt;count&lt;/code&gt; 个元素，直接可以返回了，因此最终距离最近或最远的元素可能不会被包含在结果集中；&lt;/li&gt;
-&lt;li&gt;不使用该可选参数，会先得到所有结果，然后进行排序，然后再返回前 count 个。因此如果查询的范围较大，即使返回的元素较少，也会影响服务的性能。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;数组：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;未提供可选参数时：返回元素列表，如[&amp;ldquo;New York&amp;rdquo;,&amp;ldquo;Milan&amp;rdquo;,&amp;ldquo;Paris&amp;rdquo;]&lt;/li&gt;
-&lt;li&gt;提供可选参数时：返回数组的数组，其中每个子数组代表一个元素信息。每个子数组的第一个值为name，后续的信息先后顺序为：距离、GeoHash编码、经纬度。例如 GEORADIUS Sicily 15 37 200 km WITHCOORD WITHDIST，即使WITHCOORD在前，但是返回结果中也会在后面的位置：&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;[&amp;#34;Palermo&amp;#34;,&amp;#34;190.4424&amp;#34;,[&amp;#34;13.361389338970184&amp;#34;,&amp;#34;38.115556395496299&amp;#34;]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; GEOADD Sicily 13.361389 38.115556 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt; 15.087269 37.502669 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOADD Sicily 12.758489 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge1&amp;#34;&lt;/span&gt; 17.241510 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge2&amp;#34;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOSEARCH Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOSEARCH Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYBOX &lt;span class=&#34;m&#34;&gt;400&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;400&lt;/span&gt; km ASC WITHCOORD WITHDIST
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;56.4413&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;15.08726745843887329&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;37.50266842333162032&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;190.4424&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;13.36138933897018433&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.11555639549629859&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge2&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;279.7403&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;17.24151045083999634&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.78813451624225195&amp;#34;&lt;/span&gt;
-4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge1&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;279.7405&amp;#34;&lt;/span&gt;
-   3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;12.7584877610206604&amp;#34;&lt;/span&gt;
-      2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;38.78813451624225195&amp;#34;&lt;/span&gt;
-127.0.0.1:6379&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;geosearchstore&#34;&gt;GEOSEARCHSTORE&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 6.2.0&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N+log(M))&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;GEOSEARCHSTORE destination &lt;span class=&#34;nb&#34;&gt;source&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMMEMBER member&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;FROMLONLAT longitude latitude&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYRADIUS radius m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;BYBOX width height m&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;km&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;ft&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;mi&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ASC&lt;span class=&#34;p&#34;&gt;|&lt;/span&gt;DESC&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;COUNT count &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ANY&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;STOREDIST&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;该命令与&lt;code&gt;GEOSEARCH&lt;/code&gt;命令基本一样，唯一不同的是：&lt;code&gt;GEOSEARCH&lt;/code&gt; 是直接返回结果，而&lt;code&gt;GEOSEARCHSTORE&lt;/code&gt;可以将结果保存到给定的key &lt;code&gt;destination&lt;/code&gt;中。&lt;/li&gt;
-&lt;li&gt;命令默认保存代表的地理位置的GeoHash值，指定 &lt;code&gt;STOREDIST&lt;/code&gt;参数后，保存距离信息。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; GEOADD Sicily 13.361389 38.115556 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt; 15.087269 37.502669 &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOADD Sicily 12.758489 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge1&amp;#34;&lt;/span&gt; 17.241510 38.788135 &lt;span class=&#34;s2&#34;&gt;&amp;#34;edge2&amp;#34;&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 查询，只返回结果&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOSEARCH Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC withhash
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3479447370796909&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; 1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
-   2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;3479099956230698&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 将查询结果保存到 Sicily_des 中，默认保存geohash&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOSEARCHSTORE Sicily_des Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 遍历 Sicily_des&lt;/span&gt;
-127.0.0.1:6379&amp;gt; zrange Sicily_des &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3479099956230698&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;3479447370796909&amp;#34;&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 保存距离信息&lt;/span&gt;
-127.0.0.1:6379&amp;gt; GEOSEARCHSTORE Sicily_des Sicily FROMLONLAT &lt;span class=&#34;m&#34;&gt;15&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;37&lt;/span&gt; BYRADIUS &lt;span class=&#34;m&#34;&gt;200&lt;/span&gt; km ASC  STOREDIST
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt;
-127.0.0.1:6379&amp;gt; zrange Sicily_des &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; -1 withscores
-1&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Catania&amp;#34;&lt;/span&gt;
-2&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;56.441257870158204&amp;#34;&lt;/span&gt;
-3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Palermo&amp;#34;&lt;/span&gt;
-4&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;190.44242984775784&amp;#34;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
-&lt;p&gt;本文介绍了Redis GEO的基本原理和相关指令：&lt;/p&gt;
-&lt;p&gt;原理：GeoHash的编码规则&lt;/p&gt;
-&lt;p&gt;命令：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;GEOADD：添加指定经纬度的元素&lt;/li&gt;
-&lt;li&gt;GEOPOS：查询给定元素对应的经纬度&lt;/li&gt;
-&lt;li&gt;GEODIST：查询两个给定元素之间的距离&lt;/li&gt;
-&lt;li&gt;GEOHASH：返回GeoHash编码后的字符串表示&lt;/li&gt;
-&lt;li&gt;GEORADIUS：返回以指定经纬度为圆心，给定半径范围内的元素&lt;/li&gt;
-&lt;li&gt;GEORADIUSBYMEMBER：返回以指定元素为圆心，给定半径范围内的元素&lt;/li&gt;
-&lt;li&gt;GEOSEARCH：GEORADIUS 和 GEORADIUSBYMEMBER的整合，同时提供了长方形区域范围查询&lt;/li&gt;
-&lt;li&gt;GEORADIUSBYMEMBER：与GEOSEARCH功能一致，提供了保存结果功能&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Redis HyperLogLog 命令学习及原理浅析</title>
-      <link>https://lifelmy.github.io/post/redis_hpll/</link>
-      <pubDate>Fri, 27 Aug 2021 00:14:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/redis_hpll/</guid>
-      
-        <description>&lt;p&gt;关注不迷路，一起 From Zero To Hero !&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统计数量，即统计一个集合中不重复的元素个数。在数学上把一个集合不重复元素的个数称为集合的基数（cardinality），这类问题可以称为基数统计问题。问题其实很简单，有很多常规的方法或数据结构去解决，例如：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;集合Set：我们可以将所有元素保存在set中，由于set本身就是去重的，最终set中的元素个数就是最终我们需要的结果值。由于我们在存储真正的数据用于去重，在数据流较小时还可以接受，但是如果数据达到百万级别甚至上亿级别时，会占用大量的内存。假设我们有1亿个不重复的元素，每个数据大小是4字节，那么使用Set至少需要 100000000*4/1024/1024≈400MB，可见内存占用量还是挺大的。&lt;/p&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;Bitmap：在上篇文章中，我们讨论过Bitmap的使用场景，其中就提及过二值场景，统计页面访问或者App访问的场景，也是属于二值场景。如果有1亿个用户，那么我们就需要设置一亿个bit位，用于表示每个用户的状态，那么需要占用的内存为 100000000*1/8/1024/1024≈12M。&lt;/p&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;上述两种方式都是精确的方式，但是占用内存较大。有时候我们并不需要特别精确的数据，比如对于统计页面访问量来说，1亿和一亿100万其实差别不大，这种误差是用户可以接受的。那么有没有什么算法，在可接受误差的范围内使用极少的内存来统计基数呢？答案是肯定有。在大数据计算中，有很多基数统计算法，比如：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Linear Counting（LC）&lt;/li&gt;
-&lt;li&gt;LogLog Counting（LLC）&lt;/li&gt;
-&lt;li&gt;HyperLogLog Counting（HLLC）&lt;/li&gt;
-&lt;li&gt;······&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Linear算法和位图类似，但实际使用的不多，这里不多做介绍了。本文要介绍的Redis HyperLogLog，从名字也可以看出来，Redis实现是基于HyperLogLog Counting（HLLC）算法的，HyperLogLog是LogLog算法的一个改进和优化，后面我们会一起讲解这两个算法，并学习HyperLogLog是如何在LogLog的基础上改进的。&lt;/p&gt;
-&lt;p&gt;Redis HyperLoglog&lt;code&gt;最多&lt;/code&gt;使用&lt;code&gt;12k&lt;/code&gt;内存来进行基数统计，并且误差可以保持在&lt;code&gt;0.81%&lt;/code&gt;左右。接下来我们首先学习相关命令，然后再学习下原理（这种极致的统计存储，相信你和我一样，也十分好奇是怎么实现的）。&lt;/p&gt;
-&lt;h2 id=&#34;pfadd&#34;&gt;PFADD&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.8.9&lt;/p&gt;
-&lt;p&gt;时间复杂度：添加每个元素的时间复杂度为O(1)&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PFADD key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;element &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;element ...&lt;span class=&#34;o&#34;&gt;]]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;该命令将多个元素添加到key对应的HyperLogLog中&lt;/li&gt;
-&lt;li&gt;调用命令后，HyperLogLog 内部结构可能会更新，用于表示不同元素数量（集合的基数）的估计值&lt;/li&gt;
-&lt;li&gt;如果添加元素后基数估计值更新了，那么会返回1；否则返回0&lt;/li&gt;
-&lt;li&gt;如果key不存在，该命令会创建一个空的HyperLogLog结构&lt;/li&gt;
-&lt;li&gt;如果命令只提供了key，没有提供element参数，此时如果key已经存在，不会执行任何操作；否则会创建空的HyperLogLog&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数值：如果估计值被更新，返回1；否则返回0&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 添加元素&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfadd hll a b c d e f g
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfcount hll
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 添加重复元素&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfadd hll a
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 添加新元素&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfadd hll h
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfcount hll
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;8&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;pfcount&#34;&gt;PFCOUNT&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.8.9&lt;/p&gt;
-&lt;p&gt;时间复杂度：对于单个HyperLogLog，复杂度为 O(1)，且具有非常低的平均常数时间。当命令作用于N个HyperLogLog 时，复杂度为 O(N) ， 常数时间也比处理单个HyperLogLog 时要大得多。&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PFCOUNT key &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;key ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;当只指定一个key时，返回HyperLogLog的近似基数；如果key不存在，返回0&lt;/li&gt;
-&lt;li&gt;当指定多个key时，内部通过合并给定的多个HyperLogLog到一个临时的HyperLogLog，以此返回多个HyperLogLog并集的基数&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;整数值：集合基数的近似值&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 添加元素&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfadd hll a b c d e f g
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; pfcount hll
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;pfmerge&#34;&gt;PFMERGE&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;可用版本：&amp;gt;= 2.8.9&lt;/p&gt;
-&lt;p&gt;时间复杂度：O(N)，其中N为给定的key个数，但是常数时间较高&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;PFMERGE destkey sourcekey &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;sourcekey ...&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;将多个 sourcekey 对应的 HyperLogLog 合并（merge）到 destkey 对应的HyperLogLog，合并后的 HyperLogLog 的基数接近于所有输入 HyperLogLog 的并集&lt;/li&gt;
-&lt;li&gt;如果destkey不存在，会创建一个空的HyperLogLog&lt;/li&gt;
-&lt;li&gt;如果destkey已存在，命令会把destkey与所有的sourcekey一起合并，最终destkey对应的基数也包含了自身的数量&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;返回值&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;字符串：“OK”&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;127.0.0.1:6379&amp;gt; PFADD hll1 foo bar zap a
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; PFADD hll2 a b c foo
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-127.0.0.1:6379&amp;gt; PFADD hll3 d
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# a b c d foo bar zap &lt;/span&gt;
-127.0.0.1:6379&amp;gt; PFMERGE hll3 hll1 hll2
-OK
-127.0.0.1:6379&amp;gt;  PFCOUNT hll3
-&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;integer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;原理介绍&#34;&gt;原理介绍&lt;/h2&gt;
-&lt;p&gt;LogLog Counting（LLC）和 HyperLogLog Counting（HLLC）都是基于伯努利实验，我们先来看下什么是伯努利实验。&lt;/p&gt;
-&lt;h3 id=&#34;伯努利实验&#34;&gt;伯努利实验&lt;/h3&gt;
-&lt;p&gt;伯努利试验（Bernoulli experiment）是在同样的条件下重复地、相互独立地进行的一种随机试验，其特点是该随机试验只有两种可能结果：发生或者不发生。我们假设该项试验独立重复地进行了n次，那么就称这一系列重复独立的随机试验为n重伯努利试验，或称为伯努利概型。单个伯努利试验是没有多大意义的，然而，当我们反复进行伯努利试验，去观察这些试验有多少是成功的，多少是失败的，事情就变得有意义了，这些累计记录包含了很多潜在的非常有用的信息。&lt;/p&gt;
-&lt;p&gt;生活中最常见的就是抛硬币了，要么是正面（1），要么是反面（0），概率都为1/2。考虑如下情形：我们一直抛硬币，直到第一次出现正面为止，我们称为一次完整的试验。可能第一次抛就出现了正面，也可能连续抛了4次才出现正面，这都算作完整的试验，我们把一次试验抛硬币的次数记为&lt;em&gt;k&lt;/em&gt;。&lt;/p&gt;
-&lt;p&gt;我们用0表示抛到反面，用1表示抛到正面，假设我们做了&lt;em&gt;N&lt;/em&gt;次伯努利试验，对于第次伯努利试验，所经历的抛硬币次数为$k_i$ 。在这&lt;em&gt;N&lt;/em&gt;次伯努利试验中，最大的次数为$k_{max}$。如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtumusro2tj619y0oa0ts02.jpg&#34; alt=&#34;image-20210826235958224&#34;&gt;&lt;/p&gt;
-&lt;p&gt;那么如果我不告诉你 &lt;em&gt;N&lt;/em&gt; 是多少，只告诉你$k_{max}$，你能否根据$k_{max}$去推算N呢？也就是估算我们一共做了多少次伯努利试验？这种估算在次数较少时误差较大，但是在较大数据量下，有如下结论：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuog2razmj60ga034wea02.jpg&#34; alt=&#34;image-20210827005503166&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;举个栗子&#34;&gt;举个栗子&lt;/h3&gt;
-&lt;p&gt;简单考虑一个抛硬币序列 0001，得到这个序列的概率是多少呢？ ${1/2}^4=1/16$，那么我们反推可以得到，得到这个序列，至少需要抛硬币16次才会出现。&lt;/p&gt;
-&lt;p&gt;我们再举个例子：&lt;/p&gt;
-&lt;p&gt;（1）第1次伯努利试验，抛了2次才出现正面，$k_1=2$&lt;/p&gt;
-&lt;p&gt;（2）第2次伯努利试验，抛了3次才出现正面，$k_2=3$&lt;/p&gt;
-&lt;p&gt;（3）第3次伯努利试验，抛了2次才出现正面，$k_3=2$&lt;/p&gt;
-&lt;p&gt;（4）第4次伯努利试验，抛了1次才出现正面，$k_4=1$&lt;/p&gt;
-&lt;p&gt;因此4次实验中，$k_{max}=3$，最终我们根据$k_{max}$推断，一共做了 $2^3=8$ 次实验。这种估算在数据量较少时存在误差，但是在数据量较大时误差较小，毕竟是根据概率统计得出来的结论，有理论支持。&lt;/p&gt;
-&lt;p&gt;回到字符串上来，如果给定一批字符串，然后我们取hash值后，得到的就是01字符串，类似上面的抛硬币序列，我们从右往左找到第一个1的位置，作为$k_i$ ：&lt;/p&gt;
-&lt;p&gt;（1）011001100110011001100110，$k_1=2$&lt;/p&gt;
-&lt;p&gt;（2）010001000100010001000100，$k_2=3$&lt;/p&gt;
-&lt;p&gt;（3）011001100110011001100110，$k_3=2$&lt;/p&gt;
-&lt;p&gt;（4）010101010101010101010101，$k_4=1$&lt;/p&gt;
-&lt;p&gt;接收到这些字符串后，我们不保存字符串原值，只是更新$k_{max}$的值，最终$k_{max}=3$，我们就推断出用户一共添加了8个字符串。&lt;/p&gt;
-&lt;h3 id=&#34;分桶思想减小误差&#34;&gt;分桶思想减小误差&lt;/h3&gt;
-&lt;p&gt;我们在做实验的时候都知道，一次实验可能有误差，但是多次实验取平均值就可以减少误差。对于抛硬币来说，我们可以重复N次实验，然后得到N个$k_{max}$ ， 然后取平均值计算。但是和抛硬币不同，抛硬币我们每一轮的结果都是随机的，所以可以取平均减小误差，但是集合中的数据通过哈希计算得到的值是固定的，无论你计算多少轮，结果也都不会改变。那么对于集合基数的估计，如何去减小误差呢？&lt;/p&gt;
-&lt;p&gt;我们只能够从数据本身入手。一种思路就是我们把数据平均分成多份，对每一份数据进行估算，然后多份数据来进行求平均减小误差。这其实就是分桶的思想，假设数据经过处理，得到了一个32bit的二进制串，我们用低10位来表示分桶=的位置（10位最多有1024个桶），然后高22位用于模拟伯努利过程，每个桶只需要保存当前出现过的最大的 $k_{max}$ 。整个过程如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuofaaprlj61qo0u00ux02.jpg&#34; alt=&#34;image-20210827005417945&#34;&gt;&lt;/p&gt;
-&lt;p&gt;最后我们得到1024个桶的 $k_{max}$  值，我们可以进行取平均并估算集合的基数值。&lt;/p&gt;
-&lt;h3 id=&#34;loglog-counting算法&#34;&gt;LogLog Counting算法&lt;/h3&gt;
-&lt;p&gt;LogLog Counting算法在分桶后，对这 m 个桶的 $k_{max}$ 值做一个算数平均数：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuoa4p9kej60ou044t8m02.jpg&#34; alt=&#34;image-20210827004920631&#34;&gt;&lt;/p&gt;
-&lt;p&gt;基于 $\overline{R}$ 计算每个桶的基数，最后乘以桶数 &lt;em&gt;m&lt;/em&gt; 和偏差修正因子 c  ，就得到了整个集合的基数值：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuo9ueattj60pc04ejra02.jpg&#34; alt=&#34;image-20210827004904349&#34;&gt;&lt;/p&gt;
-&lt;p&gt;可以看出算法的计算并不复杂。那么LLC算法占用多少空间呢？回到上面分桶的例子，我们有1024个桶，高22位去模拟伯努利试验，$k_{max}$ 的最大值也只能是22，因此每个桶只需要5bit就能保存，总共占用空间只需要 1024 * 5bit= 640B 。&lt;/p&gt;
-&lt;h3 id=&#34;hyperloglog-counting-算法&#34;&gt;HyperLogLog Counting 算法&lt;/h3&gt;
-&lt;p&gt;前面的LogLog算法中我们是使用的是平均数来将每个桶的结果汇总起来，但是平均数有一个广为人知的缺点，就是容易受到大的数值的影响，一个常见的例子是，假如我的工资是1000元一个月，我老板的工资是100000元一个月，那么我和老板的平均工资就是(100000 + 1000)/2，即50500元，显然这离我的工资相差甚远，我肯定不服这个平均工资。 用调和平均数就可以解决这一问题，调和平均数的结果会倾向于集合中比较小的数，$x_1$ 到 $x_m$的调和平均数的公式如下：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuo8yltnmj30xm04mjrd.jpg&#34; alt=&#34;image-20210827004813451&#34;&gt;&lt;/p&gt;
-&lt;p&gt;那么对应上面的LogLog公式，HyperLogLog最终的公式为：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuo81acbjj60yq050gll02.jpg&#34; alt=&#34;image-20210827004719775&#34;&gt;&lt;/p&gt;
-&lt;h3 id=&#34;redis实现&#34;&gt;Redis实现&lt;/h3&gt;
-&lt;p&gt;在Redis中，添加到 &lt;code&gt;HLL&lt;/code&gt; 中的value值会被Hash函数计算得到一个 64bit 的值，低14位用于分桶，所以桶数为 $m=2^{14}=16384$ 个，高50位用于伯努利试验，需要6bit来存储 ($2^6=64&amp;gt;50$)。所以在Redis中，HLL仅用空间 16384 * 6bit = 12KB ，就可以统计多达 $2^{64}$ 个数。&lt;/p&gt;
-&lt;p&gt;算法的实现本身并不复杂，但是Redis还是对其内存占用作了一些优化。我们可以看出，无论基数多大，桶数都是16384个，所占用的内存都是12KB，当基数比较小时，还是会造成一些空间浪费。所以Redis采用稀疏存储结构和密集存储结构两种方式。&lt;/p&gt;
-&lt;h4 id=&#34;密集存储结构&#34;&gt;密集存储结构&lt;/h4&gt;
-&lt;p&gt;密集存储结构类似于位图，是一个大小固定为12KB的数组，每6bit表示一个桶，存储该桶的$k_{max}$值，共计16384个桶，对每个桶的读写操作时，都需要一定的位运算，定位到桶的那6个比特并进行读写。密集存储结构如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuobfqpowj61ii0u0dig02.jpg&#34; alt=&#34;image-20210827005035494&#34;&gt;&lt;/p&gt;
-&lt;h4 id=&#34;稀疏存储结构&#34;&gt;稀疏存储结构&lt;/h4&gt;
-&lt;p&gt;稀疏存储结构并不真的使用12KB的数组来表示16384个桶，而是使用特殊的字节结构来表达，如下图所示：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuoc8q15zj61ys0qagnf02.jpg&#34; alt=&#34;image-20210827005122167&#34;&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;ZERO：占用1个字节，表示连续多少个桶的计数都是0。前2位固定是00，后6位表示有多少个桶，最大为64&lt;/li&gt;
-&lt;li&gt;XZERO：占用2个字节，表示连续多少个桶的计数都是0。前2位固定是01，后14位表示有多少个桶，最大为16384&lt;/li&gt;
-&lt;li&gt;VAL：占用1个字节，表示连续多少个桶的计数为多少。前1位固定是1，接下来5位表示计数的值是多少，所以最大是32。最后2位表示连续多少个桶&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuoctff6oj61mq0l4dhx02.jpg&#34; alt=&#34;image-20210827005155548&#34;&gt;&lt;/p&gt;
-&lt;p&gt;所以，一个初始状态的 HyperLogLog 对象只需要2 字节，也就是一个 XZERO 来存储其数据，而不需要消耗12K 内存。当 HyperLogLog 插入了少数元素时，可以只使用少量的 XZERO、VAL 和 ZERO 进行表示，如下图所示。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gtuod6qlqmj61ao0u0jus02.jpg&#34; alt=&#34;image-20210827005216323&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Redis从稀疏存储转换到密集存储的条件是：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;任意一个计数值从 32 变成 33，因为 VAL 指令已经无法容纳，它能表示的计数值最大为 32&lt;/li&gt;
-&lt;li&gt;稀疏存储占用的总字节数超过 3000 字节，这个阈值可以通过 hll_sparse_max_bytes 参数进行调整。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
-&lt;p&gt;本文介绍了HyperLogLog的相关命令以及基本原理，命令包括：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;PFADD：添加元素&lt;/li&gt;
-&lt;li&gt;PFCOUNT：查询基数&lt;/li&gt;
-&lt;li&gt;PFMERGE：合并多个HyperLogLog&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;相关原理：伯努利实验、分桶优化、Redis实现&lt;/p&gt;
-&lt;p&gt;同时给大家推荐一个网站，可以可视化的看到HyperLogLog的变化过程： &lt;a href=&#34;http://content.research.neustar.biz/blog/hll.html&#34;&gt;HyperLogLog 工具网址&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;h2 id=&#34;参考文档&#34;&gt;参考文档&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://dqyuan.top/2018/08/22/hyperloglog.html&#34;&gt;http://dqyuan.top/2018/08/22/hyperloglog.html&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.modb.pro/db/43389&#34;&gt;https://www.modb.pro/db/43389&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://juejin.cn/post/6844903869965664264#heading-4&#34;&gt;https://juejin.cn/post/6844903869965664264#heading-4&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.zhihu.com/question/53416615&#34;&gt;https://www.zhihu.com/question/53416615&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
       
     </item>
