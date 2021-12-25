@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Go语言 io包核心接口详解 - lifelmy的博客</title>
+  <title>Go语言 io包基本接口详解 - lifelmy的博客</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -35,7 +35,7 @@
 <meta name="generator" content="Hugo 0.84.0" />
 
 
-<link rel="canonical" href="https://lifelmy.github.io/post/2021_12_14_go_io_core/" />
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_12_22_io_2_basic/" />
 
 
 
@@ -59,19 +59,19 @@
 
 
 
-<meta property="og:title" content="Go语言 io包核心接口详解" />
+<meta property="og:title" content="Go语言 io包基本接口详解" />
 <meta property="og:description" content="前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lifelmy.github.io/post/2021_12_14_go_io_core/" /><meta property="article:section" content="post" />
-<meta property="article:published_time" content="2021-12-14T23:16:23&#43;08:00" />
-<meta property="article:modified_time" content="2021-12-14T23:16:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_12_22_io_2_basic/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-12-22T09:30:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-12-22T09:30:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
 
-<meta itemprop="name" content="Go语言 io包核心接口详解">
-<meta itemprop="description" content="前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现"><meta itemprop="datePublished" content="2021-12-14T23:16:23&#43;08:00" />
-<meta itemprop="dateModified" content="2021-12-14T23:16:23&#43;08:00" />
-<meta itemprop="wordCount" content="1999">
+<meta itemprop="name" content="Go语言 io包基本接口详解">
+<meta itemprop="description" content="前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现"><meta itemprop="datePublished" content="2021-12-22T09:30:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-12-22T09:30:23&#43;08:00" />
+<meta itemprop="wordCount" content="2309">
 <meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content="Go语言 io包核心接口详解"/>
+<meta name="twitter:title" content="Go语言 io包基本接口详解"/>
 <meta name="twitter:description" content="前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现"/>
 
 <!--[if lte IE 9]>
@@ -295,18 +295,18 @@
           <article class="post bg-white">
     
     <header class="post-header">
-      <h1 class="post-title">Go语言 io包核心接口详解</h1>
+      <h1 class="post-title">Go语言 io包基本接口详解</h1>
       
       <div class="post-meta">
-        <time datetime="2021-12-14" class="post-time">
-          2021-12-14
+        <time datetime="2021-12-22" class="post-time">
+          2021-12-22
         </time>
         <div class="post-category">
             <a href="https://lifelmy.github.io/categories/go/"> Go </a>
             
           </div>
-        <span class="more-meta"> 约 1999 字 </span>
-          <span class="more-meta"> 预计阅读 4 分钟 </span>
+        <span class="more-meta"> 约 2309 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
 
         
         
@@ -328,11 +328,16 @@
     <nav id="TableOfContents">
   <ul>
     <li><a href="#前言">前言</a></li>
-    <li><a href="#reader">Reader</a></li>
-    <li><a href="#writer">Writer</a></li>
-    <li><a href="#closer">Closer</a></li>
-    <li><a href="#seeker">Seeker</a></li>
-    <li><a href="#组合接口">组合接口</a></li>
+    <li><a href="#readerfrom">ReaderFrom</a></li>
+    <li><a href="#writerto">WriterTo</a></li>
+    <li><a href="#readerat">ReaderAt</a></li>
+    <li><a href="#writeat">WriteAt</a></li>
+    <li><a href="#bytereader">ByteReader</a></li>
+    <li><a href="#bytescanner">ByteScanner</a></li>
+    <li><a href="#bytewriter">ByteWriter</a></li>
+    <li><a href="#runereader">RuneReader</a></li>
+    <li><a href="#runescanner">RuneScanner</a></li>
+    <li><a href="#stringwriter">StringWriter</a></li>
     <li><a href="#总结">总结</a></li>
     <li><a href="#更多">更多</a></li>
   </ul>
@@ -344,12 +349,13 @@
     <div class="post-content">
       <h2 id="前言">前言</h2>
 <p><code>IO</code> 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现相应的方法，提供更加丰富的功能。</p>
-<p><code>Go</code> 语言提倡<code>小接口</code> + <code>接口组合</code>的方式，来扩展程序的行为以及增加程序的灵活性。io代码包恰恰就可以作为这样的一个标杆，它可以成为我们运用这种技巧时的一个参考标准。io包中包含了大量接口，本篇文章我们就先来学习四个核心接口以及对应的接口组合。</p>
-<h2 id="reader">Reader</h2>
-<p>io.Reader接口定义了 <code>Read</code> 方法，用于读取数据到字节数组中：</p>
+<p><code>Go</code> 语言提倡<code>小接口</code> + <code>接口组合</code>的方式，来扩展程序的行为以及增加程序的灵活性。io代码包恰恰就可以作为这样的一个标杆，它可以成为我们运用这种技巧时的一个参考标准。</p>
+<p><a href="http://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;mid=2247484833&amp;idx=1&amp;sn=131de4fb02ed7291c18f790c89297b67&amp;chksm=fe50ceeec92747f88cfa292939f679e21d355ab5241e6ef08cec865b5bec7a90bbea58cafaba&amp;scene=21#wechat_redirect">上一篇文章</a>，我们学习了io包中的四个核心接口，本篇文章我们来学习下多个基本接口！</p>
+<h2 id="readerfrom">ReaderFrom</h2>
+<p>io.ReaderFrom 接口定义了 <code>ReadFrom</code> 方法，用于从一个 Reader 中读取数据</p>
 <ul>
-<li>入参：字节数组 p，会将数据读入到 p 中</li>
-<li>返回值：本次读取的字节数 n，以及遇到的错误 err</li>
+<li>入参：Reader r</li>
+<li>返回值：n为读取的字节数，err 为读取过程中遇到的error</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -358,34 +364,21 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">Read</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ReaderFrom</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">ReadFrom</span><span class="p">(</span><span class="nx">r</span> <span class="nx">Reader</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
 </div><p><strong>方法功能详解</strong></p>
 <ol>
-<li>方法读取数据写入到字节数组 p 中，由于 p 是有大小的，所以一次至多读取 len(p) 个字节</li>
-<li>方法返回读取的数据字节数 n(0 &lt;= n &lt;= len(p))，以及读取过程中遇到的 error</li>
-<li>即使一次调用读取到的数据小于 len(p)，也可能会占用整个字节数组 p 作为暂存空间</li>
-<li>如果数据源的数据量小于 len(p) 个字节，方法只会读取当前可用数据，不会等待更多数据的到来</li>
+<li>该方法从 Reader r 中读取数据，直到读到文件末尾（EOF）或者 遇到 其他 error</li>
+<li>返回的 n 就是读取的字节数</li>
 </ol>
-<p><strong>何时返回error</strong></p>
-<ol>
-<li>在成功读取了 n（n&gt;0）个字节后，如果产生了 error 或者 读到文件末尾 （end-of-file），本次调用必须要返回读取的字节数 n，但对于err 的值，可以选择在本次直接返回 err（err!=nil），或者在下次调用的时候再返回 err (n=0, err!=nil)。常见的一个例子就是，读取到n个字节后到达文件末尾（EOF），此时可以返回 err=EOF 或者 err=nil，下次调用返回 n=0,err=EOF。</li>
-<li>调用者需要注意，每次调用后，如果 n&gt;0，应该先处理数据，再考虑 err 是否为 nil。因为上一点已经指出，如果读取到 n&gt;0 个字节后遇到 error，会同时返回 n&gt;0 和 err!=nil，此时就需要先处理数据再考虑 err。</li>
-</ol>
-<p><strong>方法实现和调用需注意</strong></p>
-<ol>
-<li>如果想要实现该方法，不推荐同时返回 n=0 和 err=nil，除非 len(p)=0</li>
-<li>如果调用该该方法返回 n=0 和 err=nil，可以认为什么都没有发生，不能认为是读到文件末尾了（end-of-file）</li>
-<li>实现该方法后，一定不要持有字节数组p （保留下地址做他用）</li>
-</ol>
-<h2 id="writer">Writer</h2>
-<p>io.Writer接口定义了 <code>Write</code> 方法，用于写数据到文件中</p>
+<h2 id="writerto">WriterTo</h2>
+<p>io.WriteTo 接口定义了 <code>WriteTo</code> 方法，用于将数据写入到一个 Writer 中</p>
 <ul>
-<li>入参：字节数组 p，会将 p 中的数据写入到文件中</li>
-<li>返回值：成功写入完成的字节数 n，以及遇到的错误 err</li>
+<li>入参：Writer w</li>
+<li>返回值：n为写入的字节数，err 为写入过程中遇到的 error</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -394,43 +387,60 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Writer</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">WriterTo</span> <span class="kd">interface</span> <span class="p">{</span>
+   <span class="nf">WriteTo</span><span class="p">(</span><span class="nx">w</span> <span class="nx">Writer</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
 </div><p><strong>方法功能详解</strong></p>
 <ol>
-<li>该方法将 p 中的数据写到文件中</li>
-<li>方法返回成功写入的字节数 n（0 &lt;= n &lt;= len(p)），以及写入过程中遇到的错误 err</li>
-<li>如果 n&lt;len(p)，方法必须返回 err!=nil</li>
-<li>方法一定不能修改字节数组 p，即使是临时修改也不被允许</li>
+<li>该方法将数据写入到 w 中，直到没有数据可写或者遇到error</li>
+<li>返回的 n 就是写入的字节数</li>
+</ol>
+<h2 id="readerat">ReaderAt</h2>
+<p>io.ReaderAt 接口定义了 <code>ReadAt</code> 方法，用于从指定位置读取数据</p>
+<ul>
+<li>入参：读取的起始位置 off，读取后写入字节数组 p</li>
+<li>返回值：n 为成功读取的字节数，err为读取过程中遇到的 error</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ReaderAt</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">ReadAt</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">off</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>方法功能详解</strong></p>
+<ol>
+<li>方法从指定的偏移量位置 off 开始读取指定的数据，然后至多读取 len(p) 个字节，写入字节数组 p</li>
+<li>返回成功读取的字节量 n，以及遇到的 error</li>
+<li>当该方法返回的 n &lt; len(p) 时，即读取的数据没有将字节数组p填充满，返回的 err != nil，在这一点上，ReadAt方法要比 Read方法严格（Read方法规定遇到n&lt;len(p)，本次调用可以返回 err=nil，然后在下一次调用时返回err!=nil ）</li>
+<li>即使方法返回的 n &lt; len(p)，也可能会占用整个字节数组 p 作为暂存空间</li>
+<li>如果数据可用，但是不够 len（p）个字节，ReadAt 方法会阻塞，直到所有数据可用 或者 遇到 error，这一点也与 Read 方法不同</li>
+<li>如果方法返回的 n=len(p)，并且此时正好读取到了文件末尾，ReadAt 可以返回 err = EOF 或者 err = nil。如果返回的 err 为 nil的话，下次就一定返回 EOF 了。</li>
+</ol>
+<p><strong>不能影响seek offset</strong></p>
+<ol>
+<li>如果 ReadAt 方法的入参 off 是由 seek 方法计算得到的，ReadAt 方法不能修改 off 的值</li>
+</ol>
+<p><strong>可并行</strong></p>
+<ol>
+<li>对于同一个数据源，可以并行调用 ReadAt 方法读取数据</li>
 </ol>
 <p><strong>方法实现需注意</strong></p>
 <ol>
-<li>实现该方法后，一定不要持有字节数组p，只是用来读取数据</li>
+<li>实现该方法后，一定不要持有字节数组p（不能保存 p 的地址，用于其他地方）</li>
 </ol>
-<h2 id="closer">Closer</h2>
-<p>io.Closer接口定义了 <code>Close</code> 方法，该方法用于关闭连接。</p>
-<p><strong>方法实现需注意</strong></p>
-<p>第一次调用该方法后，再次调用该方法应该产生什么行为，该接口没有定义，依赖实现方法自定义。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Closer</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">Close</span><span class="p">()</span> <span class="kt">error</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h2 id="seeker">Seeker</h2>
-<p>io.Seeker接口定义了 <code>Seek</code> 方法，该方法用于指定下次读取或者写入时的偏移量</p>
+<h2 id="writeat">WriteAt</h2>
+<p>io.WriterAt 接口定义了 <code>WriteAt</code> 方法，将字节数组 p 中的数据，从文件 off 偏移量开始写入到文件中</p>
 <ul>
-<li>入参：计算新偏移量的起始值 whence， 基于whence的偏移量offset</li>
-<li>返回值：基于 whence 和 offset 计算后新的偏移量值，以及可能产生的错误</li>
+<li>入参：字节数组p，文件开始写处的偏移量 off</li>
+<li>返回值：成功写入的字节数 n，写入过程中遇到的error err</li>
 </ul>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -439,143 +449,146 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Seeker</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nf">Seek</span><span class="p">(</span><span class="nx">offset</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">whence</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">WriterAt</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">WriteAt</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">off</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
 </div><p><strong>方法功能详解</strong></p>
 <ol>
-<li>
-<p>io包中定义了如下三种 whence</p>
+<li>方法将 字节数组 p 中的 len(p) 个字节，从文件 off 位置开始，写入到文件中。</li>
+<li>方法返回成功写入的字节个数n (0 &lt;= n &lt;= len(p)) ，以及是否遇到 error</li>
+<li>如果 n &lt; len(p)，方法必须返回 err!=nil</li>
+</ol>
+<p><strong>不能影响offset</strong></p>
+<ol>
+<li>如果 WriteAt 方法的入参 off 是由 seek 方法计算得到的，ReadAt 方法不能修改 off 的值</li>
+</ol>
+<p><strong>可并行</strong></p>
+<ol>
+<li>对于同一个数据源，如果写入的范围不重叠，可以并行调用 WriteAt 方法写数据</li>
+</ol>
+<p><strong>方法实现需注意</strong></p>
+<ol>
+<li>实现该方法后，一定不要持有字节数组p（不能保存 p 的地址，用于其他地方）</li>
+</ol>
+<h2 id="bytereader">ByteReader</h2>
+<p>io.ByteReader 接口定义了 <code>ReadByte</code> 方法，用于读取一个字节</p>
+<ul>
+<li>返回值：读取的一个字节，以及可能遇到的 error</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ByteReader</span> <span class="kd">interface</span> <span class="p">{</span>
+   <span class="nf">ReadByte</span><span class="p">()</span> <span class="p">(</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>方法功能详解</strong></p>
+<ol>
+<li>方法读取底层数据流的下一个字节，然后返回该字节，同时返回对应的error</li>
+<li>如果方法读取过程中遇到error，不会消费底层数据的一个字节，相当于当前读取的位置不会变</li>
+</ol>
+<h2 id="bytescanner">ByteScanner</h2>
+<p>ByteScanner 是 <code>ByteReader</code> 接口 和 <code>UnreadByte</code> 方法的组合，因此该组合接口包含了两个方法，一个 ReadByte，一个 UnreadByte。从名字我们也可以看出来，ReadByte 是读取一个字节，UnreadByte 是回退一个字节。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
 </span><span class="lnt">3
 </span><span class="lnt">4
-</span><span class="lnt">5
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">const</span> <span class="p">(</span>
-	<span class="nx">SeekStart</span>   <span class="p">=</span> <span class="mi">0</span> <span class="c1">// 基于文件开始位置
-</span><span class="c1"></span>	<span class="nx">SeekCurrent</span> <span class="p">=</span> <span class="mi">1</span> <span class="c1">// 基于当前偏移量 
-</span><span class="c1"></span>	<span class="nx">SeekEnd</span>     <span class="p">=</span> <span class="mi">2</span> <span class="c1">// 基于文件结束位置
-</span><span class="c1"></span><span class="p">)</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ByteScanner</span> <span class="kd">interface</span> <span class="p">{</span>
+   <span class="nx">ByteReader</span>
+   <span class="nf">UnreadByte</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div></li>
-<li>
-<p>如果计算后新的偏移量，在文件起始位置之前，返回 error!=nil</p>
-</li>
-<li>
-<p>任意正数的偏移量都是合法的，但是对数据源如何进行I/O操作，依赖具体的实现方法</p>
-</li>
+</div><p><strong>方法功能详解</strong></p>
+<ol>
+<li>在调用一次 ReadByte 之后，如果调用一次 UnreadByte，那么下次再调用 ReadByte 方法得到的值，和第一次调用 ReadByte 应该一样，也就是回退了一个位置。</li>
+<li>如果连续两次调用 UnreadByte，中间没有调用 ReadByte，可能会产生 error (这里说的可能，比如从文件开始读取一次，然后两次回退，那么回退到的位置可能就不合法了，具体还是依赖实现方法定义)</li>
 </ol>
-<h2 id="组合接口">组合接口</h2>
-<p>在go语言中，可以利用接口的组合，来囊括其他接口中的方法，类似于定义了一个父接口，可以包含多个子接口。如果一个 struct 实现了所有子接口的方法，也就相当于实现了父接口。<code>小接口</code> + <code>接口组合</code>的方式，很大程度上增加了程序的灵活性，在我们自己业务开发过程中，可以借鉴这种做法。</p>
-<p>针对上面四个最小粒度的接口，io包定义了如下几种组合接口：</p>
+<h2 id="bytewriter">ByteWriter</h2>
+<p>io.ByteWriter 接口定义了 <code>WriteByte</code> 方法，用于向底层文件写入一个字节，然后返回写入过程产生的 error</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// ReadWriter 是 Read 和 Write 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ReadWriter</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Reader</span>
-	<span class="nx">Writer</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">ByteWriter</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">WriteByte</span><span class="p">(</span><span class="nx">c</span> <span class="kt">byte</span><span class="p">)</span> <span class="kt">error</span>
 <span class="p">}</span>
-
-<span class="c1">// ReadCloser 是 Read 和 Close 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ReadCloser</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Reader</span>
-	<span class="nx">Closer</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="runereader">RuneReader</h2>
+<p>io.RuneReader 接口定义了 <code>ReadRune</code> 方法，读取一个 UTF-8 字符。UTF-8 是一种变长编码规则，从 1 到 4 个字节不等，比如一个字母占一个字节，中文每个字符占用 3 个字节。ReadRune 每次读出的是一个完整的编码字符，比如读汉字，每次就会读出一个汉字。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RuneReader</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nf">ReadRune</span><span class="p">()</span> <span class="p">(</span><span class="nx">r</span> <span class="kt">rune</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span>
-
-<span class="c1">// WriteCloser 是 Write 和 Close 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">WriteCloser</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Writer</span>
-	<span class="nx">Closer</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="runescanner">RuneScanner</h2>
+<p>类似 ByteScanner，<code>RuneScanner</code> 也是个组合接口，提供了 UnreadRune 方法，可以回退一个 rune。如果连续两次调用 UnreadRune 方法，可能会产生error。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">RuneScanner</span> <span class="kd">interface</span> <span class="p">{</span>
+	<span class="nx">RuneReader</span>
+	<span class="nf">UnreadRune</span><span class="p">()</span> <span class="kt">error</span>
 <span class="p">}</span>
-
-<span class="c1">// ReadWriteCloser 是 Read、Write 和 Close 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ReadWriteCloser</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Reader</span>
-	<span class="nx">Writer</span>
-	<span class="nx">Closer</span>
-<span class="p">}</span>
-
-<span class="c1">// ReadSeeker 是 Read 和 Seek 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ReadSeeker</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Reader</span>
-	<span class="nx">Seeker</span>
-<span class="p">}</span>
-
-<span class="c1">// WriteSeeker 是 Write 和 Seek 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">WriteSeeker</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Writer</span>
-	<span class="nx">Seeker</span>
-<span class="p">}</span>
-
-<span class="c1">// ReadWriteSeeker 是 Read、Write 和 Seek 方法的组合
-</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ReadWriteSeeker</span> <span class="kd">interface</span> <span class="p">{</span>
-	<span class="nx">Reader</span>
-	<span class="nx">Writer</span>
-	<span class="nx">Seeker</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="stringwriter">StringWriter</h2>
+<p>io.StringWriter 接口定义了 <code>WriteString</code> 方法，用于将字符串 s 写入底层的数据流中，返回写入成功的字节数 n，以及可能产生的 error</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// StringWriter is the interface that wraps the WriteString method.
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">StringWriter</span> <span class="kd">interface</span> <span class="p">{</span>
+   <span class="nf">WriteString</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
 </div><h2 id="总结">总结</h2>
-<p>本篇文章介绍了 io包 中的四大核心接口：</p>
+<p>本篇文章介绍了 io包 中的十个基本接口及对应的方法：</p>
 <ul>
-<li>Reader : 读取文件中的数据到字节数组中</li>
-<li>Writer : 将字节数组的数据写入到文件中</li>
-<li>Closer : 用于关闭连接</li>
-<li>Seeker : 给定 whence 和 offset，计算得出新的offset，用于在特定位置开始读写</li>
+<li>ReaderFrom: 定义了 ReadFrom 方法，从 Reader 中读取数据</li>
+<li>WriterTo: 定义了 WriteTo 方法，向 Writer 中写入数据</li>
+<li>ReaderAt: 定义了 ReadAt 方法，从指定位置读取数据</li>
+<li>WriterAt: 定义了 WriteAt 方法，从指定位置写入数据</li>
+<li>ByteReader: 定义了 ReadByte 方法，读取一个字节</li>
+<li>ByteScanner: 组合接口，除了ReadByte 方法，定义了 UnreadByte 方法，用于回退一个字节</li>
+<li>ByteWriter： 定义了 WriteByte 方法，向文件写入一个字节</li>
+<li>RuneReader: 定义了 ReadRune 方法，读取一个 UTF-8 字符</li>
+<li>RuneScanner: 组合接口，除了 ReadRune 方法，定义了 UnreadRune 方法，用于回退一个 rune</li>
+<li>StringWriter: 定义了 WriteString 方法，用于向文件写入一个字符串</li>
 </ul>
-<p>可以看到 Reader 和 Writer 接口中定义的方法中，都有字节数组p，而底层要操作的文件在方法中都没有体现。Read方法是将文件的数据读入字节数组p，Write 是将字节数组p的数据写入文件，这一点不要记混。</p>
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
@@ -593,7 +606,7 @@
   <p class="copyright-item">
     <span class="item-title">上次更新</span>
     <span class="item-content">
-      2021-12-14
+      2021-12-22
       
     </span>
   </p>
@@ -617,7 +630,7 @@
       
       <nav class="post-nav">
         
-          <a class="prev" href="/post/2021_12_22_io_2_basic/">
+          <a class="prev" href="/post/2021_12_25_go_io_source/">
             
             <i class="iconfont">
               <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -627,12 +640,12 @@
 </svg>
 
             </i>
-            <span class="prev-text nav-default">Go语言 io包基本接口详解</span>
+            <span class="prev-text nav-default">Go语言 io包源码解读</span>
             <span class="prev-text nav-mobile">上一篇</span>
           </a>
         
-          <a class="next" href="/post/2021_12_07_go_type_transfer/">
-            <span class="next-text nav-default">Go语言 int、float、string相互转换</span>
+          <a class="next" href="/post/2021_12_14_go_io_core/">
+            <span class="next-text nav-default">Go语言 io包核心接口详解</span>
             <span class="prev-text nav-mobile">下一篇</span>
             
             <i class="iconfont">
