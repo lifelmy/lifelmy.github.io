@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go语言 strings.Reader源码详解 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 前面三篇文章 Go语言 io包核心接口详解 、 Go语言 io包基本接口详解 、Go语言 io包源码解读，我们学习了Go语言 io 包中的接口和方法，本篇文" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2021_12_28_go_strings_reader/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Go语言 strings.Reader源码详解" />
+<meta property="og:description" content="前言 前面三篇文章 Go语言 io包核心接口详解 、 Go语言 io包基本接口详解 、Go语言 io包源码解读，我们学习了Go语言 io 包中的接口和方法，本篇文" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2021_12_28_go_strings_reader/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2021-12-28T08:30:23&#43;08:00" />
+<meta property="article:modified_time" content="2021-12-28T08:30:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Go语言 strings.Reader源码详解">
+<meta itemprop="description" content="前言 前面三篇文章 Go语言 io包核心接口详解 、 Go语言 io包基本接口详解 、Go语言 io包源码解读，我们学习了Go语言 io 包中的接口和方法，本篇文"><meta itemprop="datePublished" content="2021-12-28T08:30:23&#43;08:00" />
+<meta itemprop="dateModified" content="2021-12-28T08:30:23&#43;08:00" />
+<meta itemprop="wordCount" content="3570">
+<meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言 strings.Reader源码详解"/>
+<meta name="twitter:description" content="前言 前面三篇文章 Go语言 io包核心接口详解 、 Go语言 io包基本接口详解 、Go语言 io包源码解读，我们学习了Go语言 io 包中的接口和方法，本篇文"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go语言 strings.Reader源码详解</h1>
+      
+      <div class="post-meta">
+        <time datetime="2021-12-28" class="post-time">
+          2021-12-28
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 3570 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#定义">定义</a></li>
+    <li><a href="#方法定义">方法定义</a>
+      <ul>
+        <li><a href="#newreader">NewReader</a></li>
+        <li><a href="#len">Len</a></li>
+        <li><a href="#size">Size</a></li>
+        <li><a href="#read">Read</a></li>
+        <li><a href="#readat">ReadAt</a></li>
+        <li><a href="#readbyte">ReadByte</a></li>
+        <li><a href="#unreadbyte">UnreadByte</a></li>
+        <li><a href="#readrune">ReadRune</a></li>
+        <li><a href="#unreadrune">UnreadRune</a></li>
+        <li><a href="#seek">Seek</a></li>
+        <li><a href="#writeto">WriteTo</a></li>
+        <li><a href="#reset">Reset</a></li>
+      </ul>
+    </li>
+    <li><a href="#测试使用">测试使用</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>前面三篇文章 <a href="https://lifelmy.github.io/post/2021_12_14_go_io_core/">Go语言 io包核心接口详解</a> 、 <a href="https://lifelmy.github.io/post/2021_12_22_io_2_basic/">Go语言 io包基本接口详解</a> 、<a href="https://lifelmy.github.io/post/2021_12_25_go_io_source/">Go语言 io包源码解读</a>，我们学习了Go语言 <code>io</code> 包中的接口和方法，本篇文章我们就来学习下具体的实现-<code>strings.Reader</code>。strings.Reader 用于高效的读取字符串，实现了 io.Reader、io.ReaderAt、io.Seeker、io.WriterTo、io.ByteScanner、io.RuneScanner 接口，下面我们就通过阅读源码来学习下底层实现吧！</p>
+<h2 id="定义">定义</h2>
+<ul>
+<li>s: 初始化传入的字符串，后续的操作都是对该字符串的操作</li>
+<li>i: 已读计数，保存下次读取的开始位置，默认是0（第一次读取就是从0开始），读取n个byte后，会相应的加n。</li>
+<li>prevRune: 保存上一个Rune的位置，默认是-1，只有在调用 ReadRune 方法的时候才会增加</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Reader</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">s</span>        <span class="kt">string</span>
+	<span class="nx">i</span>        <span class="kt">int64</span> 
+	<span class="nx">prevRune</span> <span class="kt">int</span>   
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="方法定义">方法定义</h2>
+<h3 id="newreader">NewReader</h3>
+<p>初始化一个 Strings.Reader，传入需要操作的字符串，初始化当前读取位置 i=0，prevRune=-1</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">NewReader</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="o">*</span><span class="nx">Reader</span> <span class="p">{</span> <span class="k">return</span> <span class="o">&amp;</span><span class="nx">Reader</span><span class="p">{</span><span class="nx">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="len">Len</h3>
+<p>Len 方法返回 <code>未读取</code> 部分的长度</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
+	<span class="c1">// 如果当前读取开始位置 i 大于等于 字符串 的长度，说明之前已经读取完了字符串，此时返回0
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span>
+	<span class="p">}</span>
+	<span class="c1">// 返回剩余长度
+</span><span class="c1"></span>	<span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="o">-</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="size">Size</h3>
+<p>Size 方法返回原始字符串的长度，每次调用该方法的返回值都相同，不受其他方法的影响；利用 Size()-Len()，可以计算出已经读取的字节数</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">Size</span><span class="p">()</span> <span class="kt">int64</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="read">Read</h3>
+<p>Read 方法读取字符串到字节切片 b 中，返回读取的字节长度和产生的 error</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Read 方法读取字符串到字节切片 b 中，返回读取的字节长度和产生的 error
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">Read</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// 如果当前读取开始位置，已经大于等于字符串长度，说明已经对字符串读取完毕了，返回 EOF error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 只有在调用 ReadRune 方法的时候才会修改，如果调用其他方法都会设置为默认值
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1">// 调用 copy 方法，从当前位置 i 开始，将字符串 s 中的数据拷贝至字节切片 b 中，返回拷贝的字节数 n
+</span><span class="c1"></span>	<span class="nx">n</span> <span class="p">=</span> <span class="nb">copy</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">:])</span>
+
+	<span class="c1">// 当前读取的位置往后移动 n 个
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">+=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="readat">ReadAt</h3>
+<ul>
+<li>ReadAt 从指定位置 off 开始读取字符串至字节切片 b 中，返回读取到的字节数 n 以及产生的 error</li>
+<li>ReadAt 不会修改已读计数 i，也不会修改 prevRune 值</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadAt</span><span class="p">(</span><span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">off</span> <span class="kt">int64</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 如果传入的 off &lt; 0，是非法偏移量
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">off</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;strings.Reader.ReadAt: negative offset&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 如果传入的 off 大于等于 字符串的长度，那么就没有数据可以读取了，返回 EOF error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">off</span> <span class="o">&gt;=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 其他位置就是合法位置
+</span><span class="c1"></span>	<span class="c1">// 从 off 位置开始，调用 copy 方法，复制数据到字节切片 b 中，返回复制的字节数
+</span><span class="c1"></span>	<span class="nx">n</span> <span class="p">=</span> <span class="nb">copy</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">[</span><span class="nx">off</span><span class="p">:])</span>
+
+	<span class="c1">// 根据 ReaderAt 接口的定义，如果读取的字节长度小于传入字节切片的长度，返回的 err 不能为 nil，需要说明原因
+</span><span class="c1"></span>	<span class="c1">// 如果复制的字节数小于字节切片 b 的长度，说明已经复制到了字符串结尾，不够填充满字节切片b 了，返回 EOF error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="readbyte">ReadByte</h3>
+<p>读取一个字节，返回读取的字节和产生的error</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadByte</span><span class="p">()</span> <span class="p">(</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> 
+	<span class="c1">// 只有在调用 ReadRune 方法的时候才会修改，如果调用其他方法都会设置为默认值
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1">// 如果当前读取开始位置，大于等于字符串长度，说明已经读取完毕了，返回 EOF error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span>
+	<span class="p">}</span>
+	<span class="c1">// 读取当前开始位置的字节，然后将 i+1
+</span><span class="c1"></span>	<span class="nx">b</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">]</span>
+	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="o">++</span>
+	<span class="k">return</span> <span class="nx">b</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="unreadbyte">UnreadByte</h3>
+<p>回退一个字节，将已读计数的值减一</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">UnreadByte</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// 如果当前开始位置 i &lt;= 0，再减一非法了，返回 error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;strings.Reader.UnreadByte: at beginning of string&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 只有在调用 ReadRune 方法的时候才会修改，如果调用其他方法都会设置为默认值
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1">// 回退一个字节
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="o">--</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="readrune">ReadRune</h3>
+<ul>
+<li>ReadRune 作用是读取一个 UTF-8 字符，返回读取的 rune、字节数 以及 产生的 error</li>
+<li>rune 不同于字节，而是一个 UTF-8 字符，比如中文 &ldquo;我&rdquo; 是三个字节，英文字母 &lsquo;a&rsquo; 是一个字节，而两者都可以表示为一个rune（UTF-8 字符）</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadRune</span><span class="p">()</span> <span class="p">(</span><span class="nx">ch</span> <span class="kt">rune</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 如果当前开始位置 i 已经大于等于字符串长度，已经没有数据可以读取，返回 EOF error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">{</span>
+		<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 如果当前位置合法，设置prevRune为当前 i 的位置，然后进行读取。
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">)</span>
+
+	<span class="c1">// 判断当前 i 位置的字节值是否小于utf8.RuneSelf
+</span><span class="c1"></span>  <span class="c1">// 小于表示当前的字节就是一个独立的UTF-8 字符，那么返回这个字节对应的数据即可
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">c</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">];</span> <span class="nx">c</span> <span class="p">&lt;</span> <span class="nx">utf8</span><span class="p">.</span><span class="nx">RuneSelf</span> <span class="p">{</span>
+		<span class="c1">// 本次只读取了一个字节，i+1
+</span><span class="c1"></span>		<span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="o">++</span>
+		<span class="k">return</span> <span class="nb">rune</span><span class="p">(</span><span class="nx">c</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+
+	<span class="c1">// DecodeRuneInString 从字符串指定位置开始，返回从该位置开始的一个完整的 rune，以及对应的字节数
+</span><span class="c1"></span>	<span class="c1">// 从当前 i 位置开始，调用 DecodeRuneInString 方法，并更新 i 值
+</span><span class="c1"></span>	<span class="nx">ch</span><span class="p">,</span> <span class="nx">size</span> <span class="p">=</span> <span class="nx">utf8</span><span class="p">.</span><span class="nf">DecodeRuneInString</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">:])</span>
+	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">+=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">size</span><span class="p">)</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="unreadrune">UnreadRune</h3>
+<ul>
+<li>UnreadRune表示回退一个 rune，，而且只能回退一次</li>
+<li>这个方法只有在运行过 ReadRune 后，且没有运行 Read、ReadByte、UnreadByte、Seek、WriteTo方法时调用才有效(这些方法会将 prevRune 更新为默认值)</li>
+<li>需要注意的是，ReadRune调用后，运行 ReadAt 方法不改变 prevRune 的状态，可以使用 UnreadRune 回退</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">UnreadRune</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+	<span class="c1">// 未操作过字符串，不能回退
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;strings.Reader.UnreadRune: at beginning of string&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c1">// 非法位置，无法回退
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;strings.Reader.UnreadRune: previous operation was not ReadRune&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c1">// 修改已读计数 i 为 prevRune
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="p">=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span><span class="p">)</span>
+
+	<span class="c1">// prevRune 设置为默认值，不能再次回退了
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="seek">Seek</h3>
+<p>Seek 基于 起始位置 whence 和 偏移量 offset，返回新的位置和产生的 error，同时也会修改已读计数 i，设定下一次读取的起始位置</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">Seek</span><span class="p">(</span><span class="nx">offset</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">whence</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="kd">var</span> <span class="nx">abs</span> <span class="kt">int64</span>
+	<span class="k">switch</span> <span class="nx">whence</span> <span class="p">{</span>
+		<span class="c1">// 从开始位置开始，也就是从0开始，那么就设置为入参 offset
+</span><span class="c1"></span>	<span class="k">case</span> <span class="nx">io</span><span class="p">.</span><span class="nx">SeekStart</span><span class="p">:</span>
+		<span class="nx">abs</span> <span class="p">=</span> <span class="nx">offset</span>
+		<span class="c1">//从当前位置开始，也就是从 i 开始，设置为 i + offset
+</span><span class="c1"></span>	<span class="k">case</span> <span class="nx">io</span><span class="p">.</span><span class="nx">SeekCurrent</span><span class="p">:</span>
+		<span class="nx">abs</span> <span class="p">=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">+</span> <span class="nx">offset</span>
+		<span class="c1">// 从末尾开始，也就是从字符串默认位置开始
+</span><span class="c1"></span>	<span class="k">case</span> <span class="nx">io</span><span class="p">.</span><span class="nx">SeekEnd</span><span class="p">:</span>
+		<span class="nx">abs</span> <span class="p">=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="o">+</span> <span class="nx">offset</span>
+	<span class="k">default</span><span class="p">:</span>
+		<span class="c1">// 其他 whence 入参非法
+</span><span class="c1"></span>		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;strings.Reader.Seek: invalid whence&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c1">// 根据Seeker接口的定义，如果新的 offset 在文件开始位置之前，是非法的，需要返回 err!=nil
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">abs</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;strings.Reader.Seek: negative position&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c1">// 更新位置
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="p">=</span> <span class="nx">abs</span>
+	<span class="k">return</span> <span class="nx">abs</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="writeto">WriteTo</h3>
+<p>WriteTo方法，将从已读计数 i 开始的数据，交给 Writer w 写入，返回写入的字节数和产生的error</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">WriteTo</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 将 prevRune 设置为默认值
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">prevRune</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1">// 如果当前开始位置 i 大于等于 字符串长度，没有数据可写
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">&gt;=</span> <span class="nb">int64</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">))</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	<span class="c1">// 从 i 位置开始的数据，调用 io.WriteString 方法，交给 Writer w 写入，返回写入的字节数和err
+</span><span class="c1"></span>	<span class="nx">s</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nx">s</span><span class="p">[</span><span class="nx">r</span><span class="p">.</span><span class="nx">i</span><span class="p">:]</span>
+	<span class="nx">m</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">s</span><span class="p">)</span>
+
+	<span class="c1">// 如果写入的字节数，比入参字符串长度还长，不合理，直接panic
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">m</span> <span class="p">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;strings.Reader.WriteTo: invalid WriteString count&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 被读取了 m 个字节，更新 i 位置
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">.</span><span class="nx">i</span> <span class="o">+=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+
+	<span class="cm">/* 
+</span><span class="cm">	如果写入的字符，比传递字符串的长度不相等，且 err==nil，返回 ErrShortWrite
+</span><span class="cm">	
+</span><span class="cm">	分析：
+</span><span class="cm">	
+</span><span class="cm">	上面调用的 WriteString(w Writer, s string)方法，该方法定义如下：
+</span><span class="cm">	
+</span><span class="cm">	func WriteString(w Writer, s string) (n int, err error) {
+</span><span class="cm">		if sw, ok := w.(StringWriter); ok {
+</span><span class="cm">			return sw.WriteString(s)
+</span><span class="cm">		}
+</span><span class="cm">		return w.Write([]byte(s))
+</span><span class="cm">	}
+</span><span class="cm">	
+</span><span class="cm">	1.根据 WriteString(w Writer, s string)的逻辑，如果传入的 Writer w 实现了StringWriter接口，
+</span><span class="cm">	进一步会直接调用StringWriter.WriteString方法，该方法没有约束返回的写入字节数、产生的error 与入参字符串之间的规范
+</span><span class="cm">
+</span><span class="cm">	2. 如果传入的 Writer w 没有实现StringWriter接口，会直接调用Writer.Write 方法
+</span><span class="cm">	Write 方法明确说明：如果写入的字节数小于传入的字节数，err 一定不为 nil
+</span><span class="cm">
+</span><span class="cm">	因此这里的 m != len(s) &amp;&amp; err == nil , 一定是第一种情形返回的
+</span><span class="cm">	*/</span>
+	<span class="nx">n</span> <span class="p">=</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">m</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">m</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="nx">err</span> <span class="p">=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">ErrShortWrite</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="reset">Reset</h3>
+<p>重置：将整个结构初始化为最初状态，设置新的字符串</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">Reset</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span> <span class="o">*</span><span class="nx">r</span> <span class="p">=</span> <span class="nx">Reader</span><span class="p">{</span><span class="nx">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="测试使用">测试使用</h2>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">reader</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="s">&#34;this is a test&#34;</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">reader</span><span class="p">.</span><span class="nf">Size</span><span class="p">())</span> <span class="c1">// 字符串长度  14
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">reader</span><span class="p">.</span><span class="nf">Len</span><span class="p">())</span>  <span class="c1">// 未读字节数  14
+</span><span class="c1"></span>
+	<span class="nx">b</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+	<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>           <span class="c1">// 读取10个字节
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>                <span class="c1">// 10 &lt;nil&gt;
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;&#39;&#34;</span> <span class="o">+</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="p">)</span> <span class="c1">// &#39;this is a &#39;
+</span><span class="c1"></span>
+	<span class="c1">// 当前 i=10
+</span><span class="c1"></span>	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadByte</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">t</span><span class="p">),</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">// t &lt;nil&gt;
+</span><span class="c1"></span>	<span class="nx">_</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">UnreadByte</span><span class="p">()</span>     <span class="c1">// 回退一个字节
+</span><span class="c1"></span>	<span class="nx">t</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadByte</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">t</span><span class="p">),</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">// t &lt;nil&gt;
+</span><span class="c1"></span>
+	<span class="nx">offset</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">Seek</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="nx">io</span><span class="p">.</span><span class="nx">SeekStart</span><span class="p">)</span> <span class="c1">// 设置 i=5
+</span><span class="c1"></span>	<span class="nx">b</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+	<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadAt</span><span class="p">(</span><span class="nx">b</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span>  <span class="c1">// 14-5，读取9个字节
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>                <span class="c1">// 9 EOF
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;&#39;&#34;</span> <span class="o">+</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#34;&#39;&#34;</span><span class="p">)</span> <span class="c1">// &#39;is a test&#39;
+</span><span class="c1"></span>
+	<span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadRune</span><span class="p">()</span> <span class="c1">// 从 i=5，读取一个 rune
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">r</span><span class="p">),</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">// i 1 &lt;nil&gt;
+</span><span class="c1"></span>
+	<span class="nx">reader</span><span class="p">.</span><span class="nf">Reset</span><span class="p">(</span><span class="s">&#34;这是一个测试&#34;</span><span class="p">)</span> <span class="c1">// reset i=0
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadRune</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">r</span><span class="p">),</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">// 这 3 &lt;nil&gt;
+</span><span class="c1"></span>	<span class="nx">_</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">UnreadRune</span><span class="p">()</span>        <span class="c1">// 回退一个rune
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">,</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">reader</span><span class="p">.</span><span class="nf">ReadRune</span><span class="p">()</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">r</span><span class="p">),</span> <span class="nx">s</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">//这 3 &lt;nil&gt;
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章学习了strings.Reader，对涉及到的所有方法进行了源码级别的分析，并给出了使用示例。在strings.Reader中，比较重要的变量就是已读计数 i 了，下面总结了几条该字段何时会被更新：</p>
+<ul>
+<li>Reader 拥有的大部分用于读取的方法都会及时地更新已读计数</li>
+<li>ReadByte 方法会在读取成功后将这个计数的值加 1，ReadRune方法在读取成功之后，会把被读取的字符所占用的字节数作为计数的增量</li>
+<li>ReadAt方法算是一个例外，它既不会依据已读计数进行读取，也不会在读取后更新它。正因为如此，这个方法可以自由地读取其所属的Reader值中的任何内容</li>
+<li>Reader值的 Seek 方法也会更新该值的已读计数，实际上，这个Seek方法的主要作用正是设定下一次读取的起始索引位置</li>
+</ul>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2021-12-28
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/go/">Go</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2021_12_25_go_io_source/">
+            <span class="next-text nav-default">Go语言 io包源码解读</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    2021
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
