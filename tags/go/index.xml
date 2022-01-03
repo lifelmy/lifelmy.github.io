@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 28 Dec 2021 08:30:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 04 Jan 2022 00:50:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go 语言 bytes.Buffer 源码详解之1</title>
+      <link>https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/</link>
+      <pubDate>Tue, 04 Jan 2022 00:50:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/</guid>
+      <description>前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string</description>
+    </item>
+    
     <item>
       <title>Go语言 strings.Reader源码详解</title>
       <link>https://lifelmy.github.io/post/2021_12_28_go_strings_reader/</link>

@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go 语言 bytes.Buffer 源码详解之1 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Go 语言 bytes.Buffer 源码详解之1" />
+<meta property="og:description" content="前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-01-04T00:50:23&#43;08:00" />
+<meta property="article:modified_time" content="2022-01-04T00:50:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Go 语言 bytes.Buffer 源码详解之1">
+<meta itemprop="description" content="前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string"><meta itemprop="datePublished" content="2022-01-04T00:50:23&#43;08:00" />
+<meta itemprop="dateModified" content="2022-01-04T00:50:23&#43;08:00" />
+<meta itemprop="wordCount" content="3986">
+<meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go 语言 bytes.Buffer 源码详解之1"/>
+<meta name="twitter:description" content="前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go 语言 bytes.Buffer 源码详解之1</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-01-04" class="post-time">
+          2022-01-04
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 3986 字 </span>
+          <span class="more-meta"> 预计阅读 8 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#初体验">初体验</a></li>
+    <li><a href="#结构定义">结构定义</a></li>
+    <li><a href="#方法定义">方法定义</a>
+      <ul>
+        <li><a href="#bytes">Bytes()</a></li>
+        <li><a href="#string">String()</a></li>
+        <li><a href="#empty">empty()</a></li>
+        <li><a href="#len">Len()</a></li>
+        <li><a href="#cap">Cap()</a></li>
+        <li><a href="#reset">Reset()</a></li>
+        <li><a href="#truncate">Truncate()</a></li>
+        <li><a href="#trygrowbyreslice">tryGrowByReslice()</a></li>
+        <li><a href="#grow">grow()</a></li>
+        <li><a href="#makeslice">makeSlice()</a></li>
+        <li><a href="#grow-1">Grow()</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>前面一篇文章 <a href="https://lifelmy.github.io/post/2021_12_28_go_strings_reader/">Go语言 strings.Reader 源码详解</a>，我们对 <code>strings</code> 包中的 <code>Reader</code> 结构进行了详细的分析，今天我们来学习 <code>bytes</code> 包中的 <code>Buffer</code>结构。bytes包与strings包 可以说是一对孪生兄弟，从包名称可以看出，strings包主要是对字符串进行操作，而 bytes包面向的主要是字节和字节切片。</p>
+<p><code>bytes.Reader</code> 与 <code>strings.Reader</code> 的功能和实现基本类似，完全可以类比学习，本篇文章就来学习一个新的结构：<code>bytes.Buffer</code>。从名称可以看出，bytes.Buffer是一个缓冲区（buffer），更具体点来说，bytes.Buffer 是一个<code>集读写于一体、缓冲区大小可变</code>的字节缓冲区，下面我们就来一探究竟吧！</p>
+<h2 id="初体验">初体验</h2>
+<p>我们首先来体验下 bytes.Buffer 的使用。</p>
+<ol>
+<li>首先我们声明了一个 buffer 变量，然后调用 WriteString() 方法往缓冲区内写入了一个字符串，返回值为31,nil，表示写入的字节长度和产生的 error</li>
+<li>然后我们想打印出缓冲区的长度和容量，调用了 Len() 和 Cap() 方法，返回了 31 和 64，这和我们的认知应该相符，毕竟我们写入了字节长度为 31 的字符串，同时可能有扩容策略，容量为 64</li>
+<li>接下来我们调用 Read() 方法读取数据，将数据读入了字节切片中，同时打印出了读取的数据及长度，和写入的均相符</li>
+<li>最后我们再次调用 Len() 和 Cap() 方法，发现返回的长度和容量分别为 0 和 64，那么为什么长度会变成 0，而容量却没变呢？带着这个疑问，我们一起来学习下 bytes.Buffer 的实现吧！</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">var</span> <span class="nx">buffer</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">Buffer</span>
+<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">WriteString</span><span class="p">(</span><span class="s">&#34;this is a test for bytes buffer&#34;</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>                     <span class="c1">// 31  nil
+</span><span class="c1"></span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">buffer</span><span class="p">.</span><span class="nf">Len</span><span class="p">(),</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">Cap</span><span class="p">())</span> <span class="c1">// 31 64
+</span><span class="c1"></span>
+<span class="nx">s</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">Read</span><span class="p">(</span><span class="nx">s</span><span class="p">)</span>
+<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">n</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>                     <span class="c1">// 31 nil
+</span><span class="c1"></span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>                  <span class="c1">// this is a test for bytes buffer
+</span><span class="c1"></span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">buffer</span><span class="p">.</span><span class="nf">Len</span><span class="p">(),</span> <span class="nx">buffer</span><span class="p">.</span><span class="nf">Cap</span><span class="p">())</span> <span class="c1">// 0 64
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="结构定义">结构定义</h2>
+<p>Buffer 是集读写功能于一身，缓冲区大小可变的字节缓冲区，结构中有如下三个变量：</p>
+<ul>
+<li>buf: 底层的缓冲字节切片，用于保存数据。len(buf)表示字节切片长度，cap(buf)表示切片容量</li>
+<li>off: 已读计数，在该位置之前的数据都是被读取过的，off表示下次读取时的开始位置。因此未读数据部分为 buf[off:len(buf)]</li>
+<li>lastRead: 保存上次的读操作类型，用于后续的回退操作</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">Buffer</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">buf</span>      <span class="p">[]</span><span class="kt">byte</span>
+	<span class="nx">off</span>      <span class="kt">int</span>
+	<span class="nx">lastRead</span> <span class="nx">readOp</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg" alt="Buffer结构示意图"></p>
+<p>下面是bytes.Buffer 中定义的一些常量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 初始化底层缓冲字节数组容量时，分配的最小值
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">smallBufferSize</span> <span class="p">=</span> <span class="mi">64</span>
+
+
+<span class="c1">// readOp 常量表示上次的操作类型，用于后续使用 UnreadRune 和 UnreadByte 回退时检查操作是否合法
+</span><span class="c1">// 有四种 opReadRuneX，表示上次读 rune 时对应的字节大小
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">readOp</span> <span class="kt">int8</span>
+
+<span class="kd">const</span> <span class="p">(</span>
+	<span class="nx">opRead</span>      <span class="nx">readOp</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c1">// 任意读操作
+</span><span class="c1"></span>	<span class="nx">opInvalid</span>   <span class="nx">readOp</span> <span class="p">=</span> <span class="mi">0</span>  <span class="c1">// 非读操作
+</span><span class="c1"></span>	<span class="nx">opReadRune1</span> <span class="nx">readOp</span> <span class="p">=</span> <span class="mi">1</span>  <span class="c1">// 长度为 1 的 rune
+</span><span class="c1"></span>	<span class="nx">opReadRune2</span> <span class="nx">readOp</span> <span class="p">=</span> <span class="mi">2</span>  <span class="c1">// 长度为 2 的 rune
+</span><span class="c1"></span>	<span class="nx">opReadRune3</span> <span class="nx">readOp</span> <span class="p">=</span> <span class="mi">3</span>  <span class="c1">// 长度为 3 的 rune
+</span><span class="c1"></span>	<span class="nx">opReadRune4</span> <span class="nx">readOp</span> <span class="p">=</span> <span class="mi">4</span>  <span class="c1">// 长度为 4 的 rune
+</span><span class="c1"></span><span class="p">)</span>
+
+<span class="c1">// 在扩容时会用到，如果缓冲字节切片太大，内存不够分配时会panic，并给出该提示
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">ErrTooLarge</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;bytes.Buffer: too large&#34;</span><span class="p">)</span>
+
+<span class="c1">// 读到的数据量为负值时提示该错误
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">errNegativeRead</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;bytes.Buffer: reader returned negative count from Read&#34;</span><span class="p">)</span>
+
+<span class="c1">// 缓冲字节切片的最大容量
+</span><span class="c1"></span><span class="kd">const</span> <span class="nx">maxInt</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(^</span><span class="nb">uint</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="方法定义">方法定义</h2>
+<h3 id="bytes">Bytes()</h3>
+<ul>
+<li>Bytes() 方法返回未读的字节数据，即从已读计数 off 开始，到 len(off) 结束，也就是上图中的绿色部分。</li>
+<li>由于返回的是字节切片，存在内容泄露的风险，因为通过切片，我们可以直接访问和操纵它的底层数组。不论这个切片是基于某个数组得来的，还是通过对另一个切片做切片操作获得的。</li>
+<li>同时，由于返回的是从 off 位置开始的切片，因此得到的数据是有<code>有效期</code>的。如果调用Read()、Write()、 Reset()、 Truncate() 等类似会修改 off 变量值的方法，Bytes()方法得到的数据就失效了。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">Bytes</span><span class="p">()</span> <span class="p">[]</span><span class="kt">byte</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">off</span><span class="p">:]</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="string">String()</h3>
+<p>String() 方法返回未读数据的字符串的形式，不会存在内容泄露的风险。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">if</span> <span class="nx">b</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="c1">// Special case, useful in debugging.
+</span><span class="c1"></span>		<span class="k">return</span> <span class="s">&#34;&lt;nil&gt;&#34;</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">off</span><span class="p">:])</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="empty">empty()</h3>
+<p>empty() 方法返回是否还有未读数据，即上图中的绿色部分。如果已读计数 off &gt;= len(b.buf) ，说明没有未读数据了，返回 true</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">empty</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">off</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="len">Len()</h3>
+<p>Len() 方法返回未读数据部分的长度，即上图绿色部分的长度。 Bytes() 方法返回的是未读部分的数据，即 b.Len() == len(b.Bytes())</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">Len</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span> <span class="o">-</span> <span class="nx">b</span><span class="p">.</span><span class="nx">off</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="cap">Cap()</h3>
+<p>Cap() 方法返回底层缓冲字节切片 buf 的容量，由于底层的缓冲切片会扩容，因此该值是可变的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">Cap</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span> <span class="k">return</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="reset">Reset()</h3>
+<p>Reset() 重置整个结构，把缓冲字节切片长度修改为0，已读计数设置为0，相当于上图中的灰色已读数据部分与绿色未读数据部分长度均被设置为0。</p>
+<p>虽然缓冲区 buf 底层数组中的数据没有清空，但对于结构来说，通过 off 字段的控制，这些数据都是不可见的，读取不到数据，后续再写入数据会直接覆盖这些脏数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">Reset</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">off</span> <span class="p">=</span> <span class="mi">0</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">lastRead</span> <span class="p">=</span> <span class="nx">opInvalid</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="truncate">Truncate()</h3>
+<p>Truncate 会 <code>保留未读部分前n个字节</code> 的数据，丢弃其余部分，即只保留上图绿色部分的 前n个 字节。</p>
+<p>该方法只是修改缓冲切片的长度 len(buf)，因为有效数据部分是 buf[off:len(buf)]</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">Truncate</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 对我们有用的数据只有未读数据，如果 n==0，说明不需要保留未读数据了
+</span><span class="c1"></span>  <span class="c1">// 不保留相当于缓冲字节切片的数据都没用了，直接重置
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">n</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+  
+	<span class="c1">// 设置上次操作类型
+</span><span class="c1"></span>	<span class="nx">b</span><span class="p">.</span><span class="nx">lastRead</span> <span class="p">=</span> <span class="nx">opInvalid</span>
+
+	<span class="c1">// 如果要保留的长度小于0，或者 保留的长度大于未读数据的长度，不合法，直接panic
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">n</span> <span class="p">&gt;</span> <span class="nx">b</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;bytes.Buffer: truncation out of range&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+  
+	<span class="c1">// 保留n个未读字节，也就是直接修改切片长度 len
+</span><span class="c1"></span>	<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">b</span><span class="p">.</span><span class="nx">off</span><span class="o">+</span><span class="nx">n</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="trygrowbyreslice">tryGrowByReslice()</h3>
+<p>在向缓冲切片中写 n 个字节之前，我们要确保至少有n个空白位置可以存放数据。从下图可以看出，在 <code>len(buf)</code> 到 <code>cap(buf)</code> 之间本身就有空闲部分，如果 <code>cap(buf) - len(buf) &gt;= n</code>，说明空闲部分可以写入n个字节，那么我们就可以将len(buf) 后移n位，将新增数据保存在这n个位置中。否则的话，就需要进行数据平移甚至扩容了，这些工作是下一个要介绍的 grow() 方法要做的事情，因此我们可以说 tryGrowByReslice() 是 grow() 的快速情况（fase-case），在成本最低的情况下满足需求。在后续介绍相关的写方法中我们会看到，调用 grow() 方法前都会先尝试调用下 tryGrowByReslice()，不成功的话才会调用 grow()。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0iybp10hj31z60scdid.jpg" alt="tryGrowByReslice 示意图"></p>
+<p>需要注意的是，如果本次操作成功，字节切片 buf 的长度被增大了，但是新增的 n 个字节还没有数据，只是空出来了，用于调用者直接填充数据。</p>
+<ul>
+<li>入参 n:表示要增长的字节长度</li>
+<li>返回值：增长后写入数据的起始位置（调整前的 len（buf））；本次快速增长是否成功</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">tryGrowByReslice</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">bool</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 判断容量与长度的差额，是否大于要增长的长度n,如果大于则满足增长需求
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">l</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">);</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span><span class="o">-</span><span class="nx">l</span> <span class="p">{</span>
+		<span class="c1">// 修改buf 的长度
+</span><span class="c1"></span>		<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">l</span><span class="o">+</span><span class="nx">n</span><span class="p">]</span>
+		<span class="c1">// 写入的起始位置为l，本次操作成功
+</span><span class="c1"></span>		<span class="k">return</span> <span class="nx">l</span><span class="p">,</span> <span class="kc">true</span>
+	<span class="p">}</span>
+	<span class="c1">// 快速增长失败
+</span><span class="c1"></span>	<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">false</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="grow">grow()</h3>
+<p>grow() 通过对缓冲字节切片进行调整，甚至进行扩容，来确保有 n 个空闲位置供调用者写入，方法返回写入的开始位置。如果在扩容中，缓冲切片长度超过最大长度，会产生 ErrTooLarge 的panic。</p>
+<ol>
+<li>先进行数据整理，如果 buf 中没有未读数据，且已读计数大于0，重置，此时的整个缓冲切片都是空闲的，如下图：</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0q3ahuu4j31nc0u0myt.jpg" alt="重置情况示意图"></p>
+<ol start="2">
+<li>调用 tryGrowByReslice，判断通过 fast-case 是否满足需求，如果满足直接返回了，不满足再进行下一步。</li>
+<li>当前的 buf 可能还没有初始化（声明变量后，直接调用Grow()方法，手动扩容），如果 buf == nil，判断最小缓冲大小是否满足需求，满足需求的话，创建一个字节切片返回即可。</li>
+<li>数据平移。考虑下面这种情况，如果 <code>未读数据的长度 + 所需字节数 n &lt;= 缓冲切片容量 cap(buf)</code>，可以将未读数据平移到 buf 的顶端，覆盖已读数据，这样就可以至少留出来 n 个字节了。</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0qhzel72j31rs0u0tau.jpg" alt="数据平移示意图1"></p>
+<p>可是在实际的源码实现中，条件更加严苛点，要求 <code>未读数据的长度 + 所需字节数 n &lt;= cap(buf)/2</code>，即两者加起来要小于一半的容量，这样做的原因是为了防止频繁的数据复制。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0qnrgwjaj31v10u0gnz.jpg" alt="数据平移示意图2"></p>
+<ol start="5">
+<li>
+<p>扩容。上面的条件都不满足，只能扩容， <code>新容器的容量 = 2 * 原有容量 + 所需字节数</code>。然后将原缓冲切片中的未读数据，拷贝到新的缓冲切片头部。</p>
+</li>
+<li>
+<p>方法最后设置已读计数为 0，设置缓冲切片的长度为 <code>未读数据长度 + 所需字节数 n</code></p>
+</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">grow</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span> <span class="p">{</span>
+
+	<span class="c1">// m: 当前未读字节的数量
+</span><span class="c1"></span>	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">Len</span><span class="p">()</span>
+	<span class="c1">// 未读数据为0，且off！=0，说明off位置之前的数据已经没用了，白白占用空间，可以首先 Reset 重置，
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">m</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">off</span> <span class="o">!=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nf">Reset</span><span class="p">()</span>
+	<span class="p">}</span>
+	<span class="c1">// 通过reslice 的方式，判断当前  len到cap部分  的空余空间，是否满足数据需求
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">tryGrowByReslice</span><span class="p">(</span><span class="nx">n</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">i</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 初始化结构体的时候，可能当前的 buf 是 nil，如果当前 buf 是 nil，且需要的空间小于定义的最小缓冲大小，
+</span><span class="c1"></span>	<span class="c1">// 那么就初始化缓冲数组容量为smallBufferSize，长度为 n
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="nx">smallBufferSize</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">smallBufferSize</span><span class="p">)</span>
+		<span class="k">return</span> <span class="mi">0</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 上面的一些快速满足的方式，如果都达不到要求，那么下面就需要通过整理数据，或者重新分配内存的方式，来满足需求：
+</span><span class="c1"></span>
+	<span class="nx">c</span> <span class="o">:=</span> <span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span>
+
+	<span class="c1">// 数据平移，将所有的有用数据，平移到缓冲切片头部，类似于数据整理
+</span><span class="c1"></span>	<span class="c1">// 按理来说，当 未读数据m + 需要新增字节数n &lt; 切片容量 c时，就可以完成平移，但是为了防止下次再次grow时，频繁的数据拷贝，设置的条件为 m+n &lt; n/2
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">n</span> <span class="o">&lt;=</span> <span class="nx">c</span><span class="o">/</span><span class="mi">2</span><span class="o">-</span><span class="nx">m</span> <span class="p">{</span>
+		<span class="nb">copy</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">off</span><span class="p">:])</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nx">c</span> <span class="p">&gt;</span> <span class="nx">maxInt</span><span class="o">-</span><span class="nx">c</span><span class="o">-</span><span class="nx">n</span> <span class="p">{</span> <span class="c1">// 重新分配内存的大小为 2*切片容量c + 新增容量 n，如果需要重新分配的大小超出了最大容量，直接panic
+</span><span class="c1"></span>		<span class="nb">panic</span><span class="p">(</span><span class="nx">ErrTooLarge</span><span class="p">)</span>
+	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+		<span class="c1">// 重新分配内存，然后将之前的数据拷贝到新的切片中
+</span><span class="c1"></span>		<span class="nx">buf</span> <span class="o">:=</span> <span class="nf">makeSlice</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="nx">c</span> <span class="o">+</span> <span class="nx">n</span><span class="p">)</span>
+		<span class="nb">copy</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">off</span><span class="p">:])</span>
+		<span class="c1">// 新的切片作为缓冲切片
+</span><span class="c1"></span>		<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">buf</span>
+	<span class="p">}</span>
+	<span class="c1">// 重置已读计数为0，同时长度设置为 m+n。
+</span><span class="c1"></span>	<span class="c1">// 需要注意的是，[0,m)这段数据是历史数据，[m,n)没有数据，是空余出来给调用方放数据的，如果调用方不需要放数据，需要修改buf的len，可以参考 Grow方法
+</span><span class="c1"></span>	<span class="nx">b</span><span class="p">.</span><span class="nx">off</span> <span class="p">=</span> <span class="mi">0</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">m</span><span class="o">+</span><span class="nx">n</span><span class="p">]</span>
+
+	<span class="c1">// 返回写数据的开始位置
+</span><span class="c1"></span>	<span class="k">return</span> <span class="nx">m</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="makeslice">makeSlice()</h3>
+<p>创建一个容量为 n 的字节切片，如果分配失败，产生 ErrTooLarge 的 panic，grow()方法调用到了该方法。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">makeSlice</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">[]</span><span class="kt">byte</span> <span class="p">{</span>
+	<span class="c1">// If the make fails, give a known error.
+</span><span class="c1"></span>	<span class="k">defer</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nb">recover</span><span class="p">()</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nb">panic</span><span class="p">(</span><span class="nx">ErrTooLarge</span><span class="p">)</span>
+		<span class="p">}</span>
+	<span class="p">}()</span>
+	<span class="k">return</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="grow-1">Grow()</h3>
+<p>对外暴露的用于手动扩容的方法。Grow() 通过调整底层的缓冲切片，确保可写入n个字节的数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Buffer</span><span class="p">)</span> <span class="nf">Grow</span><span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// 如果 n&lt;0，会直接panic
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;bytes.Buffer.Grow: negative count&#34;</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="c1">// m 是下次写入的开始位置，根据 grow 方法，当前 buf 的长度为 m+n，由于不需要写数据，更新buf 的长度为 m
+</span><span class="c1"></span>	<span class="nx">m</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">grow</span><span class="p">(</span><span class="nx">n</span><span class="p">)</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">buf</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[:</span><span class="nx">m</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章我们学习了 bytes.Buffer 的结构定义和基础方法源码实现，其中最重要的是要记住 off 表示已读计数。通过下图，就能够更容易理解相关方法的实现原理。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg" alt="Buffer结构示意图"></p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-01-04
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/go/">Go</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2021_12_28_go_strings_reader/">
+            <span class="next-text nav-default">Go语言 strings.Reader源码详解</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2021 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
