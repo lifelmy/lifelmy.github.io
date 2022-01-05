@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 04 Jan 2022 00:50:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 06 Jan 2022 00:50:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go 语言 bytes.Buffer 源码详解 2</title>
+      <link>https://lifelmy.github.io/post/2022_01_06_go_bytes_buffer_2/</link>
+      <pubDate>Thu, 06 Jan 2022 00:50:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_01_06_go_bytes_buffer_2/</guid>
+      <description>前言 前面一篇文章 Go 语言 bytes.Buffer 源码详解之1，我们学习了 bytes.Buffer 的结构和基础方法，了解了缓冲区的运行机制，其中最重要的是要理解整个结构被分为了三段：已读数</description>
+    </item>
+    
     <item>
       <title>Go 语言 bytes.Buffer 源码详解之1</title>
       <link>https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/</link>
