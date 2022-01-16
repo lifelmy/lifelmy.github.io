@@ -5,10 +5,142 @@
     <link>https://lifelmy.github.io/</link>
     <description>Recent content on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 06 Jan 2022 00:50:23 +0800</lastBuildDate>
+    <lastBuildDate>Sun, 16 Jan 2022 14:20:23 +0800</lastBuildDate>
     
         <atom:link href="https://lifelmy.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Go语言 Base64编码原理及使用</title>
+      <link>https://lifelmy.github.io/post/2022_01_16_go_base64/</link>
+      <pubDate>Sun, 16 Jan 2022 14:20:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_01_16_go_base64/</guid>
+      
+        <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
+&lt;p&gt;在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通过这篇文章一起来了解下吧！&lt;/p&gt;
+&lt;h2 id=&#34;go-base64编码&#34;&gt;Go Base64编码&lt;/h2&gt;
+&lt;h3 id=&#34;标准base64编码&#34;&gt;标准Base64编码&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 标准Base64编码
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;hello world&amp;#34;&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;base64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;StdEncoding&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;EncodeToString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// aGVsbG8gd29ybGQ=
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+	&lt;span class=&#34;c1&#34;&gt;// 标准Base64解码
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;base64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;StdEncoding&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;DecodeString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// hello world &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;base64-url-编码&#34;&gt;Base64 URL 编码&lt;/h3&gt;
+&lt;p&gt;标准Base64编码后会有 &amp;lsquo;+&amp;lsquo;号，在HTTP URL传输时，&#39;+&amp;lsquo;号会被解析成空格，这样服务端接收到的数据和传输的数据就不一致。因此衍生出了Base64 URL编码，这种编码会把&amp;rsquo;+&amp;lsquo;变为&amp;rsquo;-&#39;，便于在URL中传输。&lt;/p&gt;
+&lt;p&gt;因此如果想要将编码后的数据放在 HTTP URL中传输，应该使用该编码方式。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-go&#34; data-lang=&#34;go&#34;&gt;	&lt;span class=&#34;c1&#34;&gt;// Base64 URL 编码
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;s&#34;&gt;&amp;#34;信息&amp;#34;&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;base64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;URLEncoding&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;EncodeToString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;([]&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;byte&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;src&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;))&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 5L-h5oGv
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+	&lt;span class=&#34;c1&#34;&gt;// Base64 URL 解码
+&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;	&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;:=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;base64&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;URLEncoding&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;DecodeString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;res&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+	&lt;span class=&#34;nx&#34;&gt;fmt&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;Println&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nb&#34;&gt;string&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;s&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;// 信息 &amp;lt;nil&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;什么是base64编码&#34;&gt;什么是Base64编码&lt;/h2&gt;
+&lt;p&gt;Base64是网络上最常见的用于传输8Bit字节码的编码方式之一，是一种基于64个&lt;code&gt;可打印字符&lt;/code&gt;来表示二进制数据的方法。Base64编码是从二进制到字符的过程，可用于在HTTP环境下传递较长的标识信息。采用Base64编码具有不可读性，需要解码后才能阅读。&amp;mdash;百度百科&lt;/p&gt;
+&lt;p&gt;通过百度百科的介绍，我们可以获得如下信息：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Base64是一种编码方式，将二进制编码为字符&lt;/li&gt;
+&lt;li&gt;Base64编码后的字符范围为64个可打印字符&lt;/li&gt;
+&lt;li&gt;编码后的结果具有不可读性，需要解码：即Base64不是加密方法，而是编码方式，是从一种语言翻译为另一种语言，当然也可以翻译回去&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;为什么需要base64编码&#34;&gt;为什么需要Base64编码&lt;/h2&gt;
+&lt;p&gt;我们都知道计算机的世界，是由0和1组成的，那么0和1的组合如何表示现实语言呢，这就出现了&lt;code&gt;ASCII 码&lt;/code&gt;。ASCII 是由美国设计的，一共128个字符，其中规定了第0～31及127(共33个)是控制字符或通信专用字符，32～126(共95个)是可打印字符。比如10（0000 1001）表示换行，65（0100 0001）表示大写字母A。&lt;/p&gt;
+&lt;p&gt;最初的许多协议都是基于 ASCII 设计的，只能传输可打印字符。比如发邮件时使用的 SMTP（简单邮件传输协议），最初只能传输纯文本，对图片、语音等二进制文件的支持并不是太好。&lt;/p&gt;
+&lt;p&gt;那么我们想传输这些包含不可打印字符的数据怎么办，一种方式就是设计一种编码方式，将不可打印字符转为可打印字符，这样这些数据就可以传输了，收到这些数据后，再解码回来，得到原始数据。Base64就是为了解决这个问题的。&lt;/p&gt;
+&lt;p&gt;对于现在的协议来说，都针对二进制文件做了处理，但我们无法保证文件在网络传输过程中不出现问题。当包含不可打印字符的文件在网络中传输时，往往要经过多个路由设备，由于不同的设备（特指老的路由设备）对字节流的处理方式有一些不同，这样那些不可打印字节就有可能被错误处理，不利于数据传输的。所以就先把数据先做一个编码，统统变成可见字节，确保数据可靠传输。&lt;/p&gt;
+&lt;h2 id=&#34;base64编码原理&#34;&gt;Base64编码原理&lt;/h2&gt;
+&lt;p&gt;Base64之所以叫做Base64，是因为它是基于64个可打印字符设计的，这64个字符是 ASCII 编码中可打印字符的子集，包含26个字母的大小写、10个阿拉伯数字、&#39;+&amp;lsquo;号 和 &amp;lsquo;/&amp;lsquo;号。（其实还有一个 &amp;lsquo;=&amp;rsquo; 号用于后缀）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyenx53j10j31ag0u0mzq.jpg&#34; alt=&#34;Base64字符表&#34;&gt;&lt;/p&gt;
+&lt;h3 id=&#34;编码步骤&#34;&gt;编码步骤&lt;/h3&gt;
+&lt;p&gt;由于一共有 64 个字符，那么使用 6 个比特位就足够表示了(2的6次方=64)，而 ASCII码 使用 8 个比特位表示一个字符，6 和 8 的最小公倍数为 24，3个 ASCII码 字符可以编码为 4 个 Base64 字符。因此Base64的编码过程如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;将原始数据每三个字节分为一组，一共24个比特位&lt;/li&gt;
+&lt;li&gt;将24个比特位分为4组，每组6个比特位&lt;/li&gt;
+&lt;li&gt;计算每组的十进制值，根据编码对照表，得到可打印字符串&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;以维基百科上举的例子做个演示：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;给定单词 &amp;lsquo;Man&amp;rsquo;，一共三个字节&lt;/li&gt;
+&lt;li&gt;根据ASCII编码，得到24个比特位&lt;/li&gt;
+&lt;li&gt;6个一组，分为4组&lt;/li&gt;
+&lt;li&gt;计算每组的十进制值分别为 19、22、5、46，对照Base64编码表，得到可打印字符串为 &amp;lsquo;TWFu&amp;rsquo;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyeoms5hnpj31co0ekdi1.jpg&#34; alt=&#34;编码示例&#34;&gt;&lt;/p&gt;
+&lt;p&gt;需要注意的是，使用Base64编码后，3个字节会转为4个字节，编码后的需要传输的数据比编码前多了 1/3。&lt;/p&gt;
+&lt;h3 id=&#34;位数不足情况&#34;&gt;位数不足情况&lt;/h3&gt;
+&lt;p&gt;位数不足会有两种情况：两个字节或者一个字节的数据。&lt;/p&gt;
+&lt;p&gt;如果是两个字节，也就是16个比特，需要补两个0，得到三个Base64编码字符，最后添加一个&amp;rsquo;=&amp;lsquo;用于补充&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyepe7lp5mj31dy0ecq51.jpg&#34; alt=&#34;位数不足：剩余两个字符&#34;&gt;&lt;/p&gt;
+&lt;p&gt;如果是一个字节，也就是8个比特，需要补4个0，得到两个Base64编码字符，最后添加两个&amp;rsquo;=&amp;lsquo;用于补充&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyetzq7b0rj31dw0eijtg.jpg&#34; alt=&#34;位数不足，剩余一个字符&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;base64解码原理&#34;&gt;Base64解码原理&lt;/h2&gt;
+&lt;p&gt;解码就是编码的逆向操作：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;去掉结尾的&amp;rsquo;=&amp;lsquo;号&lt;/li&gt;
+&lt;li&gt;根据Base64编码表，找到每个字符对应的编码值&lt;/li&gt;
+&lt;li&gt;取每个编码值的后6位，形成二进制串&lt;/li&gt;
+&lt;li&gt;对上述二进制串，每8个构成一个字节，如果最后一组不够8个，一定全是0，丢弃掉&lt;/li&gt;
+&lt;li&gt;此时得到的就是原始数据的二进制编码，再根据编码方式（例如 ASCII ）等进行解码&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;例如对于上述 &amp;lsquo;Ma&amp;rsquo; 的编码值 &amp;lsquo;TWE=&amp;rsquo; 进行解码：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;去掉&amp;rsquo;=&#39;，得到 &amp;lsquo;TWE&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;&amp;lsquo;T&amp;rsquo;:19，&amp;lsquo;W&amp;rsquo;:22，&amp;lsquo;E&amp;rsquo;:4&lt;/li&gt;
+&lt;li&gt;010011 010110 000100&lt;/li&gt;
+&lt;li&gt;01001101 01100001&lt;/li&gt;
+&lt;li&gt;M		  a&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;base64标准编码变种&#34;&gt;Base64标准编码变种&lt;/h2&gt;
+&lt;p&gt;我们有时候会将Base64编码后的字符串，当前 HTTP URL 中的参数进行传递，但是标准的 Base64 并不适合直接放在URL里传输，因为对于 &amp;lsquo;+&amp;lsquo;号，使用url encode时会被encode 为空格，比如编码后的值是 &amp;lsquo;ab+cd&amp;rsquo;，但是使用url encode 后变成了 &amp;lsquo;ab cd&amp;rsquo;，那么对方接收到的也是&amp;rsquo;ab cd&amp;rsquo;，此时再解码肯定失败了。&lt;/p&gt;
+&lt;p&gt;为解决此问题，衍生出一种用于URL的改进Base64编码，它不仅在末尾去掉填充的&amp;rsquo;=&amp;lsquo;号，并将标准Base64中的“+”和“/”分别改成了“-”和“_”。&lt;/p&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;本篇文章，我们学习了如下内容：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go 语言中如何进行 Base64编码&lt;/li&gt;
+&lt;li&gt;Base64编码和解码原理&lt;/li&gt;
+&lt;li&gt;Base64不是加密算法，而是一种编码方式&lt;/li&gt;
+&lt;li&gt;Base64编码后的数据量是原数据大小的4/3左右&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
+&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+</description>
+      
+    </item>
     
     <item>
       <title>Go 语言 bytes.Buffer 源码详解 2</title>
@@ -8822,442 +8954,6 @@ i hate you
 &lt;li&gt;which：搜索命令所在目录及别名信息&lt;/li&gt;
 &lt;li&gt;whereis：搜索命令所在目录及帮助文档路径&lt;/li&gt;
 &lt;li&gt;grep：找文件里符合条件的字符串&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-</description>
-      
-    </item>
-    
-    <item>
-      <title>Linux文件权限管理命令学习</title>
-      <link>https://lifelmy.github.io/post/linux_authority/</link>
-      <pubDate>Tue, 12 Oct 2021 23:20:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/linux_authority/</guid>
-      
-        <description>&lt;p&gt;关注不迷路，一起 From Zero To Hero !&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;你必须非常努力，才能看起来毫不费力！&lt;/p&gt;
-&lt;p&gt;微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero !&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
-&lt;p&gt;本篇文章主要讨论Linux中的文件权限管理命令，包括更改文件权限、文件所有者、文件所有组和默认权限，大家一起来学习吧！&lt;/p&gt;
-&lt;h2 id=&#34;chmod&#34;&gt;chmod&lt;/h2&gt;
-&lt;p&gt;chmod: &lt;code&gt;ch&lt;/code&gt;ange the permission &lt;code&gt;mod&lt;/code&gt;e of a file&lt;/p&gt;
-&lt;p&gt;Linux/Unix 的文件调用权限分为三级 : 文件所有者（Owner）、用户组（Group）、其它用户（Other Users）。权限分为三种：可读、可写、可执行。可以通过更改不同用户的权限来保护文件。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gv8dv3cv1lj60sg09gmxv02.jpg&#34; alt=&#34;image-20211009004706124&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;chmod &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;-cfvR&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; mode file
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;谁可以更改文件权限：文件所有者或者root用户&lt;/p&gt;
-&lt;p&gt;选项&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;-c : 若该文件权限确实已经更改，才显示其更改动作
--f : 若该文件权限无法被更改也不要显示错误讯息
--v : 显示权限变更的详细资料
--R : 对目前目录下的所有文件与子目录进行相同的权限变更&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;即以递归的方式逐个变更&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;权限有两种方式可以设置：&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;1. &lt;span class=&#34;o&#34;&gt;[{&lt;/span&gt;ugoa&lt;span class=&#34;o&#34;&gt;}{&lt;/span&gt;+-&lt;span class=&#34;o&#34;&gt;=}{&lt;/span&gt;rwx&lt;span class=&#34;o&#34;&gt;}]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;文件或目录&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-
-2. &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;mode&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;421&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;文件或目录&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ol&gt;
-&lt;li&gt;第一种通过对不同角色增加、减少或者设定权限，完成chmod&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;u：所有者	g：所属组	o：其他	a：所有角色&lt;/p&gt;
-&lt;p&gt;+：增加权限  -：减少权限   =：设定权限&lt;/p&gt;
-&lt;p&gt;r：读权限	w：写权限	x：执行权限&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 新建文件的权限为 rw-r--r--&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch test.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 01:00 test.txt
-
-&lt;span class=&#34;c1&#34;&gt;# 所有者增加执行权限，所属组增加写权限&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod u+x,g+w test.txt&lt;/span&gt;
-&lt;span class=&#34;c1&#34;&gt;# 查看权限&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rwxrw-r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 01:00 test.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;可以看出这种比较繁琐，需要对每个角色完成设定。&lt;/p&gt;
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;由于权限对应的是 &lt;code&gt;r w x&lt;/code&gt;，对应 &lt;code&gt;4 2 1&lt;/code&gt;，可以通过数字表示不同的权限&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;即r - 4 ； w - 2 ； x - 1&lt;/p&gt;
-&lt;p&gt;那么 &lt;code&gt;rwxrw-r--&lt;/code&gt; 可以表示为 &lt;code&gt;764&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;通过该方式，可以一次性对所有角色设置权限，比第一种要简便先，但是要先将权限对应到具体的数值上&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 新建文件的权限为 rw-r--r-- &lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch new.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 01:09 new.txt
-
-&lt;span class=&#34;c1&#34;&gt;# 设置文件权限为 764&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 764 new.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rwxrw-r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 01:09 new.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;文件目录权限总结&lt;/strong&gt;&lt;/p&gt;
-&lt;table&gt;
-&lt;thead&gt;
-&lt;tr&gt;
-&lt;th&gt;代表字符&lt;/th&gt;
-&lt;th&gt;权限&lt;/th&gt;
-&lt;th&gt;对文件的含义&lt;/th&gt;
-&lt;th&gt;对目录的含义&lt;/th&gt;
-&lt;/tr&gt;
-&lt;/thead&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td&gt;r&lt;/td&gt;
-&lt;td&gt;读权限&lt;/td&gt;
-&lt;td&gt;可以查看文件内容&lt;/td&gt;
-&lt;td&gt;可以列出目录中的内容&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;w&lt;/td&gt;
-&lt;td&gt;写权限&lt;/td&gt;
-&lt;td&gt;可以修改文件内容&lt;/td&gt;
-&lt;td&gt;可以在目录中创建、删除文件&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td&gt;x&lt;/td&gt;
-&lt;td&gt;执行权限&lt;/td&gt;
-&lt;td&gt;可以执行文件&lt;/td&gt;
-&lt;td&gt;可以进入目录&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;
-&lt;p&gt;&lt;strong&gt;易混淆点&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;我们下面做个实验，使用root用户新建一个文件夹，给文件夹权限777，并在文件夹中新建一个文件。那么有个问题：非root用户是否可以删除该文件呢？可以思考下再看后面的内容。&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cd /opt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
-redis-6.2.4  redis-6.2.4.tar.gz  rh
-
-&lt;span class=&#34;c1&#34;&gt;# 1. 新建文件夹和文件，并设置文件夹权限为777&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir movie&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch movie/list.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls&lt;/span&gt;
-movie  redis-6.2.4  redis-6.2.4.tar.gz  rh
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chmod 777 movie/&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 2. list.txt文件，只有所有者有写权限&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# cd movie/&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos movie&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-总用量 &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 10月  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:09 list.txt
-
-&lt;span class=&#34;c1&#34;&gt;# 3. 新建用户，切换用户&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# useradd user1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos opt&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# su - user1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;user1@VM-0-5-centos ~&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;$ &lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; /opt/movie
-
-&lt;span class=&#34;c1&#34;&gt;# 4. 删除文件成功&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;user1@VM-0-5-centos movie&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;$ rm list.txt
-rm: remove write-protected regular empty file ‘list.txt’? y
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;user1@VM-0-5-centos movie&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;$ ls
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;从上面的实验可以看出，想要删除文件，不需要对文件有写权限，而是需要对文件夹有写权限。对于文件的写权限，只是可以修改文件内容，而不是删除文件。而对目录的写权限，则可以删除目录中的文件。&lt;/p&gt;
-&lt;h2 id=&#34;chown&#34;&gt;chown&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;chown &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;用户&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;文件或目录&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;chown：&lt;code&gt;ch&lt;/code&gt;ange file &lt;code&gt;own&lt;/code&gt;ership&lt;/p&gt;
-&lt;p&gt;作用：改变文件或目录的所有者&lt;/p&gt;
-&lt;p&gt;限制：改变文件的所有者，需要root权限才能执行&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1. 新建文件&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch a.txt&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 2. 查看所有者为root&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-total &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:31 a.txt
-
-&lt;span class=&#34;c1&#34;&gt;# 3. 改变所有者&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chown user1 a.txt&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 4. 所有者权限变为 user1&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-total &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; user1 root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:31 a.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;chgrp&#34;&gt;chgrp&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;chgrp &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;用户组&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;文件或目录&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;chgrp：&lt;code&gt;ch&lt;/code&gt;ange file &lt;code&gt;gr&lt;/code&gt;ou&lt;code&gt;p&lt;/code&gt; ownership&lt;/p&gt;
-&lt;p&gt;功能：改变文件或者目录的所属组&lt;/p&gt;
-&lt;p&gt;权限：允许普通用户改变文件所属的组，只要该用户是该组的一员&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1. 新建文件&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch b.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-total &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:38 b.txt
-
-&lt;span class=&#34;c1&#34;&gt;# 2. 添加一个组 &lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# groupadd stu&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 3. 改变所属组&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# chgrp stu b.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-total &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root stu  &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:38 b.txt
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;umask&#34;&gt;umask&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;命令格式&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nb&#34;&gt;umask&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;-S&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;命令描述&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;显示新建的文件或者目录的默认权限&lt;/li&gt;
-&lt;li&gt;默认显示的权限是4位，第一位是特殊权限，暂不需要关注；后三位需要&lt;code&gt;与777异或&lt;/code&gt;后，才是默认权限。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;blockquote&gt;
-&lt;p&gt;注意：计算后的权限是文件夹的权限，对于文件要去掉执行权限，Linux中默认新建的文件都没有执行权限！！！！&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;示例&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1. 第一位不需要关注，022异或777后，为755，即默认权限为 rwxr-xr-x&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# umask&lt;/span&gt;
-&lt;span class=&#34;m&#34;&gt;0022&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 2. 新建文件夹，验证确实为 rwxr-xr-x&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir test&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-drwxr-xr-x &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:52 &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 3. 新建文件，默认都去掉了执行权限，为 rw-r--r--&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# touch c.txt&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
--rw-r--r-- &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; root root    &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:55 c.txt
-drwxr-xr-x &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 18:52 &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;选项&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;-S：以 rwx 的形式显示文件夹的默认权限，直接就是对应的文件夹权限，不需要再进行异或操作&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# umask -S&lt;/span&gt;
-&lt;span class=&#34;nv&#34;&gt;u&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;rwx,g&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;rx,o&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;rx
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;strong&gt;更改umask默认值&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;nb&#34;&gt;umask&lt;/span&gt; 权限值
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;通过上述命令可以更改新建文件夹和文件的默认权限，需要注意的是，该值与777异或后才是真正的权限值。因此可以先将想要的权限值与777异或，得到的就是这里的权限值。&lt;/p&gt;
-&lt;p&gt;比如想要默认权限为700，700异或777为077，这里的权限值就为077。&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;不建议使用该命令修改默认权限值!!!&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# umask 077&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# mkdir test3&lt;/span&gt;
-
-&lt;span class=&#34;c1&#34;&gt;# 077 与 777 异或后为 700&lt;/span&gt;
-&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;root@VM-0-5-centos tmp&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;&lt;span class=&#34;c1&#34;&gt;# ls -l&lt;/span&gt;
-drwx------ &lt;span class=&#34;m&#34;&gt;2&lt;/span&gt; root root &lt;span class=&#34;m&#34;&gt;4096&lt;/span&gt; Oct  &lt;span class=&#34;m&#34;&gt;9&lt;/span&gt; 19:00 test3
-&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
-&lt;p&gt;本文介绍了Linux文件权限管理命令：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;chmod：更改文件权限&lt;/li&gt;
-&lt;li&gt;chown：更改文件所有者&lt;/li&gt;
-&lt;li&gt;chgrp：更改文件所有组&lt;/li&gt;
-&lt;li&gt;umask：查看和修改默认文件权限&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;

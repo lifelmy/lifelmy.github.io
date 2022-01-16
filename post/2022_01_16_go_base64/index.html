@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go语言 Base64编码原理及使用 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_01_16_go_base64/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Go语言 Base64编码原理及使用" />
+<meta property="og:description" content="前言 在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_01_16_go_base64/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-01-16T14:20:23&#43;08:00" />
+<meta property="article:modified_time" content="2022-01-16T14:20:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Go语言 Base64编码原理及使用">
+<meta itemprop="description" content="前言 在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通"><meta itemprop="datePublished" content="2022-01-16T14:20:23&#43;08:00" />
+<meta itemprop="dateModified" content="2022-01-16T14:20:23&#43;08:00" />
+<meta itemprop="wordCount" content="2485">
+<meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言 Base64编码原理及使用"/>
+<meta name="twitter:description" content="前言 在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go语言 Base64编码原理及使用</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-01-16" class="post-time">
+          2022-01-16
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 2485 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#go-base64编码">Go Base64编码</a>
+      <ul>
+        <li><a href="#标准base64编码">标准Base64编码</a></li>
+        <li><a href="#base64-url-编码">Base64 URL 编码</a></li>
+      </ul>
+    </li>
+    <li><a href="#什么是base64编码">什么是Base64编码</a></li>
+    <li><a href="#为什么需要base64编码">为什么需要Base64编码</a></li>
+    <li><a href="#base64编码原理">Base64编码原理</a>
+      <ul>
+        <li><a href="#编码步骤">编码步骤</a></li>
+        <li><a href="#位数不足情况">位数不足情况</a></li>
+      </ul>
+    </li>
+    <li><a href="#base64解码原理">Base64解码原理</a></li>
+    <li><a href="#base64标准编码变种">Base64标准编码变种</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通过这篇文章一起来了解下吧！</p>
+<h2 id="go-base64编码">Go Base64编码</h2>
+<h3 id="标准base64编码">标准Base64编码</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 标准Base64编码
+</span><span class="c1"></span>	<span class="nx">src</span> <span class="o">:=</span> <span class="s">&#34;hello world&#34;</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">StdEncoding</span><span class="p">.</span><span class="nf">EncodeToString</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">src</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="c1">// aGVsbG8gd29ybGQ=
+</span><span class="c1"></span>
+	<span class="c1">// 标准Base64解码
+</span><span class="c1"></span>	<span class="nx">s</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">StdEncoding</span><span class="p">.</span><span class="nf">DecodeString</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">),</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">// hello world &lt;nil&gt;
+</span></code></pre></td></tr></table>
+</div>
+</div><h3 id="base64-url-编码">Base64 URL 编码</h3>
+<p>标准Base64编码后会有 &lsquo;+&lsquo;号，在HTTP URL传输时，'+&lsquo;号会被解析成空格，这样服务端接收到的数据和传输的数据就不一致。因此衍生出了Base64 URL编码，这种编码会把&rsquo;+&lsquo;变为&rsquo;-'，便于在URL中传输。</p>
+<p>因此如果想要将编码后的数据放在 HTTP URL中传输，应该使用该编码方式。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go">	<span class="c1">// Base64 URL 编码
+</span><span class="c1"></span>	<span class="nx">src</span> <span class="o">:=</span> <span class="s">&#34;信息&#34;</span>
+	<span class="nx">res</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">URLEncoding</span><span class="p">.</span><span class="nf">EncodeToString</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">src</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span> <span class="c1">// 5L-h5oGv
+</span><span class="c1"></span>
+	<span class="c1">// Base64 URL 解码
+</span><span class="c1"></span>	<span class="nx">s</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">base64</span><span class="p">.</span><span class="nx">URLEncoding</span><span class="p">.</span><span class="nf">DecodeString</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">s</span><span class="p">),</span> <span class="nx">err</span><span class="p">)</span> <span class="c1">// 信息 &lt;nil&gt;
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="什么是base64编码">什么是Base64编码</h2>
+<p>Base64是网络上最常见的用于传输8Bit字节码的编码方式之一，是一种基于64个<code>可打印字符</code>来表示二进制数据的方法。Base64编码是从二进制到字符的过程，可用于在HTTP环境下传递较长的标识信息。采用Base64编码具有不可读性，需要解码后才能阅读。&mdash;百度百科</p>
+<p>通过百度百科的介绍，我们可以获得如下信息：</p>
+<ul>
+<li>Base64是一种编码方式，将二进制编码为字符</li>
+<li>Base64编码后的字符范围为64个可打印字符</li>
+<li>编码后的结果具有不可读性，需要解码：即Base64不是加密方法，而是编码方式，是从一种语言翻译为另一种语言，当然也可以翻译回去</li>
+</ul>
+<h2 id="为什么需要base64编码">为什么需要Base64编码</h2>
+<p>我们都知道计算机的世界，是由0和1组成的，那么0和1的组合如何表示现实语言呢，这就出现了<code>ASCII 码</code>。ASCII 是由美国设计的，一共128个字符，其中规定了第0～31及127(共33个)是控制字符或通信专用字符，32～126(共95个)是可打印字符。比如10（0000 1001）表示换行，65（0100 0001）表示大写字母A。</p>
+<p>最初的许多协议都是基于 ASCII 设计的，只能传输可打印字符。比如发邮件时使用的 SMTP（简单邮件传输协议），最初只能传输纯文本，对图片、语音等二进制文件的支持并不是太好。</p>
+<p>那么我们想传输这些包含不可打印字符的数据怎么办，一种方式就是设计一种编码方式，将不可打印字符转为可打印字符，这样这些数据就可以传输了，收到这些数据后，再解码回来，得到原始数据。Base64就是为了解决这个问题的。</p>
+<p>对于现在的协议来说，都针对二进制文件做了处理，但我们无法保证文件在网络传输过程中不出现问题。当包含不可打印字符的文件在网络中传输时，往往要经过多个路由设备，由于不同的设备（特指老的路由设备）对字节流的处理方式有一些不同，这样那些不可打印字节就有可能被错误处理，不利于数据传输的。所以就先把数据先做一个编码，统统变成可见字节，确保数据可靠传输。</p>
+<h2 id="base64编码原理">Base64编码原理</h2>
+<p>Base64之所以叫做Base64，是因为它是基于64个可打印字符设计的，这64个字符是 ASCII 编码中可打印字符的子集，包含26个字母的大小写、10个阿拉伯数字、'+&lsquo;号 和 &lsquo;/&lsquo;号。（其实还有一个 &lsquo;=&rsquo; 号用于后缀）</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyenx53j10j31ag0u0mzq.jpg" alt="Base64字符表"></p>
+<h3 id="编码步骤">编码步骤</h3>
+<p>由于一共有 64 个字符，那么使用 6 个比特位就足够表示了(2的6次方=64)，而 ASCII码 使用 8 个比特位表示一个字符，6 和 8 的最小公倍数为 24，3个 ASCII码 字符可以编码为 4 个 Base64 字符。因此Base64的编码过程如下：</p>
+<ol>
+<li>将原始数据每三个字节分为一组，一共24个比特位</li>
+<li>将24个比特位分为4组，每组6个比特位</li>
+<li>计算每组的十进制值，根据编码对照表，得到可打印字符串</li>
+</ol>
+<p>以维基百科上举的例子做个演示：</p>
+<ol>
+<li>给定单词 &lsquo;Man&rsquo;，一共三个字节</li>
+<li>根据ASCII编码，得到24个比特位</li>
+<li>6个一组，分为4组</li>
+<li>计算每组的十进制值分别为 19、22、5、46，对照Base64编码表，得到可打印字符串为 &lsquo;TWFu&rsquo;</li>
+</ol>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyeoms5hnpj31co0ekdi1.jpg" alt="编码示例"></p>
+<p>需要注意的是，使用Base64编码后，3个字节会转为4个字节，编码后的需要传输的数据比编码前多了 1/3。</p>
+<h3 id="位数不足情况">位数不足情况</h3>
+<p>位数不足会有两种情况：两个字节或者一个字节的数据。</p>
+<p>如果是两个字节，也就是16个比特，需要补两个0，得到三个Base64编码字符，最后添加一个&rsquo;=&lsquo;用于补充</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyepe7lp5mj31dy0ecq51.jpg" alt="位数不足：剩余两个字符"></p>
+<p>如果是一个字节，也就是8个比特，需要补4个0，得到两个Base64编码字符，最后添加两个&rsquo;=&lsquo;用于补充</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gyetzq7b0rj31dw0eijtg.jpg" alt="位数不足，剩余一个字符"></p>
+<h2 id="base64解码原理">Base64解码原理</h2>
+<p>解码就是编码的逆向操作：</p>
+<ol>
+<li>去掉结尾的&rsquo;=&lsquo;号</li>
+<li>根据Base64编码表，找到每个字符对应的编码值</li>
+<li>取每个编码值的后6位，形成二进制串</li>
+<li>对上述二进制串，每8个构成一个字节，如果最后一组不够8个，一定全是0，丢弃掉</li>
+<li>此时得到的就是原始数据的二进制编码，再根据编码方式（例如 ASCII ）等进行解码</li>
+</ol>
+<p>例如对于上述 &lsquo;Ma&rsquo; 的编码值 &lsquo;TWE=&rsquo; 进行解码：</p>
+<ol>
+<li>去掉&rsquo;='，得到 &lsquo;TWE&rsquo;</li>
+<li>&lsquo;T&rsquo;:19，&lsquo;W&rsquo;:22，&lsquo;E&rsquo;:4</li>
+<li>010011 010110 000100</li>
+<li>01001101 01100001</li>
+<li>M		  a</li>
+</ol>
+<h2 id="base64标准编码变种">Base64标准编码变种</h2>
+<p>我们有时候会将Base64编码后的字符串，当前 HTTP URL 中的参数进行传递，但是标准的 Base64 并不适合直接放在URL里传输，因为对于 &lsquo;+&lsquo;号，使用url encode时会被encode 为空格，比如编码后的值是 &lsquo;ab+cd&rsquo;，但是使用url encode 后变成了 &lsquo;ab cd&rsquo;，那么对方接收到的也是&rsquo;ab cd&rsquo;，此时再解码肯定失败了。</p>
+<p>为解决此问题，衍生出一种用于URL的改进Base64编码，它不仅在末尾去掉填充的&rsquo;=&lsquo;号，并将标准Base64中的“+”和“/”分别改成了“-”和“_”。</p>
+<h2 id="总结">总结</h2>
+<p>本篇文章，我们学习了如下内容：</p>
+<ol>
+<li>Go 语言中如何进行 Base64编码</li>
+<li>Base64编码和解码原理</li>
+<li>Base64不是加密算法，而是一种编码方式</li>
+<li>Base64编码后的数据量是原数据大小的4/3左右</li>
+</ol>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt="img"></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-01-16
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/go/">Go</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2022_01_06_go_bytes_buffer_2/">
+            <span class="next-text nav-default">Go 语言 bytes.Buffer 源码详解 2</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2021 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

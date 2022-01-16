@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 06 Jan 2022 00:50:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 16 Jan 2022 14:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言 Base64编码原理及使用</title>
+      <link>https://lifelmy.github.io/post/2022_01_16_go_base64/</link>
+      <pubDate>Sun, 16 Jan 2022 14:20:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_01_16_go_base64/</guid>
+      <description>前言 在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通</description>
+    </item>
+    
     <item>
       <title>Go 语言 bytes.Buffer 源码详解 2</title>
       <link>https://lifelmy.github.io/post/2022_01_06_go_bytes_buffer_2/</link>
@@ -174,15 +183,6 @@
       <pubDate>Tue, 19 Oct 2021 00:16:23 +0800</pubDate>
       
       <guid>https://lifelmy.github.io/post/linux_find/</guid>
-      <description>关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论</description>
-    </item>
-    
-    <item>
-      <title>Linux文件权限管理命令学习</title>
-      <link>https://lifelmy.github.io/post/linux_authority/</link>
-      <pubDate>Tue, 12 Oct 2021 23:20:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/linux_authority/</guid>
       <description>关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论</description>
     </item>
     
