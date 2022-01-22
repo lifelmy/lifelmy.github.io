@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 16 Jan 2022 14:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 22 Jan 2022 16:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言 空结构体详解</title>
+      <link>https://lifelmy.github.io/post/2022_01_22_go_empty_struct/</link>
+      <pubDate>Sat, 22 Jan 2022 16:20:23 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_01_22_go_empty_struct/</guid>
+      <description>前言 在使用 Go 语言开发过程中，我们不免会定义结构体，但是我们定义的结构体都是有字段的，基本不会定义不包含字段的 空结构体。你可能会反过来问，没有</description>
+    </item>
+    
     <item>
       <title>Go语言 Base64编码原理及使用</title>
       <link>https://lifelmy.github.io/post/2022_01_16_go_base64/</link>
