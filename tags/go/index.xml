@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 22 Jan 2022 16:20:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 28 Jan 2022 22:20:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go bufio.Reader 结构&#43;源码详解 I</title>
+      <link>https://lifelmy.github.io/post/2022_01_28_go_bufio_reader_1/</link>
+      <pubDate>Fri, 28 Jan 2022 22:20:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_01_28_go_bufio_reader_1/</guid>
+      <description>前言 前面的两篇文章 Go 语言 bytes.Buffer 源码详解之1、Go 语言 bytes.Buffer 源码详解 2，我们介绍了 bytes.buffer，它是一个字节缓冲区，我们可以将数据先写到到</description>
+    </item>
+    
     <item>
       <title>Go语言 空结构体详解</title>
       <link>https://lifelmy.github.io/post/2022_01_22_go_empty_struct/</link>
