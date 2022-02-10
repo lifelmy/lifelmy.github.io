@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go bufio.Reader 结构&#43;源码详解 II - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 上一篇文章 Go bufio.Reader 结构&#43;源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Go bufio.Reader 结构&#43;源码详解 II" />
+<meta property="og:description" content="前言 上一篇文章 Go bufio.Reader 结构&#43;源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-02-11T00:30:43&#43;08:00" />
+<meta property="article:modified_time" content="2022-02-11T00:30:43&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Go bufio.Reader 结构&#43;源码详解 II">
+<meta itemprop="description" content="前言 上一篇文章 Go bufio.Reader 结构&#43;源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的"><meta itemprop="datePublished" content="2022-02-11T00:30:43&#43;08:00" />
+<meta itemprop="dateModified" content="2022-02-11T00:30:43&#43;08:00" />
+<meta itemprop="wordCount" content="4681">
+<meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go bufio.Reader 结构&#43;源码详解 II"/>
+<meta name="twitter:description" content="前言 上一篇文章 Go bufio.Reader 结构&#43;源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go bufio.Reader 结构&#43;源码详解 II</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-02-11" class="post-time">
+          2022-02-11
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 4681 字 </span>
+          <span class="more-meta"> 预计阅读 10 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#readrune">ReadRune</a></li>
+    <li><a href="#unreadrune">UnreadRune</a></li>
+    <li><a href="#readslice">ReadSlice</a></li>
+    <li><a href="#readline">ReadLine</a></li>
+    <li><a href="#readbytes">ReadBytes</a></li>
+    <li><a href="#readstring">ReadString</a></li>
+    <li><a href="#writeto">WriteTo</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>上一篇文章 <a href="https://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;mid=2247485014&amp;idx=1&amp;sn=323a2637f17aeb6d0e9d056c1edf90a5&amp;chksm=fe50cd19c927440f16689d737c075f995e773ff80381b7be9e996e45611c203c21c6a8d8ad71#rd">Go bufio.Reader 结构+源码详解 I</a>，我们介绍了 <code>bufio.Reader</code> 的基本结构和运行原理，并介绍了如下几个重要方法：</p>
+<ul>
+<li>reset： 重置整个结构，相当于丢弃缓冲区的所有数据，同时将新的文件读取器作为 io.Reader</li>
+<li>fill：首先压缩缓冲区的无效数据，然后尝试填充缓冲区</li>
+<li>Peek：查看部分数据，但是不改变结构体的状态</li>
+<li>Discard：丢弃数据</li>
+<li>Read：读取数据，同时针对缓冲区为空的其中一个情形做了优化，直接从底层文件读取，不经过缓冲区</li>
+<li>ReadByte：读取一个字节</li>
+</ul>
+<p>本篇文章，我们就继续学习 <code>bufio.Reader</code> 的剩余重点源码，主要是读取相关的操作。</p>
+<h2 id="readrune">ReadRune</h2>
+<p><code>ReadRune方法</code> 读取一个 rune，返回 rune、字节数以及读取过程中产生的error。</p>
+<p>如果缓冲区的有效数据不能组成一个rune，且缓冲区未满，就会调用fill方法填充数据，填充完数据后，先看下第一个字节是不是一个rune，如果不是再尝试使用后续字节，最后更新已读计数并返回数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadRune</span><span class="p">()</span> <span class="p">(</span><span class="nx">r</span> <span class="kt">rune</span><span class="p">,</span> <span class="nx">size</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// b.r + utf8.UTFMax &gt; b.w，即b.w - b.r &lt; utf8.UTFMax，有效数据长度小于rune的最大可能长度 (但是可能满足较小长度的rune)
+</span><span class="c1"></span>	<span class="c1">// 以b.r开始的数据，组不成一个完整的rune （较小长度的rune也没有）
+</span><span class="c1"></span>	<span class="c1">// b.err == nil 没有error
+</span><span class="c1"></span>	<span class="c1">// b.w-b.r &lt; len(b.buf): 缓冲区有效数据小于缓冲区长度，即缓冲区未满
+</span><span class="c1"></span>
+	<span class="c1">// 如果组不成一个完整的rune，并且缓冲区未满，就会不断调用 fill 填充数据。如果 fill 产生error，那么 b.err!=nil，就会跳出 for循环
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="o">+</span><span class="nx">utf8</span><span class="p">.</span><span class="nx">UTFMax</span> <span class="p">&gt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span> <span class="o">&amp;&amp;</span> <span class="p">!</span><span class="nx">utf8</span><span class="p">.</span><span class="nf">FullRune</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="p">:</span><span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="o">&amp;&amp;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="o">-</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nf">fill</span><span class="p">()</span> 
+	<span class="p">}</span>
+
+	<span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+
+	<span class="c1">// 有效数据为空（未填充到数据），返回
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="o">==</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nf">readErr</span><span class="p">()</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 将 b.r 位置的一个字节转为 rune，如果转换后小于utf8.RuneSelf，说明 b.r 对应的这个字节就是一个rune
+</span><span class="c1"></span>	<span class="nx">r</span><span class="p">,</span> <span class="nx">size</span> <span class="p">=</span> <span class="nb">rune</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="p">]),</span> <span class="mi">1</span>
+
+	<span class="c1">// r &gt;= utf8.RuneSelf,说明这一个字节不是一个rune，需要后面的字节
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span> <span class="o">&gt;=</span> <span class="nx">utf8</span><span class="p">.</span><span class="nx">RuneSelf</span> <span class="p">{</span>
+		<span class="c1">// 从 b.r开始，组成一个rune，返回 rune 和 对应的字节数
+</span><span class="c1"></span>		<span class="nx">r</span><span class="p">,</span> <span class="nx">size</span> <span class="p">=</span> <span class="nx">utf8</span><span class="p">.</span><span class="nf">DecodeRune</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="p">:</span><span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="p">])</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 更新已读计数和回退相关数据
+</span><span class="c1"></span>	<span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="nx">size</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">lastByte</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span> <span class="p">=</span> <span class="nx">size</span>
+
+	<span class="c1">// 返回数据
+</span><span class="c1"></span>	<span class="k">return</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">size</span><span class="p">,</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="unreadrune">UnreadRune</h2>
+<p><code>UnreadRune方法</code> 用于回退一个rune。UnreadRune 的要求比 UnreadByte 要严格，如果上一个读取方法不是 ReadRune，那么调用UnreadRune就会报错。对于 UnreadByte 来说，只要上面一个方法是读取操作（包括ReadRune），也可以回退</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">UnreadRune</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+
+	<span class="c1">// 上个操作不是 ReadRune 或者 可回退数据不足
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="nx">ErrInvalidUnreadRune</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 回退
+</span><span class="c1"></span>	<span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="o">-=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span>
+
+	<span class="c1">// 不能再回退，字段置为无效值
+</span><span class="c1"></span>	<span class="nx">b</span><span class="p">.</span><span class="nx">lastByte</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="readslice">ReadSlice</h2>
+<p><code>ReadSlice方法</code> 用于查找分隔符，然后返回查找过程中遍历到的数据。比如我们想一行一行的处理数据，那么我们的入参可以是换行符，ReadSlice 就会每次返回一行数据。</p>
+<p>ReadSlice方法会先在其缓冲区的未读部分中寻找分隔符，如果未找到，并且缓冲区未满，那么该方法会先调用 fill 方法对缓冲区进行填充，然后再次寻找，如此往复。一旦ReadSlice方法找到了分隔符，它就会在缓冲区上切出相应的、包含分隔符的字节切片，并把该切片作为结果值返回。即使最终没有找到分隔符，或者查找过程中遇到了error，ReadSlice 方法会也返回寻找过程中遍历的所有数据，并更新已读计数。可见ReadSlice是一个半途而废的方法，如果缓冲区满了，就不会继续寻找了。</p>
+<p>由于 ReadSlice 返回的是针对缓冲切片的切片，存在数据泄露的风险；其次数据存在有效期，下次的读操作会覆盖这些数据，因此应当尽量使用 ReadBytes 或 ReadString 代替该方法。</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gz5eegmc5xj31i00qajsx.jpg" alt="image-20220208001023779"></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadSlice</span><span class="p">(</span><span class="nx">delim</span> <span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">line</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	
+	<span class="nx">s</span> <span class="o">:=</span> <span class="mi">0</span> <span class="c1">// 相对于已读计数的位置偏移量，会从该位置开始往后查找分隔符
+</span><span class="c1"></span>
+	<span class="c1">// 不断循环尝试找到分隔符，直至出现错误或者缓冲区已满
+</span><span class="c1"></span>	<span class="k">for</span> <span class="p">{</span>
+		<span class="c1">// 在[b.r+s : b.w] 范围内查找分隔符，i&gt;=0 表示找到，i 是相对起始位置的偏移量
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nx">bytes</span><span class="p">.</span><span class="nf">IndexByte</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="o">+</span><span class="nx">s</span><span class="p">:</span><span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="p">],</span> <span class="nx">delim</span><span class="p">);</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">{</span>
+			<span class="nx">i</span> <span class="o">+=</span> <span class="nx">s</span>
+
+			<span class="c1">// 需要返回的数据
+</span><span class="c1"></span>			<span class="nx">line</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">:</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="o">+</span><span class="nx">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+
+			<span class="c1">// 更新已读计数
+</span><span class="c1"></span>			<span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span>
+
+			<span class="c1">// 找到了，跳出循环
+</span><span class="c1"></span>			<span class="k">break</span>
+		<span class="p">}</span>
+
+		<span class="c1">// 产生了error
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+
+			<span class="c1">// line 为寻找过程中遍历的所有数据
+</span><span class="c1"></span>			<span class="nx">line</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="p">:</span><span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="p">]</span>
+
+			<span class="c1">// 更新已读计数
+</span><span class="c1"></span>			<span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span>
+
+			<span class="c1">// 返回的error
+</span><span class="c1"></span>			<span class="nx">err</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">readErr</span><span class="p">()</span>
+			
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+		<span class="c1">// 没找到分隔符，也没有error，但是缓冲区满了，且都是有效数据
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nf">Buffered</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
+
+			<span class="c1">// 更新已读计数
+</span><span class="c1"></span>			<span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span>
+
+			<span class="c1">// 此时缓冲区内都是有效计数，将缓冲区数据全部返回，err 固定为 ErrBufferFull
+</span><span class="c1"></span>			<span class="nx">line</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">buf</span>
+			<span class="nx">err</span> <span class="p">=</span> <span class="nx">ErrBufferFull</span>
+
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+		<span class="c1">// 当前的 [b.r : b.w]数据里面没有分隔符，下次检查就不需要再次扫描这部分数据了
+</span><span class="c1"></span>		<span class="nx">s</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span> <span class="o">-</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span> 
+
+		<span class="c1">// 缓冲区还没满，填充数据后再次查找
+</span><span class="c1"></span>		<span class="nx">b</span><span class="p">.</span><span class="nf">fill</span><span class="p">()</span> 
+	<span class="p">}</span>
+
+	<span class="c1">// 如果 len(line)&gt;=1，表示找到了，那么更新 lastByte，用于回退操作
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">i</span> <span class="o">:=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nx">lastByte</span> <span class="p">=</span> <span class="nb">int</span><span class="p">(</span><span class="nx">line</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nx">lastRuneSize</span> <span class="p">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="p">}</span>
+
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="readline">ReadLine</h2>
+<p><code>ReadLine方法</code> 用于读取一行数据，且不会包含回车符和换行符(&quot;\r\n&quot; 或者 &ldquo;\n&rdquo;)。该方法是 low-level 的，如果想要读取一行数据，应该尽量用 ReadBytes('\n') 或者 ReadString('\n') 来代替该方法。</p>
+<p>在读取过程中，如果一行数据过长，超过了缓冲区长度，那么只会返回缓冲数组中的全部数据，并将 isPrefix 设置为 true，剩余的数据只会在后续再次调用 ReadLine方法 返回。如果正确返回一行数据，isPrefix=false。</p>
+<p>对于返回的数据，line 和 err 不会同时为非空（不存在 err!=nil 且 line!=nil）。因为底层调用的 ReadSlice ，line 始终不为nil，因此当err!=nil，但line 无数据时，需要将line置为nil。</p>
+<p>ReadLine方法 可能会造成内容泄露，因为直接返回了buf的切片，用户可以根据地址，修改buf中的数据。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadLine</span><span class="p">()</span> <span class="p">(</span><span class="nx">line</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">isPrefix</span> <span class="kt">bool</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="c1">// 调用的 `ReadSlice(&#39;\n&#39;)` 来获取数据，此时的已读计数已经更新了
+</span><span class="c1"></span>	<span class="nx">line</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">ReadSlice</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+
+	<span class="c1">// 缓冲区满了，但未读到分隔符，此时 line = 缓冲区所有数据
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">ErrBufferFull</span> <span class="p">{</span>
+
+		<span class="c1">// 这里处理的特殊case是：如果当前缓冲区的最后一个字符是&#39;\r&#39;，再后面一个字符就是&#39;\n&#39;，但是&#39;\n&#39;不在缓冲区，会把 &#39;/r&#39; 留在缓冲区里面
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nx">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;\r&#39;</span> <span class="p">{</span>
+
+			<span class="c1">// 不应该发生，此时应该 b.r = b.w
+</span><span class="c1"></span>			<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+				<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;bufio: tried to rewind past start of buffer&#34;</span><span class="p">)</span>
+			<span class="p">}</span>
+
+			<span class="c1">// b.r减一，将 &#39;\r&#39;留在缓冲区内
+</span><span class="c1"></span>			<span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="o">--</span>
+
+			<span class="c1">// 返回的数据也不包含 &#39;\r&#39;
+</span><span class="c1"></span>			<span class="nx">line</span> <span class="p">=</span> <span class="nx">line</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="nx">line</span><span class="p">,</span> <span class="kc">true</span><span class="p">,</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 返回的数据中，保证不存在 err!=nil 且 line!=nil（ line 一定是非空的，当 line中无数据 且 err!=nil 时，将 line 置为 nil）
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="nx">line</span> <span class="p">=</span> <span class="kc">nil</span>
+		<span class="p">}</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="c1">// line!=nil 且 len(line)!=0，，那么令 err=nil
+</span><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="kc">nil</span>
+
+	<span class="c1">// 去除回车符和换行符(&#34;\r\n&#34; 或者 &#34;\n&#34;)
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;\n&#39;</span> <span class="p">{</span>
+		<span class="nx">drop</span> <span class="o">:=</span> <span class="mi">1</span>
+		<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span> <span class="p">&gt;</span> <span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="nx">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="sc">&#39;\r&#39;</span> <span class="p">{</span>
+			<span class="nx">drop</span> <span class="p">=</span> <span class="mi">2</span>
+		<span class="p">}</span>
+		<span class="nx">line</span> <span class="p">=</span> <span class="nx">line</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="nx">line</span><span class="p">)</span><span class="o">-</span><span class="nx">drop</span><span class="p">]</span>
+	<span class="p">}</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="readbytes">ReadBytes</h2>
+<p><code>ReadBytes方法</code> 会通过调用 ReadSlice方法 一次又一次地从缓冲区中读取数据，直至找到分隔符为止。相对于 ReadSlice 的半途而废，ReadBytes方法 是相当执着。</p>
+<p>在这个过程中，ReadSlice方法 可能会因缓冲区已满，返回所有已读到的字节和 ErrBufferFull错误，但 ReadBytes方法 总是会忽略掉这样的错误，并再次调用 ReadSlice方法，重新填充缓冲区并在其中寻找分隔符。如果 ReadSlice方法 返回的错误不是缓冲区已满的错误，或者它找到了分隔符，这一过程才会结束。</p>
+<p>如果寻找的过程结束了，不管是不是因为找到了分隔符，ReadBytes方法都会把在这个过程中读到的所有字节，按照读取的先后顺序组装成一个字节切片，并把它作为第一个结果值。如果过程结束是因为出现错误，那么它还会把拿到的错误值作为第二个结果值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadBytes</span><span class="p">(</span><span class="nx">delim</span> <span class="kt">byte</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// 保存每次寻找返回的数据
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">frag</span> <span class="p">[]</span><span class="kt">byte</span>
+
+	<span class="c1">// 保存多次寻找累积返回的数据
+</span><span class="c1"></span>	<span class="kd">var</span> <span class="nx">full</span> <span class="p">[][]</span><span class="kt">byte</span>
+	<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+
+	<span class="c1">// 查找过程中遍历的字节数总和
+</span><span class="c1"></span>	<span class="nx">n</span> <span class="o">:=</span> <span class="mi">0</span>
+
+	<span class="c1">// 不断循环，直至查找到分隔符 或者 遇到非缓冲区满的错误
+</span><span class="c1"></span>	<span class="k">for</span> <span class="p">{</span>
+		<span class="kd">var</span> <span class="nx">e</span> <span class="kt">error</span>
+
+		<span class="c1">// 调用ReadSlice 查找分隔符
+</span><span class="c1"></span>		<span class="nx">frag</span><span class="p">,</span> <span class="nx">e</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">ReadSlice</span><span class="p">(</span><span class="nx">delim</span><span class="p">)</span>
+
+		<span class="c1">// e==nil 说明找到了，结束寻找
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">e</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+		<span class="c1">// 发生了非ErrBufferFull 错误，结束寻找
+</span><span class="c1"></span>		<span class="k">if</span> <span class="nx">e</span> <span class="o">!=</span> <span class="nx">ErrBufferFull</span> <span class="p">{</span>
+			<span class="nx">err</span> <span class="p">=</span> <span class="nx">e</span>
+			<span class="k">break</span>
+		<span class="p">}</span>
+
+		<span class="c1">// 到这里说明没找到，但是由于缓冲区满了，产生了ErrBufferFull error，忽略该错误，然后把本次返回的数据保存到 full 里面，
+</span><span class="c1"></span>		<span class="c1">// 再次调用 ReadSlice 填充缓冲区查找
+</span><span class="c1"></span>		<span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="nx">frag</span><span class="p">))</span>
+		<span class="nb">copy</span><span class="p">(</span><span class="nx">buf</span><span class="p">,</span> <span class="nx">frag</span><span class="p">)</span>
+		<span class="nx">full</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">full</span><span class="p">,</span> <span class="nx">buf</span><span class="p">)</span>
+
+		<span class="c1">// 增加遍历到的字节数
+</span><span class="c1"></span>		<span class="nx">n</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">buf</span><span class="p">)</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 上一步 break跳出循环，遍历的字节数还没累加，这里累加
+</span><span class="c1"></span>	<span class="nx">n</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">frag</span><span class="p">)</span>
+
+	<span class="c1">// 遍历到的字节数的总和就是n，新建一个字节切片 buf，将所有遍历的数据复制到 buf 中
+</span><span class="c1"></span>	<span class="nx">buf</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+	<span class="nx">n</span> <span class="p">=</span> <span class="mi">0</span>
+	<span class="c1">// 复制 full 中的数据
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">full</span> <span class="p">{</span>
+		<span class="nx">n</span> <span class="o">+=</span> <span class="nb">copy</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="nx">n</span><span class="p">:],</span> <span class="nx">full</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+	<span class="p">}</span>
+
+	<span class="c1">// break 跳出循环时，遍历得到的数据也复制过去
+</span><span class="c1"></span>	<span class="nb">copy</span><span class="p">(</span><span class="nx">buf</span><span class="p">[</span><span class="nx">n</span><span class="p">:],</span> <span class="nx">frag</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="nx">buf</span><span class="p">,</span> <span class="nx">err</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="readstring">ReadString</h2>
+<p><code>ReadString方法</code> 和 ReadBytes方法 一样，只是将数据转为了string，其底层就是调用的ReadBytes。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">ReadString</span><span class="p">(</span><span class="nx">delim</span> <span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="kt">string</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// 直接调用ReadBytes，然后将结果转为了 string
+</span><span class="c1"></span>	<span class="nx">bytes</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">ReadBytes</span><span class="p">(</span><span class="nx">delim</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">string</span><span class="p">(</span><span class="nx">bytes</span><span class="p">),</span> <span class="nx">err</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="writeto">WriteTo</h2>
+<p><code>WriteTo方法</code> 将缓存buf中的数据 和 底层数据读取器rd 中的剩余数据，全部写入传入的Writer中。</p>
+<p>如果底层数据读取器rd 实现了WriterTo接口，直接将底层数据写入writer；如果传入的 Writer 实现了 ReaderFrom接口，直接从底层数据读取器rd 中读取数据；如果上面条件不满足，只能每次利用 底层数据读取器rd 不断填充缓冲区，然后将缓冲区数据写入到传入的 Writer 中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">WriteTo</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int64</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="c1">// 先将缓冲区的数据，写入Writer中
+</span><span class="c1"></span>	<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">writeBuf</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span>
+	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+		<span class="k">return</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 如果底层数据读取器rd 实现了WriterTo接口，直接将底层数据写入writer
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">r</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nx">rd</span><span class="p">.(</span><span class="nx">io</span><span class="p">.</span><span class="nx">WriterTo</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="nx">m</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">r</span><span class="p">.</span><span class="nf">WriteTo</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span>
+		<span class="nx">n</span> <span class="o">+=</span> <span class="nx">m</span>
+		<span class="k">return</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 如果传入的 Writer 实现了 ReaderFrom接口，直接从底层数据读取器rd 中读取数据
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">w</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.(</span><span class="nx">io</span><span class="p">.</span><span class="nx">ReaderFrom</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+		<span class="nx">m</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nf">ReadFrom</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">rd</span><span class="p">)</span>
+		<span class="nx">n</span> <span class="o">+=</span> <span class="nx">m</span>
+		<span class="k">return</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 如果上面条件不满足，只能每次利用 底层数据读取器rd 不断填充缓冲区，然后将缓冲区数据写入到传入的 Writer 中
+</span><span class="c1"></span>
+	<span class="c1">// 先填充缓冲区
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="o">-</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nf">fill</span><span class="p">()</span>
+	<span class="p">}</span>
+
+	<span class="c1">// b.r &lt; b.w =&gt; 缓冲区内有数据，非空状态。
+</span><span class="c1"></span>	<span class="c1">// 如果缓冲区非空，会将这些数据写入 Writer中，然后再次填充缓冲区。
+</span><span class="c1"></span>	<span class="c1">// 如果底层数据读取完了，就填充不到数据，缓冲区此时为空，b.r == b.w，就会结束循环
+</span><span class="c1"></span>	<span class="k">for</span> <span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="p">&lt;</span> <span class="nx">b</span><span class="p">.</span><span class="nx">w</span> <span class="p">{</span>
+		<span class="nx">m</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">b</span><span class="p">.</span><span class="nf">writeBuf</span><span class="p">(</span><span class="nx">w</span><span class="p">)</span>
+		<span class="nx">n</span> <span class="o">+=</span> <span class="nx">m</span>
+		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+			<span class="k">return</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">err</span>
+		<span class="p">}</span>
+		
+		<span class="c1">// 没有产生错误，数据都写入到Writer中了，此时缓冲区为空，继续填充
+</span><span class="c1"></span>		<span class="nx">b</span><span class="p">.</span><span class="nf">fill</span><span class="p">()</span> 
+	<span class="p">}</span>
+	
+	<span class="c1">// 缓冲区为空，走到这一步，如果b.err == io.EOF，说明底层数据读取完了，完成了任务，不应该返回 error
+</span><span class="c1"></span>	<span class="k">if</span> <span class="nx">b</span><span class="p">.</span><span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+		<span class="nx">b</span><span class="p">.</span><span class="nx">err</span> <span class="p">=</span> <span class="kc">nil</span>
+	<span class="p">}</span>
+	
+	<span class="k">return</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">b</span><span class="p">.</span><span class="nf">readErr</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="kd">var</span> <span class="nx">errNegativeWrite</span> <span class="p">=</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="s">&#34;bufio: writer returned negative count from Write&#34;</span><span class="p">)</span>
+
+<span class="c1">// 将缓冲区的数据，写入 Writer 中
+</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">b</span> <span class="o">*</span><span class="nx">Reader</span><span class="p">)</span> <span class="nf">writeBuf</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">)</span> <span class="p">(</span><span class="kt">int64</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">n</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">b</span><span class="p">.</span><span class="nx">buf</span><span class="p">[</span><span class="nx">b</span><span class="p">.</span><span class="nx">r</span><span class="p">:</span><span class="nx">b</span><span class="p">.</span><span class="nx">w</span><span class="p">])</span>
+	<span class="k">if</span> <span class="nx">n</span> <span class="p">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+		<span class="nb">panic</span><span class="p">(</span><span class="nx">errNegativeWrite</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="nx">b</span><span class="p">.</span><span class="nx">r</span> <span class="o">+=</span> <span class="nx">n</span>
+	<span class="k">return</span> <span class="nb">int64</span><span class="p">(</span><span class="nx">n</span><span class="p">),</span> <span class="nx">err</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章我们介绍了 <code>bufio.Reader</code> 的重点读取方法：</p>
+<ul>
+<li>ReadRune：读取一个 rune，返回 rune、字节数以及读取过程中产生的error</li>
+<li>UnreadRune：回退一个rune</li>
+<li>ReadSlice：查找分隔符，返回查找过程中遍历到的数据，是个半途而废的方法</li>
+<li>ReadLine：用于读取一行数据，推荐使用 ReadBytes('\n') 或者 ReadString('\n') 来代替</li>
+<li>ReadBytes：查找分隔符，返回查找过程中遍历到的数据，是个执着的方法</li>
+<li>ReadString：类似ReadBytes方法，只是将数据转为了string</li>
+<li>WriteTo：将缓存buf中的数据 和 底层数据读取器rd 中的剩余数据，全部写入传入的Writer中</li>
+</ul>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt="img"></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-02-11
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/go/">Go</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2022_01_28_go_bufio_reader_1/">
+            <span class="next-text nav-default">Go bufio.Reader 结构&#43;源码详解 I</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "lifelmy/zero_to_hero_comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2021 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>

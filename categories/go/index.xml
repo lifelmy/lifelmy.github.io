@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/categories/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 28 Jan 2022 22:20:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 11 Feb 2022 00:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go bufio.Reader 结构&#43;源码详解 II</title>
+      <link>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</link>
+      <pubDate>Fri, 11 Feb 2022 00:30:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</guid>
+      <description>前言 上一篇文章 Go bufio.Reader 结构+源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的</description>
+    </item>
+    
     <item>
       <title>Go bufio.Reader 结构&#43;源码详解 I</title>
       <link>https://lifelmy.github.io/post/2022_01_28_go_bufio_reader_1/</link>

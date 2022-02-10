@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 28 Jan 2022 22:20:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 11 Feb 2022 00:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go bufio.Reader 结构&#43;源码详解 II</title>
+      <link>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</link>
+      <pubDate>Fri, 11 Feb 2022 00:30:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</guid>
+      <description>前言 上一篇文章 Go bufio.Reader 结构+源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的</description>
+    </item>
+    
     <item>
       <title>Go bufio.Reader 结构&#43;源码详解 I</title>
       <link>https://lifelmy.github.io/post/2022_01_28_go_bufio_reader_1/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/2021_10_31_restful/</guid>
       <description>前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提</description>
-    </item>
-    
-    <item>
-      <title>Vim 基础&#43;进阶，看这篇就够了！</title>
-      <link>https://lifelmy.github.io/post/2021_10_27_linux_vim/</link>
-      <pubDate>Wed, 27 Oct 2021 00:25:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/2021_10_27_linux_vim/</guid>
-      <description>前言 vim 是从vi发展出来的一个文本编辑器。其代码补全、编译及错误跳转等方便编程的功能特别丰富，在程序员中被广泛使用。 Vim的第一个版本由布莱姆</description>
     </item>
     
   </channel>
