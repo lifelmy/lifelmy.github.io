@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 11 Feb 2022 00:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 04 Mar 2022 01:10:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言ioutil包详解</title>
+      <link>https://lifelmy.github.io/post/2022_03_04_ioutil/</link>
+      <pubDate>Fri, 04 Mar 2022 01:10:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_03_04_ioutil/</guid>
+      <description>前言 Go语言 ioutil包中提供了一些常用、方便的IO操作函数，我们在平时的时候中可以直接拿来使用。对于IO读操作来说，比较适用于读小文件，</description>
+    </item>
+    
     <item>
       <title>Go bufio.Reader 结构&#43;源码详解 II</title>
       <link>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/2021_11_08_linux_shell/</guid>
       <description>前言 经常听到 &amp;ldquo;Shell脚本&amp;rdquo;、&amp;ldquo;Shell编程&amp;rdquo;、&amp;ldquo;Bash命令&amp;rdquo;</description>
-    </item>
-    
-    <item>
-      <title>RESTful API 设计规范</title>
-      <link>https://lifelmy.github.io/post/2021_10_31_restful/</link>
-      <pubDate>Sun, 31 Oct 2021 21:42:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/2021_10_31_restful/</guid>
-      <description>前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提</description>
     </item>
     
   </channel>

@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lifelmy.github.io/post/2022_03_04_ioutil/</loc>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</loc>
     <lastmod>2022-02-11T00:30:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -297,42 +304,42 @@
   
   <url>
     <loc>https://lifelmy.github.io/categories/</loc>
-    <lastmod>2022-02-11T00:30:43+08:00</lastmod>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/go/</loc>
-    <lastmod>2022-02-11T00:30:43+08:00</lastmod>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/categories/go/</loc>
-    <lastmod>2022-02-11T00:30:43+08:00</lastmod>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/</loc>
-    <lastmod>2022-02-11T00:30:43+08:00</lastmod>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/post/</loc>
-    <lastmod>2022-02-11T00:30:43+08:00</lastmod>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/</loc>
-    <lastmod>2022-02-11T00:30:43+08:00</lastmod>
+    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -382,6 +389,12 @@
   <url>
     <loc>https://lifelmy.github.io/about/</loc>
     <lastmod>2021-06-21T09:04:52+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lifelmy.github.io/post/ioutil/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
