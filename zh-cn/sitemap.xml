@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://lifelmy.github.io/post/2022_03_22_memory_align/</loc>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lifelmy.github.io/post/2022_03_04_ioutil/</loc>
     <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -304,42 +311,42 @@
   
   <url>
     <loc>https://lifelmy.github.io/categories/</loc>
-    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/go/</loc>
-    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/categories/go/</loc>
-    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/</loc>
-    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/post/</loc>
-    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>https://lifelmy.github.io/tags/</loc>
-    <lastmod>2022-03-04T01:10:43+08:00</lastmod>
+    <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -394,6 +401,12 @@
   </url>
   
   <url>
+    <loc>https://lifelmy.github.io/post/a/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://lifelmy.github.io/post/ioutil/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -401,6 +414,12 @@
   
   <url>
     <loc>https://lifelmy.github.io/post/linux_variable_2/</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://lifelmy.github.io/post/%E8%83%8C%E6%99%AF/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

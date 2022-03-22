@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 04 Mar 2022 01:10:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 22 Mar 2022 16:20:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言内存对齐详解</title>
+      <link>https://lifelmy.github.io/post/2022_03_22_memory_align/</link>
+      <pubDate>Tue, 22 Mar 2022 16:20:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_03_22_memory_align/</guid>
+      <description>前言 前面有篇文章我们学习了 Go语言空结构体，最近又在看 unsafe包 的知识，在查阅相关资料时不免会看到内存对齐相关的内容，虽然感觉这类知识比</description>
+    </item>
+    
     <item>
       <title>Go语言ioutil包详解</title>
       <link>https://lifelmy.github.io/post/2022_03_04_ioutil/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/2021_11_09_linux_bash_01/</guid>
       <description>前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命</description>
-    </item>
-    
-    <item>
-      <title>Shell 编程初体验</title>
-      <link>https://lifelmy.github.io/post/2021_11_08_linux_shell/</link>
-      <pubDate>Mon, 08 Nov 2021 00:37:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/2021_11_08_linux_shell/</guid>
-      <description>前言 经常听到 &amp;ldquo;Shell脚本&amp;rdquo;、&amp;ldquo;Shell编程&amp;rdquo;、&amp;ldquo;Bash命令&amp;rdquo;</description>
     </item>
     
   </channel>
