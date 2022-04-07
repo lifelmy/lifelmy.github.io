@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Go语言 unsafe.Pointer 浅析 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 在写 Go 的过程中，我们不免会使用指针，但是大多数情况下使用的是类型安全的指针，类型安全的指针有助于我们写出安全的代码，但是却有诸多限制，比" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_04_07_unsafe/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Go语言 unsafe.Pointer 浅析" />
+<meta property="og:description" content="前言 在写 Go 的过程中，我们不免会使用指针，但是大多数情况下使用的是类型安全的指针，类型安全的指针有助于我们写出安全的代码，但是却有诸多限制，比" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_04_07_unsafe/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-04-07T21:40:43&#43;08:00" />
+<meta property="article:modified_time" content="2022-04-07T21:40:43&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Go语言 unsafe.Pointer 浅析">
+<meta itemprop="description" content="前言 在写 Go 的过程中，我们不免会使用指针，但是大多数情况下使用的是类型安全的指针，类型安全的指针有助于我们写出安全的代码，但是却有诸多限制，比"><meta itemprop="datePublished" content="2022-04-07T21:40:43&#43;08:00" />
+<meta itemprop="dateModified" content="2022-04-07T21:40:43&#43;08:00" />
+<meta itemprop="wordCount" content="5255">
+<meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go语言 unsafe.Pointer 浅析"/>
+<meta name="twitter:description" content="前言 在写 Go 的过程中，我们不免会使用指针，但是大多数情况下使用的是类型安全的指针，类型安全的指针有助于我们写出安全的代码，但是却有诸多限制，比"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Go语言 unsafe.Pointer 浅析</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-04-07" class="post-time">
+          2022-04-07
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 5255 字 </span>
+          <span class="more-meta"> 预计阅读 11 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#类型安全指针">类型安全指针</a>
+      <ul>
+        <li><a href="#如何获得一个指针">如何获得一个指针</a></li>
+        <li><a href="#为什么需要使用指针">为什么需要使用指针</a></li>
+        <li><a href="#类型安全指针的限制">类型安全指针的限制</a></li>
+      </ul>
+    </li>
+    <li><a href="#unsafe包">unsafe包</a></li>
+    <li><a href="#正确使用非类型安全指针">正确使用非类型安全指针</a>
+      <ul>
+        <li><a href="#使用方式一利用-pointer-作为中介完成-t1-类型-到-t2-类型的转换">使用方式一：利用 Pointer 作为中介，完成 T1 类型 到 T2 类型的转换</a></li>
+        <li><a href="#使用方式二将-pointer-转为-uintptr-不再转回-pointer">使用方式二：将 Pointer 转为 uintptr (不再转回 Pointer)</a></li>
+        <li><a href="#使用方式三将pointer转为-uintptr然后再通过算数方式将-uintptr-转回-pointer">使用方式三：将Pointer转为 uintptr，然后再通过算数方式将 uintptr 转回 Pointer</a></li>
+        <li><a href="#使用方式四将-pointer-转为-uintptr-传递给系统调用-syscallsyscall">使用方式四：将 <code>Pointer</code> 转为 <code>uintptr</code>， 传递给系统调用 <code>syscall.Syscall</code></a></li>
+        <li><a href="#使用方式五将-reflectvaluepointer-或者-reflectvalueunsafeaddr-的-uintptr-值转为-unsafepointer">使用方式五：将 <code>reflect.Value.Pointer</code> 或者 <code>reflect.Value.UnsafeAddr</code> 的 <code>uintptr</code> 值转为 <code>unsafe.Pointer</code></a></li>
+        <li><a href="#使用方式六将--reflectsliceheader-或者-reflectstringheader-的-data-域对应的-uintptr-转为-pointer或者将其他-pointer-转为-uintptr-赋值给-data">使用方式六：将  <code>reflect.SliceHeader</code> 或者 <code>reflect.StringHeader</code> 的 <code>Data</code> 域对应的 <code>uintptr</code> 转为 <code>Pointer</code>，或者将其他 <code>Pointer</code> 转为 <code>uintptr</code> 赋值给 <code>Data</code></a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>在写 <code>Go</code> 的过程中，我们不免会使用指针，但是大多数情况下使用的是<code>类型安全</code>的指针，类型安全的指针有助于我们写出安全的代码，但是却有诸多限制，比如不能对地址进行算数运算、不支持任意两个类型相互转换等。</p>
+<p><code>Go</code> 实际上是支持<code>非类型安全</code>的指针的，通过非类型安全指针，我们可以绕过诸多限制，在某些情况下甚至可以写出更高效的代码，但同时也可能会引入一些潜在的不容易发现的问题。其次，非类型安全指针没有受到 <a href="https://golang.google.cn/doc/go1compat">Go1兼容性保证</a> 的保护，在后续的Go版本中，使用非类型安全指针的代码可能会无法编译通过。</p>
+<p>即使会有上述的风险，但目前源码的很多地方都使用了非类型安全指针，同时官方给出了正确的使用方式，本篇文章我们就一起来学习下吧！</p>
+<blockquote>
+<p>说明：本文中的示例，均是基于Go1.17 64位机器</p>
+</blockquote>
+<h2 id="类型安全指针">类型安全指针</h2>
+<h3 id="如何获得一个指针">如何获得一个指针</h3>
+<p>我们有两种方式来获取类型安全的指针：</p>
+<ol>
+<li>通过内置函数 <code>new</code> 获取某个类型值的指针</li>
+<li>通过取地址符 <code>&amp;</code> 获取某个变量的指针</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// 通过 new 为int类型的值开辟一块内存，并返回指向内存起始地址的指针
+</span><span class="c1"></span>	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">new</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%p\n&#34;</span><span class="p">,</span> <span class="nx">a</span><span class="p">)</span> <span class="c1">// 0xc00034a4b8
+</span><span class="c1"></span>
+	<span class="c1">// 通过取地址符 &amp; ，获取一个变量的指针
+</span><span class="c1"></span>	<span class="nx">b</span> <span class="o">:=</span> <span class="nb">int32</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+	<span class="nx">c</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">b</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%p\n&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="c1">//0xc00034a4c0
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="为什么需要使用指针">为什么需要使用指针</h3>
+<p>在 <code>Go</code> 中，所有的参数传递都是值传递，没有引用传递。</p>
+<ol>
+<li>如果参数占用内存过大，每次函数传递都需要变量拷贝，比较耗费内存；</li>
+<li>如果我们想要在函数内部修改变量的状态，并在调用完毕后看到这种修改，就需要使用指针。</li>
+</ol>
+<p>比如我们想要调用 <code>add</code> 完成变量的加一操作，但是最终并没有达到期望的效果，原因就是值传递，即调用 <code>add(b)</code> 的时候，传入的参数是 <code>变量b</code> 的一份复制，并不会影响 <code>main函数</code> 中 <code>变量b</code> 本身。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nx">a</span> <span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="p">=</span> <span class="nx">a</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">b</span> <span class="o">:=</span> <span class="mi">1</span>
+	<span class="nf">add</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="c1">// 1
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果想要达到修改成功的目的，就需要传递指针：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">add</span><span class="p">(</span><span class="nx">a</span> <span class="o">*</span><span class="kt">int</span><span class="p">)</span> <span class="p">{</span>
+	<span class="o">*</span><span class="nx">a</span> <span class="p">=</span> <span class="o">*</span><span class="nx">a</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="o">:=</span> <span class="mi">1</span>
+	<span class="nf">add</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">)</span>
+	<span class="nb">println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="c1">// 2
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="类型安全指针的限制">类型安全指针的限制</h3>
+<ol>
+<li>不能对指针的地址进行算术运算</li>
+</ol>
+<p>我们定义一个变量 <code>a</code> ，然后取地址，对地址算数运算 <code>addr++</code> 会编译不通过；<code>*addr++</code> 编译通过，最后输出 <code>a=2</code>，其实 <code>*addr++</code> 被编译器解释为了<code>(*addr)++</code>，即解引用操作符 <code>*</code> 的优先级 高于 <code>自增符++</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="o">:=</span> <span class="mi">1</span>
+	<span class="nx">addr</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">a</span>
+	<span class="c1">// addr++  编译不通过
+</span><span class="c1"></span>	<span class="o">*</span><span class="nx">addr</span><span class="o">++</span> <span class="c1">// 编译通过
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span> <span class="c1">// 2
+</span><span class="c1"></span><span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>两个任意指针类型不能随意转换</li>
+</ol>
+<p>只有两个类型的底层数据类型是一致的，才可以完成转换</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">MyInt</span> <span class="kt">int64</span>
+<span class="kd">type</span> <span class="nx">T1</span> <span class="o">*</span><span class="kt">int64</span>
+<span class="kd">type</span> <span class="nx">T2</span> <span class="o">*</span><span class="nx">MyInt</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="kd">var</span> <span class="nx">a</span> <span class="o">*</span><span class="kt">int64</span>
+	<span class="kd">var</span> <span class="nx">myInt</span> <span class="o">*</span><span class="nx">MyInt</span>
+
+	<span class="kd">var</span> <span class="nx">t1</span> <span class="nx">T1</span>
+	<span class="nx">t1</span> <span class="p">=</span> <span class="nx">a</span> <span class="c1">// t1 是 *int64类型，a 是 *int64 类型，可以隐式转换
+</span><span class="c1"></span>
+	<span class="kd">var</span> <span class="nx">t2</span> <span class="nx">T2</span>
+	<span class="nx">t2</span> <span class="p">=</span> <span class="nx">myInt</span>       <span class="c1">// t2 是 *MyInt类型，myInt 是 *MyInt类型，可以隐式转换
+</span><span class="c1"></span>	<span class="nx">t2</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="nx">MyInt</span><span class="p">)(</span><span class="nx">a</span><span class="p">)</span> <span class="c1">// t2 的底层类型是 *int64，a 是 *int64 类型，需要显式转换
+</span><span class="c1"></span>
+	<span class="nx">t1</span> <span class="p">=</span> <span class="p">(</span><span class="o">*</span><span class="kt">int64</span><span class="p">)((</span><span class="o">*</span><span class="nx">MyInt</span><span class="p">)(</span><span class="nx">t2</span><span class="p">))</span> <span class="c1">// t2 的底层类型是 *int64，t1 是 *int64类型，需要显式转换
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>但是这些类型，无论怎么转换，都转换不了 <code>*uint64</code> 类型</p>
+<h2 id="unsafe包">unsafe包</h2>
+<p>我们说的 <code>非类型安全指针</code> 就是指 <code>unsafe</code> 包中的 <code>Pointer</code>，它被类型定义为 <code>type Pointer *ArbitraryType</code>，<code>ArbitraryType</code> 在这里仅仅是用于表示任意类型，也就是说 <code>Pointer</code> 可以指向任意数据类型，可以和任意类型的指针相互转换。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 表示任意类型
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">ArbitraryType</span> <span class="kt">int</span>
+
+<span class="kd">type</span> <span class="nx">Pointer</span> <span class="o">*</span><span class="nx">ArbitraryType</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在上篇文章中<a href="http://mp.weixin.qq.com/s?__biz=MzU5NzU2NDk2MA==&amp;mid=2247485079&amp;idx=1&amp;sn=6e614451bb387752ff2ae344be56a859&amp;chksm=fe50cdd8c92744ce974118b03809a11e5105e7abbc786245846aa2b8f64f5e6554659b6adb53#rd">Go语言内存对齐详解</a>，我们也简单了解了 <code>unsafe</code> 包中有如下三个函数：</p>
+<ol>
+<li>
+<p><code>func Sizeof(x ArbitraryType) uintptr</code></p>
+<p>返回一个变量占用的内存字节数</p>
+</li>
+<li>
+<p><code>func Offsetof(x ArbitraryType) uintptr</code></p>
+<p>返回结构体某个字段的地址相对于此结构体起始地址的偏移量</p>
+</li>
+<li>
+<p><code>func Alignof(x ArbitraryType) uintptr</code></p>
+<p>返回对齐系数</p>
+</li>
+</ol>
+<p>这三个函数的返回值的类型均为内置类型 <code>uintptr</code>，<code>uintptr</code> 是一个整数值，来保存变量的内存地址，可以和 <code>Pointer</code> 相互转换。</p>
+<p><code>Pointer</code> 表示指向任意类型的指针，对于该类型有四种合法的操作：</p>
+<ul>
+<li>任意类型的指针可以转为 <code>Pointer</code></li>
+<li><code>Pointer</code> 可以转为任意类型的指针</li>
+<li><code>uintptr</code> 可以转为 <code>Pointer</code></li>
+<li><code>Pointer</code> 可以转为 <code>uintptr</code></li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+	<span class="nx">b</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="kt">int64</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">))</span> <span class="c1">// 将 *int 先转为 Pointer，再转为 *int64
+</span><span class="c1"></span>
+	<span class="nx">c</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">))</span> <span class="c1">// 将 *int 先转为 Pointer，再转为 uintptr
+</span><span class="c1"></span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%p\n&#34;</span><span class="p">,</span> <span class="nx">b</span><span class="p">)</span> <span class="c1">// 打印地址 0xc0003cdbb0
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%x\n&#34;</span><span class="p">,</span> <span class="nx">c</span><span class="p">)</span> <span class="c1">// 地址 c0002124b8
+</span><span class="c1"></span>
+  
+	<span class="kd">type</span> <span class="nx">T</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">a</span> <span class="kt">string</span>
+		<span class="nx">b</span> <span class="kt">int</span>
+	<span class="p">}</span>
+	<span class="nx">t</span> <span class="o">:=</span> <span class="nx">T</span><span class="p">{</span><span class="nx">a</span><span class="p">:</span> <span class="s">&#34;abc&#34;</span><span class="p">,</span> <span class="nx">b</span><span class="p">:</span> <span class="mi">1</span><span class="p">}</span>
+
+	<span class="cm">/*
+</span><span class="cm">		1. 将 t 的地址转为 Pointer：符合第一种
+</span><span class="cm">		2. 将 Pointer 转为 uintptr 后得到地址的整数值：符合第四种
+</span><span class="cm">		3. 加上 t.b 的offset，得到 t.b 的地址整数值：uintptr是整数，可以直接相加
+</span><span class="cm">		4. 将 uintptr 转为 Pointer：符合第三种
+</span><span class="cm">		5. 将 Pointer 转为 *int :符合第二种
+</span><span class="cm">		6. 最后解引用，得到具体的值
+</span><span class="cm">	*/</span>
+	<span class="nx">d</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">int</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">t</span><span class="p">))</span> <span class="o">+</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Offsetof</span><span class="p">(</span><span class="nx">t</span><span class="p">.</span><span class="nx">b</span><span class="p">)))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="c1">// 1
+</span><span class="c1"></span><span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><p>Pointer 越过了类型检查，可以直接操作底层的内存，因此使用时需要格外小心。对于 Pointer的操作，只有如下六种是合法的，其余的使用方式均为非法，我们一起来看下。</p>
+<h2 id="正确使用非类型安全指针">正确使用非类型安全指针</h2>
+<h3 id="使用方式一利用-pointer-作为中介完成-t1-类型-到-t2-类型的转换">使用方式一：利用 Pointer 作为中介，完成 T1 类型 到 T2 类型的转换</h3>
+<p><code>T1</code> 和 <code>T2</code> 是任意类型，如果 T1 的内存占用大于等于 T2，并且 T1 和 T2 的内存布局一致，可以利用 Pointer 作为中介，完成 T1类型 到 T2类型的转换。（如果T1 的内存占用小于 T2，那么 T2 剩余部分没法赋值，就会有问题）</p>
+<p><code>math</code> 包中的 <code>Float64bits</code> 函数将一个 <code>float64</code> 值转换为一个 <code>uint64 </code>值，<code>Float64frombits</code> 为此转换的逆转换，即 Float64bits(Float64frombits(x)) == x。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">Float64bits</span><span class="p">(</span><span class="nx">f</span> <span class="kt">float64</span><span class="p">)</span> <span class="kt">uint64</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">uint64</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">f</span><span class="p">))</span> 
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">Float64frombits</span><span class="p">(</span><span class="nx">b</span> <span class="kt">uint64</span><span class="p">)</span> <span class="kt">float64</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">float64</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">b</span><span class="p">))</span> 
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如下所示，<code>slice</code> 和 <code>string</code> 结构的底层布局类似，且 slice 的内存占用大于 string，我们可以利用此种方式完成 slice 到 string 的正确转换，但是无法正确完成 string 到 slice 的转换。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// slice 和 string 的底层结构
+</span><span class="c1"></span><span class="kd">type</span> <span class="nx">slice</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">array</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+	<span class="nx">len</span>   <span class="kt">int</span>
+	<span class="nx">cap</span>   <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">stringStruct</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">str</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+	<span class="nx">len</span> <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="c1">// slice 转 string，可以正确转换
+</span><span class="c1"></span>	<span class="nx">sli</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">}</span>
+	<span class="nx">str</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">sli</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>      <span class="c1">// abc
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span> <span class="c1">// 3
+</span><span class="c1"></span>
+	<span class="c1">// string 转 slice，cap 字段无法赋值，无法正确转换
+</span><span class="c1"></span>	<span class="nx">str</span> <span class="p">=</span> <span class="s">&#34;1234&#34;</span>
+	<span class="nx">b</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="p">[]</span><span class="kt">byte</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">str</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span> <span class="c1">// 1234
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>    <span class="c1">// 4
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">cap</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>    <span class="c1">// 824634066744
+</span><span class="c1"></span><span class="p">}</span>  
+  
+</code></pre></td></tr></table>
+</div>
+</div><p>slice 转为 string 后，两者对应的指针指向的是同一个字节数组，因此修改底层的数组值，string 相应的也会跟着改变。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="c1">// 字节数组转字符串
+</span><span class="c1"></span>	<span class="nx">sli</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">}</span>
+	<span class="nx">str</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">sli</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span>      <span class="c1">// abc
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nx">str</span><span class="p">))</span> <span class="c1">// 3
+</span><span class="c1"></span>
+	<span class="nx">sli</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">=</span> <span class="sc">&#39;d&#39;</span>
+	<span class="nx">sli</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">=</span> <span class="sc">&#39;e&#39;</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="c1">// dec
+</span><span class="c1"></span><span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="使用方式二将-pointer-转为-uintptr-不再转回-pointer">使用方式二：将 Pointer 转为 uintptr (不再转回 Pointer)</h3>
+<p>将 <code>Pointer</code> 转为 <code>uintptr</code>，并且不再转回 <code>Pointer</code>，此方式用处不大，通常我们只用来打印值。</p>
+<p>此方式相当于取变量的内存地址，由于 <code>uintptr</code> 是个变量值，而非引用，后续该变量被移动到其他位置，其对应的<code>uintptr</code>值不会更新；其次，如果后续没有使用该变量，随时可能会被垃圾回收掉。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 每次运行得到的内存地址，可能不一样
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="o">:=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%p\n&#34;</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">a</span><span class="p">)</span>                          <span class="c1">// 0xc0001184b8
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%x\n&#34;</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">)))</span> <span class="c1">// c0001184b8
+</span><span class="c1"></span><span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><p>因此，将 uintptr 转回 Pointer 是存在风险的，只有接下来我们列举的几种转换方式合法的。</p>
+<h3 id="使用方式三将pointer转为-uintptr然后再通过算数方式将-uintptr-转回-pointer">使用方式三：将Pointer转为 uintptr，然后再通过算数方式将 uintptr 转回 Pointer</h3>
+<p>我们可以将一个变量的 <code>Pointer</code> 转为 <code>uintptr</code>，然后再加上一定的偏移量转回 <code>Pointer</code>，这种方式通常用来获取结构体中的成员变量地址或者数组中第i个元素的地址。</p>
+<p>结构体：我们可以先拿到结构体变量 <code>e</code> 的地址，然后加上 <code>成员b</code> 的偏移量，就可以得到 <code>e.b</code> 的地址，再转回 <code>Pointer</code> 就能够拿到对应的值了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="kd">type</span> <span class="nx">Example</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">a</span> <span class="kt">int32</span>
+		<span class="nx">b</span> <span class="kt">string</span>
+	<span class="p">}</span>
+
+	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">Example</span><span class="p">{</span>
+		<span class="nx">a</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="nx">b</span><span class="p">:</span> <span class="s">&#34;test&#34;</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 等价于 *(*string)(unsafe.Pointer(&amp;e.b))
+</span><span class="c1"></span>	<span class="nx">c</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">))</span> <span class="o">+</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Offsetof</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">b</span><span class="p">)))</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>
+<span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><p>数组：拿到了数组第一个元素 <code>a[0]</code> 的地址，转为 <code>uintptr</code> 后，加上 <code>2倍</code> 个元素类型占用的内存大小，就可以得到第 <code>3</code> 个元素的地址值，再转回 <code>Pointer</code>，最后转为 <code>int</code>，就得到了<code>第三个</code>元素的值。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="nx">a</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">int</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">}</span>
+	<span class="nx">b</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">int</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">a</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+<span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><p>同理，获取一个成员或元素的地址，然后减去相应的偏移量，也是合法操作。但是无论怎么操作，需要保证最后得到的地址，是在当前变量占用的地址范围内，不能超出，如下几种就是非法的操作：</p>
+<ul>
+<li>非法操作一：超出变量内存范围</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 从初始地址，最多加  unsafe.Sizeof(s)-1
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">s</span> <span class="nx">thing</span>
+<span class="nx">end</span> <span class="p">=</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">))</span> <span class="o">+</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Sizeof</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 声明了 n 个字节的长度，从初始地址最多加 n-1
+</span><span class="c1"></span><span class="nx">b</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="nx">n</span><span class="p">)</span>
+<span class="nx">end</span> <span class="p">=</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>非法操作二：使用变量保存 uintptr 的值</li>
+</ul>
+<p>在将 <code>uintptr</code> 类型转为 <code>Pointer</code> 类型之前，不能将 <code>uintptr</code> 的的值赋值给变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 非法操作示例
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="kd">type</span> <span class="nx">Example</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">a</span> <span class="kt">int32</span>
+		<span class="nx">b</span> <span class="kt">string</span>
+	<span class="p">}</span>
+
+	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">Example</span><span class="p">{</span>
+		<span class="nx">a</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="nx">b</span><span class="p">:</span> <span class="s">&#34;test&#34;</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 正确操作 c := *(*string)(unsafe.Pointer(uintptr(unsafe.Pointer(&amp;e)) + unsafe.Offsetof(e.b)))
+</span><span class="c1"></span>	<span class="nx">addr</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">))</span> <span class="o">+</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Offsetof</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">b</span><span class="p">)</span>
+
+	<span class="c1">// 到这里，变量 e 没有任何引用了，因此可能随时被垃圾回收器回收，一旦被回收，再使用 e.b 原来的地址将是非常危险的
+</span><span class="c1"></span>	<span class="nx">c</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">addr</span><span class="p">))</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">c</span><span class="p">)</span>
+<span class="err">」</span>	
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>非法操作三：Pointer 指向 nil</li>
+</ul>
+<p><code>Pointer</code> 需要指向一个分配过内存的变量，不能指向 <code>nil</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// Pintere指向nil是非法的
+</span><span class="c1"></span><span class="nx">u</span> <span class="o">:=</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="kc">nil</span><span class="p">)</span>
+<span class="nx">p</span> <span class="o">:=</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">uintptr</span><span class="p">(</span><span class="nx">u</span><span class="p">)</span> <span class="o">+</span> <span class="nx">offset</span><span class="p">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="使用方式四将-pointer-转为-uintptr-传递给系统调用-syscallsyscall">使用方式四：将 <code>Pointer</code> 转为 <code>uintptr</code>， 传递给系统调用 <code>syscall.Syscall</code></h3>
+<p>我们知道 <code>uintptr</code> 是一个整数，获取到了一个变量的 <code>uintptr</code> 值，并不能保证变量不被垃圾回收掉，如果变量被垃圾回收掉，使用原先的 <code>uintptr</code> 值将是非常危险的。</p>
+<p>下面这个函数是危险的原因在于，函数本身不能保证传递进来的地址对应的内存块一定没有被回收。 如果此内存块已经被回收了或者被重新分配给了其它变量，那么此函数内部的操作将是非法和危险的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">DoSomething</span><span class="p">(</span><span class="nx">addr</span> <span class="kt">uintptr</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// 对处于传递进来的地址处的值进行读写...
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>然而系统调用则有这种特权，保证了地址对应的内存块在函数执行过程中不被回收和移动。例如 <code>syscall</code> 标准库包中的 <code>Syscall</code> 函数的原型为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-fallback" data-lang="fallback">func Syscall(trap, a1, a2, a3 uintptr) (r1, r2 uintptr, err Errno)
+</code></pre></td></tr></table>
+</div>
+</div><p>那么此函数是如何保证传递给它的地址参数值<code>a1</code>、<code>a2</code>和<code>a3</code>处的内存块在执行过程中一定没有被回收和被移动呢？ 此函数无法做出这样的保证，事实上，是编译器做出了这样的保证。 这是 <code>syscall.Syscall</code> 这样函数的特权，其它自定义函数无法享受到这样的待遇。</p>
+<p>正确的使用姿势为：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 将 p 对应的 Pointer 值转为 uintptr
+</span><span class="c1"></span><span class="nx">syscall</span><span class="p">.</span><span class="nf">Syscall</span><span class="p">(</span><span class="nx">SYS_READ</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">p</span><span class="p">)),</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>同时需要注意的是，我们也不能先将 <code>uintptr</code> 的值赋值给一个变量，然后再传入 <code>syscall.Syscall</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="nx">u</span> <span class="o">:=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span>
+<span class="c1">// 此时 p 可能被回收或者移动
+</span><span class="c1"></span><span class="nx">syscall</span><span class="p">.</span><span class="nf">Syscall</span><span class="p">(</span><span class="nx">SYS_READ</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">fd</span><span class="p">),</span> <span class="nx">u</span><span class="p">,</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">n</span><span class="p">))</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="使用方式五将-reflectvaluepointer-或者-reflectvalueunsafeaddr-的-uintptr-值转为-unsafepointer">使用方式五：将 <code>reflect.Value.Pointer</code> 或者 <code>reflect.Value.UnsafeAddr</code> 的 <code>uintptr</code> 值转为 <code>unsafe.Pointer</code></h3>
+<p><code>reflect</code>包中，<code>Value</code> 类型的 <code>Pointer </code>和 <code>UnsafeAddr </code>方法都返回一个 <code>uintptr</code> 值，而不是 <code>unsafe.Pointer</code> 值，这样做是为了避免用户在没有引入 <code>unsafe</code> 包的条件下，就可以将这两个方法的返回值转为任意类型安全的指针。（比如返回值 a 是 unsafe.Pointer 类型，不引入unsafe包，可以直接进行(*int32)(a)，将其转为 int32 类型的指针 ）。</p>
+<p>因此，这种设计需要我们在调用完 <code>reflect.Value.Pointer</code> 或者 <code>reflect.Value.UnsafeAddr</code>后，立即调用 <code>unsafe.Pointer</code> 转为 <code>Pointer</code> 类型，否则在调用的空窗期，变量可能被移动或者回收。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="kd">type</span> <span class="nx">Example</span> <span class="kd">struct</span> <span class="p">{</span>
+		<span class="nx">a</span> <span class="kt">int32</span>
+		<span class="nx">b</span> <span class="kt">string</span>
+	<span class="p">}</span>
+
+	<span class="nx">e</span> <span class="o">:=</span> <span class="nx">Example</span><span class="p">{</span>
+		<span class="nx">a</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+		<span class="nx">b</span><span class="p">:</span> <span class="s">&#34;test&#34;</span><span class="p">,</span>
+	<span class="p">}</span>
+
+	<span class="c1">// 1. 正确使用方式
+</span><span class="c1"></span>	<span class="nx">b</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">.</span><span class="nx">b</span><span class="p">).</span><span class="nf">Pointer</span><span class="p">()))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> <span class="c1">// test
+</span><span class="c1"></span>
+  <span class="c1">// 2. 错误使用方式
+</span><span class="c1"></span>	<span class="nx">p</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nf">ValueOf</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">.</span><span class="nx">b</span><span class="p">).</span><span class="nf">Pointer</span><span class="p">()</span>
+	<span class="c1">// 此时变量可能被移动或者回收
+</span><span class="c1"></span>	<span class="nx">b</span> <span class="p">=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nx">p</span><span class="p">))</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span> 
+<span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="使用方式六将--reflectsliceheader-或者-reflectstringheader-的-data-域对应的-uintptr-转为-pointer或者将其他-pointer-转为-uintptr-赋值给-data">使用方式六：将  <code>reflect.SliceHeader</code> 或者 <code>reflect.StringHeader</code> 的 <code>Data</code> 域对应的 <code>uintptr</code> 转为 <code>Pointer</code>，或者将其他 <code>Pointer</code> 转为 <code>uintptr</code> 赋值给 <code>Data</code></h3>
+<p><code>slice</code> 和 <code>string</code> 底层的数据结构如下：其中 <code>slice</code> 结构的 <code>array</code> 字段和 <code>string</code> 结构的 <code>str</code> 字段底层其实都指向 <code>字节数组</code>。</p>
+<p><code>SliceHeader</code> 和 <code>StringHeader</code> 分别是 <code>slice</code> 和 <code>string</code> 结构的运行时表示，对于任意一个 <code>slice</code> 或者 <code>string</code>，我们可以拿到它的运行时表示，然后修改其 <code>Data</code> 值，达到修改其底层数据的目的。即我们可以将一个字符串的指针值 转换为 <code>*reflect.StringHeader</code> ，进而可以对此字符串的内部进行修改。类似，我们也可以将一个切片的指针值转换为 <code>*reflect.SliceHeader</code> ，从而对此切片的内部进行修改。</p>
+<p>这样做的好处是，在不重新分配内存的情况下，将 <code>string</code> 或 <code>slice</code> 的底层数据改变。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">type</span> <span class="nx">slice</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">array</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+	<span class="nx">len</span>   <span class="kt">int</span>
+	<span class="nx">cap</span>   <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">stringStruct</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">str</span> <span class="nx">unsafe</span><span class="p">.</span><span class="nx">Pointer</span>
+	<span class="nx">len</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">SliceHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Data</span> <span class="kt">uintptr</span>
+	<span class="nx">Len</span>  <span class="kt">int</span>
+	<span class="nx">Cap</span>  <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="kd">type</span> <span class="nx">StringHeader</span> <span class="kd">struct</span> <span class="p">{</span>
+	<span class="nx">Data</span> <span class="kt">uintptr</span>
+	<span class="nx">Len</span>  <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>和上面第五条同样的原因，为了避免用户没有引入 <code>unsafe包</code> 就可以直接转换， <code>reflect.SliceHeader</code> 或者 <code>reflect.StringHeader</code> 的 <code>Data</code> 域都是 <code>uintptr</code> 类型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 修改字符串对应的Data域
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">str</span> <span class="o">:=</span> <span class="s">&#34;test&#34;</span>
+  
+  <span class="c1">// 字节数组，修改后字符串底层数据指向这个数组
+</span><span class="c1"></span>	<span class="nx">a</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="kt">byte</span><span class="p">{</span><span class="sc">&#39;a&#39;</span><span class="p">,</span> <span class="sc">&#39;b&#39;</span><span class="p">,</span> <span class="sc">&#39;c&#39;</span><span class="p">}</span>
+
+	<span class="nx">strHeader</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">str</span><span class="p">))</span>
+	<span class="nx">strHeader</span><span class="p">.</span><span class="nx">Data</span> <span class="p">=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">a</span><span class="p">))</span>
+	<span class="nx">strHeader</span><span class="p">.</span><span class="nx">Len</span> <span class="p">=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">a</span><span class="p">)</span>
+
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="c1">// abc
+</span><span class="c1"></span><span class="p">}</span>  
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  
+	<span class="nx">sli</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="sc">&#39;h&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">}</span>
+
+	<span class="nx">array</span> <span class="o">:=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="kt">byte</span><span class="p">{</span><span class="sc">&#39;1&#39;</span><span class="p">,</span> <span class="sc">&#39;2&#39;</span><span class="p">,</span> <span class="sc">&#39;3&#39;</span><span class="p">,</span> <span class="sc">&#39;4&#39;</span><span class="p">}</span>
+
+	<span class="c1">// 将切片转为 reflect.SliceHeader 结构
+</span><span class="c1"></span>	<span class="nx">sliceHeader</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">sli</span><span class="p">))</span>
+
+	<span class="c1">// 修改对应的字段数据，修改后 sli 底层的数据指向了 array
+</span><span class="c1"></span>	<span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Data</span> <span class="p">=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">array</span><span class="p">))</span>
+  
+  <span class="c1">// 先设置长度为2
+</span><span class="c1"></span>	<span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Len</span> <span class="p">=</span> <span class="mi">2</span>
+	<span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Cap</span> <span class="p">=</span> <span class="nb">len</span><span class="p">(</span><span class="nx">array</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">sli</span><span class="p">)</span> <span class="c1">// 12
+</span><span class="c1"></span>
+	<span class="c1">// 修改 sli 的长度
+</span><span class="c1"></span>	<span class="nx">sli</span> <span class="p">=</span> <span class="nx">sli</span><span class="p">[:</span><span class="nb">cap</span><span class="p">(</span><span class="nx">sli</span><span class="p">)]</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">sli</span><span class="p">)</span> <span class="c1">// 1234
+</span><span class="c1"></span>  
+<span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>一般来说，我们应该从一个已经存在的字符串得到 <code>*reflect.StringHeader</code>，或者从一个已经存在的切片得到 <code>*reflect.SliceHeader</code>，不能直接声明 <code>reflect.SliceHeader</code> 或 <code>reflect.StringHeader</code> 变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 错误使用方式
+</span><span class="c1"></span><span class="kd">var</span> <span class="nx">hdr</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span>
+<span class="nx">hdr</span><span class="p">.</span><span class="nx">Data</span> <span class="p">=</span> <span class="nb">uintptr</span><span class="p">(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="nb">new</span><span class="p">([</span><span class="mi">5</span><span class="p">]</span><span class="kt">byte</span><span class="p">)))</span>
+ <span class="c1">// 在此时刻，上一行代码中刚开辟的数组内存块已经不再被任何值所引用，所以它可以被回收
+</span><span class="c1"></span><span class="nx">hdr</span><span class="p">.</span><span class="nx">Len</span> <span class="p">=</span> <span class="nx">n</span>
+<span class="nx">s</span> <span class="o">:=</span> <span class="o">*</span><span class="p">(</span><span class="o">*</span><span class="kt">string</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">hdr</span><span class="p">))</span> <span class="c1">// 危险
+</span></code></pre></td></tr></table>
+</div>
+</div><p>使用 <code>reflect.SliceHeader</code> 和 <code>reflect.StringHeader</code>，我们可以在不重新分配底层数据内存的情况下，完成 <code>slice</code> 和 <code>string</code> 类型互换：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 字节切片转 string
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">ByteSlice2String</span><span class="p">(</span><span class="nx">slice</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">sliceHeader</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">slice</span><span class="p">))</span>
+	<span class="nx">stringHeader</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">))</span>
+	<span class="nx">stringHeader</span><span class="p">.</span><span class="nx">Data</span> <span class="p">=</span> <span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Data</span>
+	<span class="nx">stringHeader</span><span class="p">.</span><span class="nx">Len</span> <span class="p">=</span> <span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Len</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="c1">// string 转字节切片
+</span><span class="c1"></span><span class="kd">func</span> <span class="nf">String2ByteSlice</span><span class="p">(</span><span class="nx">s</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="nx">slice</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">{</span>
+	<span class="nx">stringHeader</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">StringHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">s</span><span class="p">))</span>
+	<span class="nx">sliceHeader</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">reflect</span><span class="p">.</span><span class="nx">SliceHeader</span><span class="p">)(</span><span class="nx">unsafe</span><span class="p">.</span><span class="nf">Pointer</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">slice</span><span class="p">))</span>
+
+	<span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Data</span> <span class="p">=</span> <span class="nx">stringHeader</span><span class="p">.</span><span class="nx">Data</span>
+	<span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Len</span> <span class="p">=</span> <span class="nx">stringHeader</span><span class="p">.</span><span class="nx">Len</span>
+	<span class="nx">sliceHeader</span><span class="p">.</span><span class="nx">Cap</span> <span class="p">=</span> <span class="nx">stringHeader</span><span class="p">.</span><span class="nx">Len</span>
+	<span class="k">return</span>
+<span class="p">}</span>
+
+<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">b</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">{</span><span class="sc">&#39;h&#39;</span><span class="p">,</span> <span class="sc">&#39;e&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;l&#39;</span><span class="p">,</span> <span class="sc">&#39;o&#39;</span><span class="p">}</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">ByteSlice2String</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span> <span class="c1">// hello
+</span><span class="c1"></span>
+	<span class="nx">s</span> <span class="o">:=</span> <span class="s">&#34;hello&#34;</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nf">String2ByteSlice</span><span class="p">(</span><span class="nx">s</span><span class="p">))</span> <span class="c1">// [104 101 108 108 111]
+</span><span class="c1"></span>  
+<span class="p">}</span>  
+  
+</code></pre></td></tr></table>
+</div>
+</div><p>由于默认字符串内存是分配在不可修改区的，使用上述的 <code>String2ByteSlice </code>将 <code>string</code> 转为 <code>slice</code> 后，只能进行读取，不能修改其底层数据值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+
+	<span class="nx">s1</span> <span class="o">:=</span> <span class="s">&#34;Goland&#34;</span> <span class="c1">// 官方标准编译器会将 s1 的字节开辟在不可修改内存区
+</span><span class="c1"></span>	
+	<span class="nx">b1</span> <span class="o">:=</span> <span class="nf">String2ByteSlice</span><span class="p">(</span><span class="nx">s1</span><span class="p">)</span> <span class="c1">// 转为字节数组
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">b1</span><span class="p">)</span> <span class="c1">// Goland
+</span><span class="c1"></span>
+	<span class="c1">// 由于字符串 s1 底层指向的字节数组在不可修改区，此时不能修改值，否则会panic
+</span><span class="c1"></span>	<span class="c1">// b1[5] = &#39;a&#39;
+</span><span class="c1"></span>
+	<span class="c1">// 这种方式不会存放在不可修改区，转为字节数组后，可以修改值
+</span><span class="c1"></span>	<span class="nx">s2</span> <span class="o">:=</span> <span class="nx">strings</span><span class="p">.</span><span class="nf">Join</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;Go&#34;</span><span class="p">,</span> <span class="s">&#34;land&#34;</span><span class="p">},</span> <span class="s">&#34;&#34;</span><span class="p">)</span>
+	<span class="nx">b2</span> <span class="o">:=</span> <span class="nf">String2ByteSlice</span><span class="p">(</span><span class="nx">s2</span><span class="p">)</span>
+	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%s\n&#34;</span><span class="p">,</span> <span class="nx">b2</span><span class="p">)</span> <span class="c1">// Goland
+</span><span class="c1"></span>	<span class="nx">b2</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="p">=</span> <span class="sc">&#39;g&#39;</span> <span class="c1">// 相当于修改底层数组的值，原字符串的值也会随之改变
+</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">s2</span><span class="p">)</span> <span class="c1">// Golang
+</span><span class="c1"></span><span class="p">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章从类型安全指针切入，介绍了如何获取指针、为什么需要使用指针以及类型安全指针的局限性，然后进一步介绍了 <code>unsafe</code> 包中对于非类型安全指针类型 <code>Pointer</code> 的定义以及使用方法，最后通过具体示例详细介绍了六种正确使用 <code>Pointer</code> 的场景。</p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt="img"></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-04-07
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/go/">Go</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2022_03_22_memory_align/">
+            <span class="next-text nav-default">Go语言内存对齐详解</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "lifelmy/zero_to_hero_comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2021 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
