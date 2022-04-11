@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 07 Apr 2022 21:40:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Apr 2022 11:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言实现 ssh &amp; scp</title>
+      <link>https://lifelmy.github.io/post/2022_04_11_go_ssh_scp/</link>
+      <pubDate>Mon, 11 Apr 2022 11:30:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_04_11_go_ssh_scp/</guid>
+      <description>前言 最近遇到一个临时需求，需要将客户环境中一个服务每天的日志进行一系列复杂处理，并生成数据报表。由于数据处理逻辑复杂，且需要存入数据库，在客</description>
+    </item>
+    
     <item>
       <title>Go语言 unsafe.Pointer 浅析</title>
       <link>https://lifelmy.github.io/post/2022_04_07_unsafe/</link>

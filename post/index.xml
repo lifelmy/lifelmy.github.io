@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 07 Apr 2022 21:40:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 11 Apr 2022 11:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言实现 ssh &amp; scp</title>
+      <link>https://lifelmy.github.io/post/2022_04_11_go_ssh_scp/</link>
+      <pubDate>Mon, 11 Apr 2022 11:30:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_04_11_go_ssh_scp/</guid>
+      <description>前言 最近遇到一个临时需求，需要将客户环境中一个服务每天的日志进行一系列复杂处理，并生成数据报表。由于数据处理逻辑复杂，且需要存入数据库，在客</description>
+    </item>
+    
     <item>
       <title>Go语言 unsafe.Pointer 浅析</title>
       <link>https://lifelmy.github.io/post/2022_04_07_unsafe/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/2021_11_14_linux_variables_1/</guid>
       <description>前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供</description>
-    </item>
-    
-    <item>
-      <title>Bash的基本功能-2</title>
-      <link>https://lifelmy.github.io/post/2021_11_09_linux_bash_02/</link>
-      <pubDate>Wed, 10 Nov 2021 00:00:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/2021_11_09_linux_bash_02/</guid>
-      <description>前言 上篇文章我们学习了部分 Bash 的基本功能，本篇文章我们继续学习其他基本功能！ 输出重定向 在 Bash 中，执行命令默认会输出到屏幕上，但是很多时候我们是通</description>
     </item>
     
   </channel>
