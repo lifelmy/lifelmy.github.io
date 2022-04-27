@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 11 Apr 2022 11:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 28 Apr 2022 02:15:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>初见 Go Mutex </title>
+      <link>https://lifelmy.github.io/post/2022_04_28_mutex_1/</link>
+      <pubDate>Thu, 28 Apr 2022 02:15:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_04_28_mutex_1/</guid>
+      <description>前言 在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑</description>
+    </item>
+    
     <item>
       <title>Go语言实现 ssh &amp; scp</title>
       <link>https://lifelmy.github.io/post/2022_04_11_go_ssh_scp/</link>
