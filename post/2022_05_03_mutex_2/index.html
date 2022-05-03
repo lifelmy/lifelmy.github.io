@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title> - lifelmy的博客</title>
+  <title>Go Mutex 源码详解 - lifelmy的博客</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -23,7 +23,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 
 <meta name="author" content="漫漫Coding路" />
-  <meta name="description" content="Go Mutex 在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑" />
+  <meta name="description" content="前言 在上一篇文章中，我们一起学习了如何使用 Go 中的互斥锁 Mutex，那么本篇文章，我们就一起来探究下 Mutex 底层是如何实现的，知其然，更要知其所以然" />
 
   <meta name="keywords" content="Hugo, theme, jane" />
 
@@ -35,7 +35,7 @@
 <meta name="generator" content="Hugo 0.84.0" />
 
 
-<link rel="canonical" href="https://lifelmy.github.io/post/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E4%BA%92%E6%96%A5%E9%94%81/" />
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_05_03_mutex_2/" />
 
 
 
@@ -59,20 +59,20 @@
 
 
 
-<meta property="og:title" content="" />
-<meta property="og:description" content="Go Mutex 在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑" />
+<meta property="og:title" content="Go Mutex 源码详解" />
+<meta property="og:description" content="前言 在上一篇文章中，我们一起学习了如何使用 Go 中的互斥锁 Mutex，那么本篇文章，我们就一起来探究下 Mutex 底层是如何实现的，知其然，更要知其所以然" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://lifelmy.github.io/post/%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E4%BA%92%E6%96%A5%E9%94%81/" /><meta property="article:section" content="post" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_05_03_mutex_2/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-05-03T16:00:43&#43;08:00" />
+<meta property="article:modified_time" content="2022-05-03T16:00:43&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
 
-<meta property="og:site_name" content="lifelmy的博客" />
-
-<meta itemprop="name" content="">
-<meta itemprop="description" content="Go Mutex 在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑">
-
-<meta itemprop="wordCount" content="8422">
-<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
-<meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Go Mutex 在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑"/>
+<meta itemprop="name" content="Go Mutex 源码详解">
+<meta itemprop="description" content="前言 在上一篇文章中，我们一起学习了如何使用 Go 中的互斥锁 Mutex，那么本篇文章，我们就一起来探究下 Mutex 底层是如何实现的，知其然，更要知其所以然"><meta itemprop="datePublished" content="2022-05-03T16:00:43&#43;08:00" />
+<meta itemprop="dateModified" content="2022-05-03T16:00:43&#43;08:00" />
+<meta itemprop="wordCount" content="6662">
+<meta itemprop="keywords" content="Go," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go Mutex 源码详解"/>
+<meta name="twitter:description" content="前言 在上一篇文章中，我们一起学习了如何使用 Go 中的互斥锁 Mutex，那么本篇文章，我们就一起来探究下 Mutex 底层是如何实现的，知其然，更要知其所以然"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -295,15 +295,18 @@
           <article class="post bg-white">
     
     <header class="post-header">
-      <h1 class="post-title"></h1>
+      <h1 class="post-title">Go Mutex 源码详解</h1>
       
       <div class="post-meta">
-        <time datetime="0001-01-01" class="post-time">
-          0001-01-01
+        <time datetime="2022-05-03" class="post-time">
+          2022-05-03
         </time>
-        
-        <span class="more-meta"> 约 8422 字 </span>
-          <span class="more-meta"> 预计阅读 17 分钟 </span>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/go/"> Go </a>
+            
+          </div>
+        <span class="more-meta"> 约 6662 字 </span>
+          <span class="more-meta"> 预计阅读 14 分钟 </span>
 
         
         
@@ -324,17 +327,13 @@
   <div class="post-toc-content">
     <nav id="TableOfContents">
   <ul>
-    <li>
-      <ul>
-        <li><a href="#为什么要使用互斥锁">为什么要使用互斥锁</a></li>
-        <li><a href="#如何使用互斥锁">如何使用互斥锁</a></li>
-      </ul>
-    </li>
-    <li><a href="#互斥锁的常见问题">互斥锁的常见问题</a></li>
-    <li><a href="#mutex源码">Mutex源码</a></li>
-    <li><a href="#源码解读">源码解读</a></li>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#mutex-特性">Mutex 特性</a></li>
+    <li><a href="#数据结构">数据结构</a></li>
     <li><a href="#lock">Lock()</a></li>
     <li><a href="#unlock">Unlock()</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
   </ul>
 </nav>
   </div>
@@ -342,544 +341,12 @@
 
     
     <div class="post-content">
-      <p>Go Mutex</p>
-<p>在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑，为了避免少卖或者超卖，就需要使用锁来进行并发控制。 在 Go 语言里面，互斥锁的实现在 sync.Mutex 包内，我们就来学习下为什么要使用互斥锁、如何使用互斥锁，然后再深入学习下底层实现。</p>
-<h3 id="为什么要使用互斥锁">为什么要使用互斥锁</h3>
-<p>我们来看一个示例：我们起了 <code>10000</code> 个协程将变量 <code>num</code> 加1，因此肯定会存在并发，如果我们不控制并发，10000 个协程都执行完后，该变量的值很大概率不等于 10000。</p>
-<p>那么为什么会出现这个问题呢，原因是 <code>num++</code> 不是原子操作，它会先读取变量 <code>num</code> 当前值，然后对这个值 <code>加1</code>，再把结果保存到 <code>num</code> 中。例如 <code>10</code> 个 <code>goroutine</code> 同时运行到 <code>num++</code> 这一行，可能同时读取 <code>num=1000</code>，都<code>加1</code>后再保存， <code>num=1001</code>，这就与想要的结果不符。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;sync&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">num</span> <span class="o">:=</span> <span class="mi">0</span>
-
-	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-	<span class="nx">threadCount</span> <span class="o">:=</span> <span class="mi">10000</span>
-	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">threadCount</span><span class="p">)</span>
-  
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">threadCount</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-			<span class="nx">num</span><span class="o">++</span>
-		<span class="p">}()</span>
-	<span class="p">}</span>
-  
-	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="c1">// 等待 10000 个协程都执行完
-</span><span class="c1"></span>  <span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="c1">// 9388(每次都可能不一样)
-</span><span class="c1"></span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>我们如果使用了互斥锁，可以保证每次进入临界区的只有一个 <code>goroutine</code>，一个 <code>goroutine</code> 执行完后，另一个 <code>goroutine</code> 才能进入临界区执行，最终就实现了并发控制。</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1g9v63crcj21c40p6myz.jpg" alt="image-20220420163516819"></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;sync&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">num</span> <span class="o">:=</span> <span class="mi">0</span>
-	<span class="kd">var</span> <span class="nx">mutex</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>  <span class="c1">// 互斥锁
-</span><span class="c1"></span>
-	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-	<span class="nx">threadCount</span> <span class="o">:=</span> <span class="mi">10000</span>
-	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">threadCount</span><span class="p">)</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">threadCount</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-			
-			<span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span> <span class="c1">// 加锁
-</span><span class="c1"></span>			<span class="nx">num</span><span class="o">++</span> <span class="c1">// 临界区
-</span><span class="c1"></span>			<span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span> <span class="c1">// 解锁
-</span><span class="c1"></span>			
-		<span class="p">}()</span>
-	<span class="p">}</span>
-
-	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">num</span><span class="p">)</span> <span class="c1">// 10000
-</span><span class="c1"></span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><h3 id="如何使用互斥锁">如何使用互斥锁</h3>
-<p>mutex 保持 Go 一贯的简洁风格，开箱即用，声明一个变量默认是没有加锁的，加锁使用 Lock() 方法，解锁使用 Unlock() 方法。</p>
-<h4 id="使用方式一直接声明使用">使用方式一：直接声明使用</h4>
-<p>这个在上例中已经体现了，直接看上面的例子就好</p>
-<h4 id="使用方式二封装在其他结构体中">使用方式二：封装在其他结构体中</h4>
-<p>我们可以将 mutex 封装在 struct 中，封装成线程安全的函数。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;sync&#34;</span>
-<span class="p">)</span>
-
-
-<span class="kd">type</span> <span class="nx">Counter</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">num</span>   <span class="kt">int</span>
-	<span class="nx">mutex</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
-<span class="p">}</span>
-
-<span class="c1">// 加一操作，涉及到临界区 num，加锁解锁
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">counter</span> <span class="o">*</span><span class="nx">Counter</span><span class="p">)</span> <span class="nf">Add</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">counter</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">counter</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="nx">counter</span><span class="p">.</span><span class="nx">num</span><span class="o">++</span>
-<span class="p">}</span>
-
-<span class="c1">// 返回数量，涉及到临界区 num，加锁解锁
-</span><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">counter</span> <span class="o">*</span><span class="nx">Counter</span><span class="p">)</span> <span class="nf">Count</span><span class="p">()</span> <span class="kt">int</span> <span class="p">{</span>
-	<span class="nx">counter</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">counter</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="k">return</span> <span class="nx">counter</span><span class="p">.</span><span class="nx">num</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">threadCount</span> <span class="o">:=</span> <span class="mi">10000</span>
-  
-	<span class="kd">var</span> <span class="nx">counter</span> <span class="nx">Counter</span>
-	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-	
-	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">threadCount</span><span class="p">)</span>
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">threadCount</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="k">defer</span> <span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-			<span class="nx">counter</span><span class="p">.</span><span class="nf">Add</span><span class="p">()</span>
-		<span class="p">}()</span>
-	<span class="p">}</span>
-
-	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span> <span class="c1">// 等待所有 goroutine 都执行完
-</span><span class="c1"></span>	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">counter</span><span class="p">.</span><span class="nf">Count</span><span class="p">())</span> <span class="c1">// 10000
-</span><span class="c1"></span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>在 Go 中，map结构是不支持并发的，如果并发读写就会 panic</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 运行会 panic，提示 fatal error: concurrent map writes
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">m</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kt">string</span><span class="p">)</span>
-	<span class="kd">var</span> <span class="nx">wait</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-	<span class="nx">wait</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="nx">item</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="nx">wait</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-			<span class="nx">m</span><span class="p">[</span><span class="nx">item</span><span class="p">]</span> <span class="p">=</span> <span class="nx">item</span>
-		<span class="p">}()</span>
-	<span class="p">}</span>
-	<span class="nx">wait</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>基于 mutex ，我们可以实现一个线程安全的 map：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;sync&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">ConcurrentMap</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">mutex</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
-	<span class="nx">items</span> <span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConcurrentMap</span><span class="p">)</span> <span class="nf">Add</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">,</span> <span class="nx">value</span> <span class="kd">interface</span><span class="p">{})</span> <span class="p">{</span>
-	<span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="nx">c</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="p">=</span> <span class="nx">value</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConcurrentMap</span><span class="p">)</span> <span class="nf">Remove</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="nb">delete</span><span class="p">(</span><span class="nx">c</span><span class="p">.</span><span class="nx">items</span><span class="p">,</span> <span class="nx">key</span><span class="p">)</span>
-<span class="p">}</span>
-<span class="kd">func</span> <span class="p">(</span><span class="nx">c</span> <span class="o">*</span><span class="nx">ConcurrentMap</span><span class="p">)</span> <span class="nf">Get</span><span class="p">(</span><span class="nx">key</span> <span class="kt">string</span><span class="p">)</span> <span class="kd">interface</span><span class="p">{}</span> <span class="p">{</span>
-	<span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="k">return</span> <span class="nx">c</span><span class="p">.</span><span class="nx">items</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">NewConcurrentMap</span><span class="p">()</span> <span class="nx">ConcurrentMap</span> <span class="p">{</span>
-	<span class="k">return</span> <span class="nx">ConcurrentMap</span><span class="p">{</span>
-		<span class="nx">items</span><span class="p">:</span> <span class="nb">make</span><span class="p">(</span><span class="kd">map</span><span class="p">[</span><span class="kt">string</span><span class="p">]</span><span class="kd">interface</span><span class="p">{}),</span>
-	<span class="p">}</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="nx">m</span> <span class="o">:=</span> <span class="nf">NewConcurrentMap</span><span class="p">()</span>
-	<span class="kd">var</span> <span class="nx">wait</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
-	<span class="nx">wait</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
-
-	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
-		<span class="nx">item</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%d&#34;</span><span class="p">,</span> <span class="nx">i</span><span class="p">)</span>
-		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-			<span class="nx">wait</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
-			<span class="nx">m</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">item</span><span class="p">,</span> <span class="nx">item</span><span class="p">)</span>
-		<span class="p">}()</span>
-	<span class="p">}</span>
-	<span class="nx">wait</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
-	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="s">&#34;100&#34;</span><span class="p">))</span> <span class="c1">// 100
-</span><span class="c1"></span><span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>当然，基于互斥锁 mutex 实现的线程安全 map 并不是性能最好的，基于读写锁 sync.RWMutex 和 分片 可以实现性能更好的、线程安全的 map，开发中比较常用的并发安全 map 是 <a href="https://github.com/orcaman/concurrent-map">orcaman / concurrent-map</a>。</p>
-<h2 id="互斥锁的常见问题">互斥锁的常见问题</h2>
-<p>从上面可与看出，mutex 的使用过程方法比较简单，但还是有几点需要注意：</p>
-<ol>
-<li>
-<p>mutex 是可以在goroutine A 中加锁，在 goroutine B 中解锁的，但是在实际使用中，尽量保证在同一个 goroutine 中加解锁。比如 goroutine A 申请到了锁，在处理临界区资源的时候，goroutine B 把锁释放了，但是 A 以为自己还持有锁，会继续处理临界区资源，就可能会出现问题。</p>
-</li>
-<li>
-<p>mutex 的加锁解锁基本都是成对出现，为了解决忘记解锁，可以使用 defer 语句，在加锁后直接 defer mutex.Unlock()；但是如果处理完临界区资源后还有很多耗时操作，为了尽早释放锁，不建议使用 defer，而是在处理完临界区资源后就调用 mutex.Unlock() 尽早释放锁。</p>
-</li>
-</ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="c1">// 逻辑复杂，可能会忘记释放锁
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">var</span> <span class="nx">mutex</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
-	<span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-
-	<span class="k">if</span> <span class="o">***</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="o">***</span> <span class="p">{</span>
-			<span class="c1">// 处理临界区资源
-</span><span class="c1"></span>			<span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-			<span class="k">return</span>
-		<span class="p">}</span>
-		<span class="c1">// 处理临界区资源
-</span><span class="c1"></span>		<span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-		<span class="k">return</span>
-	<span class="p">}</span>
-
-	<span class="c1">// 处理临界区资源
-</span><span class="c1"></span>	<span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="k">return</span>
-<span class="p">}</span>
-
-
-<span class="c1">// 避免逻辑复杂忘记释放锁，使用 defer语句，成对出现
-</span><span class="c1"></span><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">var</span> <span class="nx">mutex</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
-	<span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-
-	<span class="k">if</span> <span class="o">***</span> <span class="p">{</span>
-		<span class="k">if</span> <span class="o">***</span> <span class="p">{</span>
-			<span class="c1">// 处理临界区资源
-</span><span class="c1"></span>			<span class="k">return</span>
-		<span class="p">}</span>
-		<span class="c1">// 处理临界区资源
-</span><span class="c1"></span>		<span class="k">return</span>
-	<span class="p">}</span>
-
-	<span class="c1">// 处理临界区资源
-</span><span class="c1"></span>	<span class="k">return</span>
-<span class="p">}</span>
-
-
-</code></pre></td></tr></table>
-</div>
-</div><ol start="3">
-<li>mutex 不能复制使用</li>
-</ol>
-<p>mutex 是有状态的，比如我们对一个 mutex 加锁后，再进行复制操作，会把当前的加锁状态也给复制过去，基于加锁的 mutex 再加锁肯定不会成功。进行复制操作可能听起来是一个比较低级的错误，但是无意间可能就会犯这种错误。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span></code></pre></td>
-<td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go"><span class="kn">package</span> <span class="nx">main</span>
-
-<span class="kn">import</span> <span class="p">(</span>
-	<span class="s">&#34;fmt&#34;</span>
-	<span class="s">&#34;sync&#34;</span>
-<span class="p">)</span>
-
-<span class="kd">type</span> <span class="nx">Counter</span> <span class="kd">struct</span> <span class="p">{</span>
-	<span class="nx">mutex</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">Mutex</span>
-	<span class="nx">num</span>   <span class="kt">int</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">SomeFunc</span><span class="p">(</span><span class="nx">c</span> <span class="nx">Counter</span><span class="p">)</span> <span class="p">{</span>
-	<span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">c</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-	<span class="nx">c</span><span class="p">.</span><span class="nx">num</span><span class="o">--</span>
-<span class="p">}</span>
-
-<span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
-	<span class="kd">var</span> <span class="nx">counter</span> <span class="nx">Counter</span>
-	<span class="nx">counter</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">()</span>
-	<span class="k">defer</span> <span class="nx">counter</span><span class="p">.</span><span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">()</span>
-
-	<span class="nx">counter</span><span class="p">.</span><span class="nx">num</span><span class="o">++</span>
-	<span class="c1">// Go都是值传递，这里复制了 counter，此时 counter.mutex 是加锁状态，在 SomeFunc 无法再次加锁，就会一直等待
-</span><span class="c1"></span>	<span class="nf">SomeFunc</span><span class="p">(</span><span class="nx">counter</span><span class="p">)</span>
-
-<span class="p">}</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>本篇文章我们简单学习了下 sync.mutex 的使用方式，以及常见问题，下篇文章我们就深入源码，去了解下 mutex 的庐山真面目</p>
-<h2 id="mutex源码">Mutex源码</h2>
+      <h2 id="前言">前言</h2>
+<p>在上一篇文章中，我们一起学习了如何使用 <code>Go</code> 中的互斥锁 <code>Mutex</code>，那么本篇文章，我们就一起来探究下 <code>Mutex</code> 底层是如何实现的，知其然，更要知其所以然！</p>
+<blockquote>
+<p>说明：本文中的示例，均是基于Go1.17 64位机器</p>
+</blockquote>
+<h2 id="mutex-特性">Mutex 特性</h2>
 <p><code>Mutex</code> 就是一把互斥锁，可以想象成一个令牌，有且只有这一个令牌，只有持有令牌的 <code>goroutine</code> 才能进入房间（临界区），在房间内执行完任务后，走出房间并把令牌交出来，如果还有其余的 <code>goroutine</code> 等着获取这个令牌，让他们再去抢这个令牌，抢到的重复上述过程，没抢到的继续等。</p>
 <p>上述是从宏观角度来看待互斥锁的，但是在 <code>Mutex</code> 内部，有着非常复杂的抢锁逻辑，<code>Mutex</code> 的发展也经历了几个版本，我们可以用拿令牌进餐厅吃饭来形象比喻下几个主要版本的变化。</p>
 <p>前提：餐厅一次只能进入一个人，餐厅有一个令牌，只有持有这个令牌的人才能进去；从餐厅出来后，需要把这个令牌归还</p>
@@ -907,7 +374,7 @@
 <p>（1）如果当前被唤醒的等待者获得到锁后，发现自己是队列中的最后一个，队列中没有其他等待者了，此时会切换到正常模式</p>
 <p>（2）如果当前被唤醒的等待者获得到锁后，发现自己总共的等待时间不超过 <code>1ms</code>，就获得到锁了，此时也会切换到正常模式</p>
 <p>正常模式会带来更高的吞吐量：一个 <code>goroutine</code> 要释放锁，更大可能会被正在运行的 <code>goroutine</code> 抢到，这就避免了协程的上下文切换，运行更多的 <code>goroutine</code>，但是有可能造成一个问题，就是锁始终被新来的 <code>goroutine</code> 抢走，在等待队列中的等待者始终抢不到锁，这就会导致饥饿问题。饥饿模式就是为了解决这个问题出现的，保证了每个 <code>goroutine</code> 都有运行的机会，防止等待时间过长。</p>
-<h2 id="源码解读">源码解读</h2>
+<h2 id="数据结构">数据结构</h2>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -1145,11 +612,9 @@
 </span><span class="lnt">164
 </span><span class="lnt">165
 </span><span class="lnt">166
-</span><span class="lnt">167
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">
-<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">lockSlow</span><span class="p">()</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">lockSlow</span><span class="p">()</span> <span class="p">{</span>
 	<span class="kd">var</span> <span class="nx">waitStartTime</span> <span class="kt">int64</span> <span class="c1">// // 记录等待时间
 </span><span class="c1"></span>	<span class="nx">starving</span> <span class="o">:=</span> <span class="kc">false</span> <span class="c1">// 当前的 goroutine 是否已经饥饿了（如果已经饥饿，就会将 state 的饥饿状态置为 1）
 </span><span class="c1"></span>	<span class="nx">awoke</span> <span class="o">:=</span> <span class="kc">false</span>  <span class="c1">// 当前的 goroutine 是否被唤醒的
@@ -1423,11 +888,9 @@
 </span><span class="lnt">45
 </span><span class="lnt">46
 </span><span class="lnt">47
-</span><span class="lnt">48
 </span></code></pre></td>
 <td class="lntd">
-<pre class="chroma"><code class="language-go" data-lang="go">
-<span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">unlockSlow</span><span class="p">(</span><span class="nx">new</span> <span class="kt">int32</span><span class="p">)</span> <span class="p">{</span>
+<pre class="chroma"><code class="language-go" data-lang="go"><span class="kd">func</span> <span class="p">(</span><span class="nx">m</span> <span class="o">*</span><span class="nx">Mutex</span><span class="p">)</span> <span class="nf">unlockSlow</span><span class="p">(</span><span class="nx">new</span> <span class="kt">int32</span><span class="p">)</span> <span class="p">{</span>
   
   <span class="cm">/* 状态正确性校验：
 </span><span class="cm">  	 1. 如果解锁一个上锁状态的锁，最后一位则为1，fast path 中 new 已经减去了1, 此时 new 最后一位应当为0
@@ -1476,7 +939,13 @@
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章首先通过餐厅的示例，形象的介绍了 Mutex 的运行特性，然后对源码进行逐行分析，学习了 Mutex 加锁 Lock() 以及 解锁 Unlock()是如何实现的。如果本篇文章对有所帮助，点个关注 + 转发哦 ^_^</p>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
     </div>
 
     
@@ -1489,7 +958,7 @@
   <p class="copyright-item">
     <span class="item-title">上次更新</span>
     <span class="item-content">
-      0001-01-01
+      2022-05-03
       
     </span>
   </p>
@@ -1505,27 +974,17 @@
     
 
     <footer class="post-footer">
-      
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/go/">Go</a>
+          
+        </div>
 
       
       <nav class="post-nav">
         
-          <a class="prev" href="/post/linux_variable_2/">
-            
-            <i class="iconfont">
-              <svg  class="icon" viewBox="0 0 1024 1024" version="1.1"
-  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  width="18" height="18">
-  <path d="M691.908486 949.511495l75.369571-89.491197c10.963703-12.998035 10.285251-32.864502-1.499144-44.378743L479.499795 515.267417 757.434875 204.940602c11.338233-12.190647 11.035334-32.285311-0.638543-44.850487l-80.46666-86.564541c-11.680017-12.583596-30.356378-12.893658-41.662889-0.716314L257.233596 494.235404c-11.332093 12.183484-11.041474 32.266891 0.657986 44.844348l80.46666 86.564541c1.772366 1.910513 3.706415 3.533476 5.750981 4.877077l306.620399 321.703933C662.505829 963.726242 680.945807 962.528973 691.908486 949.511495z"></path>
-</svg>
-
-            </i>
-            <span class="prev-text nav-default"></span>
-            <span class="prev-text nav-mobile">上一篇</span>
-          </a>
         
-          <a class="next" href="/post/%E8%83%8C%E6%99%AF/">
-            <span class="next-text nav-default"></span>
+          <a class="next" href="/post/2022_04_28_mutex_1/">
+            <span class="next-text nav-default">初见 Go Mutex </span>
             <span class="prev-text nav-mobile">下一篇</span>
             
             <i class="iconfont">

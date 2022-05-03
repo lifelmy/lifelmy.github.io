@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/tags/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 28 Apr 2022 02:15:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 03 May 2022 16:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go Mutex 源码详解</title>
+      <link>https://lifelmy.github.io/post/2022_05_03_mutex_2/</link>
+      <pubDate>Tue, 03 May 2022 16:00:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_05_03_mutex_2/</guid>
+      <description>前言 在上一篇文章中，我们一起学习了如何使用 Go 中的互斥锁 Mutex，那么本篇文章，我们就一起来探究下 Mutex 底层是如何实现的，知其然，更要知其所以然</description>
+    </item>
+    
     <item>
       <title>初见 Go Mutex </title>
       <link>https://lifelmy.github.io/post/2022_04_28_mutex_1/</link>
