@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 04 May 2022 23:58:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 10 Jun 2022 22:30:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go语言 WaitGroup 详解</title>
+      <link>https://lifelmy.github.io/post/2022_06_10_waitgroup/</link>
+      <pubDate>Fri, 10 Jun 2022 22:30:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_06_10_waitgroup/</guid>
+      <description>前言 在前面的文章中，我们使用过 WaitGroup 进行任务编排，Go语言中的 WaitGroup 和 Java 中的 CyclicBarrier、CountDownLatch 非常类似。比如我</description>
+    </item>
+    
     <item>
       <title>Go语言读写锁 RWMutex 详解</title>
       <link>https://lifelmy.github.io/post/2022_05_04_rwmutex/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</guid>
       <description>前言 上一篇文章，我们一起学习了 Shell 脚本中的 if 条件控制，以及多种条件判断，本篇文章我们一起来学习下剩余的流程控制语句。 流程控制语句 我们先来看下 Shell</description>
-    </item>
-    
-    <item>
-      <title>Shell 脚本中的 if 条件判断</title>
-      <link>https://lifelmy.github.io/post/2021_11_25_linux_if/</link>
-      <pubDate>Thu, 25 Nov 2021 00:20:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/2021_11_25_linux_if/</guid>
-      <description>前言 if&amp;hellip;else&amp;hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来</description>
     </item>
     
   </channel>
