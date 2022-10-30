@@ -5,7 +5,16 @@
     <link>https://lifelmy.github.io/post/</link>
     <description>Recent content in Posts on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 14 Aug 2022 14:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 30 Oct 2022 16:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Makefile 学习一：运行机制</title>
+      <link>https://lifelmy.github.io/post/2022_10_30_makefile_1/</link>
+      <pubDate>Sun, 30 Oct 2022 16:00:43 +0800</pubDate>
+      
+      <guid>https://lifelmy.github.io/post/2022_10_30_makefile_1/</guid>
+      <description>前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告</description>
+    </item>
+    
     <item>
       <title>Go语言 context包源码学习</title>
       <link>https://lifelmy.github.io/post/2022_08_14_context/</link>
@@ -175,15 +184,6 @@
       
       <guid>https://lifelmy.github.io/post/2021_12_14_go_io_core/</guid>
       <description>前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现</description>
-    </item>
-    
-    <item>
-      <title>Go语言 int、float、string相互转换</title>
-      <link>https://lifelmy.github.io/post/2021_12_07_go_type_transfer/</link>
-      <pubDate>Tue, 07 Dec 2021 00:16:23 +0800</pubDate>
-      
-      <guid>https://lifelmy.github.io/post/2021_12_07_go_type_transfer/</guid>
-      <description>前言 Go 开发中经常设计到类型转换，本文就重点记录下 整形、浮点型和字符串类型互相转换的方法。 整形转字符串 fmt.Sprintf 将整数转为字符串，字符串可以是2进制、</description>
     </item>
     
   </channel>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Makefile 学习一：运行机制 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_10_30_makefile_1/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Makefile 学习一：运行机制" />
+<meta property="og:description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_10_30_makefile_1/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-10-30T16:00:43&#43;08:00" />
+<meta property="article:modified_time" content="2022-10-30T16:00:43&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Makefile 学习一：运行机制">
+<meta itemprop="description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告"><meta itemprop="datePublished" content="2022-10-30T16:00:43&#43;08:00" />
+<meta itemprop="dateModified" content="2022-10-30T16:00:43&#43;08:00" />
+<meta itemprop="wordCount" content="2430">
+<meta itemprop="keywords" content="Makefile," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Makefile 学习一：运行机制"/>
+<meta name="twitter:description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Makefile 学习一：运行机制</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-10-30" class="post-time">
+          2022-10-30
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/makefile/"> Makefile </a>
+            
+          </div>
+        <span class="more-meta"> 约 2430 字 </span>
+          <span class="more-meta"> 预计阅读 5 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#规则">规则</a></li>
+    <li><a href="#多目标">多目标</a></li>
+    <li><a href="#伪目标">伪目标</a></li>
+    <li><a href="#运行">运行</a></li>
+    <li><a href="#引用-makefile">引用 Makefile</a></li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告；我们希望能够一键编译、打包、发布项目，这就需要使用到 <a href="https://en.wikipedia.org/wiki/Make_%28software%29">Make</a>。Make 有很多种，我们常用的就是 <a href="https://www.gnu.org/software/make/manual/html_node/index.html#SEC_Contents">GUN Make</a>，有了 Make，我们将极大的提高项目开发、测试、发布的效率。</p>
+<p>Make 最初是为 C、C++项目的编译、构建服务的，因此有很多为C、C++的特性，但是这些特性在 Go 开发中使用不到。毕竟每个人的时间有限，我们就只学习Go 开发中 Make 使用所必需的知识。Make 的规则都在 Makefile 文件编写上，我们后面就一起来学习 Makefile 的编写吧！</p>
+<blockquote>
+<p>make 命令在 Windows 下不支持运行，需要在 Linux 或 Mac 环境下运行</p>
+</blockquote>
+<h2 id="规则">规则</h2>
+<p>Makefile 的规则很简单，分为三个部分：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">target </span><span class="o">:</span> <span class="n">prerequisites</span>
+    <span class="nb">command</span>
+    ...
+</code></pre></td></tr></table>
+</div>
+</div><p><strong>target</strong>：目标，可以是一个文件，或者是一个标签 label</p>
+<p><strong>prerequisites</strong>：targets 依赖的东西， 可以是文件，也可以依赖其他 target</p>
+<p><strong>command</strong>：shell 命令（开头是 Tab 键）</p>
+<ol>
+<li>
+<p>如果 prerequisites 比 target 要新，就会 执行 command 命令 （已存在的文件比不存在的文件新）</p>
+</li>
+<li>
+<p>如果 prerequisites 中存在其他 target，对该 target 重复第一条</p>
+</li>
+</ol>
+<p>举个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">hello</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span>
+	go build hello.go
+</code></pre></td></tr></table>
+</div>
+</div><p>如果 hello 文件不存在，hello.go 肯定比不存在的 hello 新，执行命令 <code>go build hello.go</code></p>
+<p>如果 hello 文件存在，但是 hello.go 又有了新的修改，hello.go 也比 hello 新，执行 <code>go build hello.go</code></p>
+<p>如果 hello 文件存在，且 hello.go 没有改动，不执行任何操作</p>
+<p>再举个例子：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">hello</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span>
+	go build hello.go
+
+<span class="nf">world</span><span class="o">:</span> <span class="n">hello</span> <span class="n">world</span>.<span class="n">go</span>
+	go build world.go
+</code></pre></td></tr></table>
+</div>
+</div><p>hello 是个 target ，world 也是个 target，且 world 依赖 hello。</p>
+<p>如果执行 world 这个 target，会有如下两种情形：</p>
+<p>world 不存在，遍历 prerequisites</p>
+<ol>
+<li>
+<p>hello 是个 target，走一遍例一描述的流程</p>
+<p>如果 hello 文件不存在，执行命令 <code>go build hello.go</code>，此时生成了 hello，比world新</p>
+<p>如果 hello 文件存在，但是 hello.go 又有了新的修改，执行 <code>go build hello.go</code>，，此时生成了 hello，比 world 新</p>
+<p>如果 hello 文件存在，且 hello.go 没有改动，继续判断 world.go</p>
+</li>
+<li>
+<p>world.go 是个普通文件，比不存在的 world 新</p>
+</li>
+<li>
+<p>world 的依赖中，存在有比 world 新的，因此执行 command</p>
+</li>
+</ol>
+<p>world 存在，遍历 prerequisites</p>
+<ol>
+<li>
+<p>hello 是个 target，走一遍例一描述的流程</p>
+<p>如果 hello 文件不存在，那么就会执行命令 <code>go build hello.go</code>，<strong>此时 hello 比 world 新了</strong></p>
+<p>如果 hello 文件存在，但是 hello.go 又有了新的修改，也会执行 <code>go build hello.go</code>，<strong>此时 hello 比 world 新</strong></p>
+<p>如果 hello 文件存在，且 hello.go 没有改动，不执行任何操作</p>
+</li>
+<li>
+<p>world.go 是个普通文件，如果修改过，那么比 world 新，否则不如 world 新</p>
+</li>
+<li>
+<p>判断 prerequisites 中的 hello 或者 world.go 是否存在比 world 新的，如果有，执行command；没有的话不执行任何操作</p>
+</li>
+</ol>
+<h2 id="多目标">多目标</h2>
+<p>有可能我们会有多个 target 规则类似，我们可以将它们合并起来：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">target</span>1 <span class="n">target</span>2
+<span class="nf">target1 target2</span><span class="o">:</span> <span class="n">prerequisites</span>
+	<span class="nb">command</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>等同于</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">target</span>1 <span class="n">target</span>2
+<span class="nf">target1</span><span class="o">:</span> <span class="n">prerequisites</span>
+	<span class="nb">command</span>
+
+<span class="nf">target2</span><span class="o">:</span> <span class="n">prerequisites</span>
+	<span class="nb">command</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="伪目标">伪目标</h2>
+<p>上面说过，target 不一定是一个文件，也可能是一个<strong>标签</strong>，因为有些操作，我们不一定会生成文件，比如清理一些中间文件，运行单测等，这种 target 我们把它叫做伪目标。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">hello</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span>
+	go build hello.go
+
+<span class="nf">world</span><span class="o">:</span> <span class="n">hello</span> <span class="n">world</span>.<span class="n">go</span>
+	go build world.go
+
+<span class="nf">clean</span><span class="o">:</span>
+	rm hello world
+</code></pre></td></tr></table>
+</div>
+</div><p>clean 就是一个伪目标，只是一个标签，运行这个伪目标，需要显式地指定这个目标，即 <strong>make clean</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make clean 
+rm hello world
+</code></pre></td></tr></table>
+</div>
+</div><p>但是有可能会有文件和我们的伪目标名称重名，这样我们运行 make clean 的时候就达不到我们的目的了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="c1"># 如果有重名文件存在，make clean 就不会运行</span>
+➜  touch clean
+➜  make clean 
+make: <span class="sb">`</span>clean<span class="err">&#39;</span> is up to date.
+</code></pre></td></tr></table>
+</div>
+</div><p>为了防止这样的情况，我们可以使用 &ldquo;<strong>.PHONY</strong>&rdquo;  显式地声明我们的 target 是个 伪目标，这样即使有重名文件在，也不会影响 target 的运行。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">hello</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span>
+	go build hello.go
+
+<span class="nf">world</span><span class="o">:</span> <span class="n">hello</span> <span class="n">world</span>.<span class="n">go</span>
+	go build world.go
+
+<span class="c"># 显式声明 clean 是个伪目标
+</span><span class="c"></span><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+<span class="nf">clean</span><span class="o">:</span>
+	rm hello world
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make world
+go build hello.go
+go build world.go
+➜   touch clean
+➜   make clean 
+rm hello world
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="运行">运行</h2>
+<p>上面我们其实已经运行过 makefile 了，这里我们再来简单看下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">hello</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span>
+	go build hello.go
+
+<span class="nf">world</span><span class="o">:</span> <span class="n">hello</span> <span class="n">world</span>.<span class="n">go</span>
+	go build world.go
+
+<span class="c"># 显式声明 clean 是个伪目标
+</span><span class="c"></span><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+<span class="nf">clean</span><span class="o">:</span>
+	rm hello world
+</code></pre></td></tr></table>
+</div>
+</div><p>在默认的方式下，也就是我们只输入 <code>make</code> 命令。那么，</p>
+<ol>
+<li>make 会在当前目录下找名字叫 “Makefile” 或 “makefile” 的文件。</li>
+<li>如果找到，它会找文件中的第一个 target，运行该 target，并打印相应的日志。</li>
+</ol>
+<p>或者我们可以输入 <strong>make + target</strong> ，强制运行某个 target，比如输入   <code>make world</code>。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make
+go build hello.go
+➜  makefile_study make world
+go build world.go
+➜   make clean 
+rm hello world
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="引用-makefile">引用 Makefile</h2>
+<p>在 Makefile 中使用 <code>include</code> 关键字可以把别的 Makefile 包含进来，这很像C语言的 <code>#include</code> ，被包含的文件会放在当前文件的包含位置。 <code>include</code> 的语法是：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">include</span> <span class="err">filenames…</span>
+</code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>filename 可以是绝对路径或者当前目录下的文件；如果 filename 是空，不会进行引用也不会报错。</li>
+<li>include 前面可以有多个空格，但是<code>一定不能</code>是 <code>Tab</code></li>
+<li>include 和 filename 直接使用空格分隔；多个 filename 之间也使用空格分隔</li>
+<li>filename 中可以使用变量</li>
+</ul>
+<p>举个例子，如果你当前文件夹下有三个 makefile 文件，分别叫做 a.mk、b.mk、c.mk，那么如下引用</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">include</span> <span class="err">foo</span> <span class="err">*.mk</span> 
+</code></pre></td></tr></table>
+</div>
+</div><p>相当于</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">include</span> <span class="err">foo</span> <span class="err">a.mk</span> <span class="err">b.mk</span> <span class="err">c.mk</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Makefile 在处理 include 时，遇到一个 include 文件就读取该文件内容，读取完后再处理下一个 include 文件。</p>
+<p>如果一个文件没有指定路径，会在当前路径下寻找，如果没找到，还会按照如下顺序寻找：</p>
+<ol>
+<li>运行 Make 命令时使用 &lsquo;-I&rsquo; 或 &lsquo;&ndash;include-dir&rsquo; 参数指定的路径</li>
+<li>如果如下目录存在的话，会挨个寻找。prefix/include（一般是/usr/local/include） 、/usr/gnu/include、/usr/local/include、 /usr/include</li>
+</ol>
+<p>在处理 include 时，如果一个 include 的文件没有找到，程序不会终止，只会打印一条警告信息，然后继续处理。当读取完整个 Makefile 文件后，程序再去重试处理这些没有找到的文件，如果还是处理失败，会产生一个致命错误。如果想忽略文件不存在带来的报错，可以在 include 前面加上一个减号 &lsquo;-'，表示忽略引用错误。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">-include</span> <span class="err">filenames…</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们一般都是有一个主文件 Makefile 对外暴露，其他的引用文件被主文件 Makefile 调用，类似函数调用。一个 target 调用 另一个 target，可以直接使用 <code>$(MAKE)+target</code>。</p>
+<p>a.mk</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">a_func</span>
+<span class="nf">a_func</span><span class="o">:</span>
+	<span class="nb">echo</span> <span class="s2">&#34;this is a_func&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Makefile</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">include</span> <span class="err">a.mk</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">func</span>
+<span class="nf">func</span><span class="o">:</span>
+	<span class="k">$(</span>MKAKE<span class="k">)</span> a_func  <span class="c1"># 调用 a.mk 中的 a_func target</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本文主要介绍了 Makefile 的运行机制，分为以下几个方面：</p>
+<ul>
+<li>规则：依据 prerequisites 是否比 target新，决定是否执行 command</li>
+<li>多目标：多个 target 的 prerequisites 和 command类似时，使用多目标</li>
+<li>伪目标：target 不是一个目标文件</li>
+<li>运行：如何运行 Make</li>
+<li>引用：引用其他 Makefile 文件</li>
+</ul>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-10-30
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/makefile/">Makefile</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2022_08_14_context/">
+            <span class="next-text nav-default">Go语言 context包源码学习</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "lifelmy/zero_to_hero_comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2021 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
