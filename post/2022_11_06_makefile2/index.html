@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en" itemscope itemtype="http://schema.org/WebPage">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Makefile 学习二：命令和变量 - lifelmy的博客</title>
+  
+
+<meta name="renderer" content="webkit" />
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes"/>
+
+<meta name="MobileOptimized" content="width"/>
+<meta name="HandheldFriendly" content="true"/>
+
+
+<meta name="applicable-device" content="pc,mobile">
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="mobile-web-app-capable" content="yes">
+
+<meta name="author" content="漫漫Coding路" />
+  <meta name="description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告" />
+
+  <meta name="keywords" content="Hugo, theme, jane" />
+
+
+
+
+
+
+<meta name="generator" content="Hugo 0.84.0" />
+
+
+<link rel="canonical" href="https://lifelmy.github.io/post/2022_11_06_makefile2/" />
+
+
+
+
+
+<link rel="icon" href="/favicon.ico" />
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/sass/jane.min.fa4b2b9f31b5c6d0b683db81157a9226e17b06e61911791ab547242a4a0556f2.css" integrity="sha256-&#43;ksrnzG1xtC2g9uBFXqSJuF7BuYZEXkatUckKkoFVvI=" media="screen" crossorigin="anonymous">
+
+
+
+
+
+<meta property="og:title" content="Makefile 学习二：命令和变量" />
+<meta property="og:description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://lifelmy.github.io/post/2022_11_06_makefile2/" /><meta property="article:section" content="post" />
+<meta property="article:published_time" content="2022-11-06T15:00:43&#43;08:00" />
+<meta property="article:modified_time" content="2022-11-06T15:00:43&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+
+<meta itemprop="name" content="Makefile 学习二：命令和变量">
+<meta itemprop="description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告"><meta itemprop="datePublished" content="2022-11-06T15:00:43&#43;08:00" />
+<meta itemprop="dateModified" content="2022-11-06T15:00:43&#43;08:00" />
+<meta itemprop="wordCount" content="2769">
+<meta itemprop="keywords" content="Makefile," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Makefile 学习二：命令和变量"/>
+<meta name="twitter:description" content="前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告"/>
+
+<!--[if lte IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+<![endif]-->
+
+<!--[if lt IE 9]>
+  <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+<![endif]-->
+
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+
+
+</head>
+<body>
+  <div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/" class="logo">漫漫Coding路</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    <li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+        
+      </li><li class="mobile-menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+        
+      </li>
+    
+
+    
+  </ul>
+</nav>
+
+
+  
+    
+
+
+
+
+
+
+  <link rel="stylesheet" href="/lib/photoswipe/photoswipe.min.css" />
+  <link rel="stylesheet" href="/lib/photoswipe/default-skin/default-skin.min.css" />
+
+
+
+
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+<div class="pswp__bg"></div>
+
+<div class="pswp__scroll-wrap">
+    
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    
+    <div class="pswp__ui pswp__ui--hidden">
+    <div class="pswp__top-bar">
+      
+      <div class="pswp__counter"></div>
+      <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+      <button class="pswp__button pswp__button--share" title="Share"></button>
+      <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+      <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+      
+      
+      <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+            <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+      <div class="pswp__share-tooltip"></div>
+    </div>
+    <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+    </button>
+    <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+    </button>
+    <div class="pswp__caption">
+      <div class="pswp__caption__center"></div>
+    </div>
+    </div>
+    </div>
+</div>
+
+  
+
+  
+
+  
+
+  <header id="header" class="header container">
+    <div class="logo-wrapper">
+  <a href="/" class="logo">
+    
+      漫漫Coding路
+    
+  </a>
+</div>
+
+<nav class="site-navbar">
+  <ul id="menu" class="menu">
+    
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/">首页</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/post/">归档</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/tags/">标签</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/categories/">分类</a>
+          
+
+        
+
+      </li>
+    
+        <li class="menu-item">
+        
+          
+          
+            <a class="menu-item-link" href="https://lifelmy.github.io/about">关于我</a>
+          
+
+        
+
+      </li>
+    
+
+    
+    
+
+    
+  </ul>
+</nav>
+
+  </header>
+
+  <div id="mobile-panel">
+    <main id="main" class="main bg-llight">
+      <div class="content-wrapper">
+        <div id="content" class="content container">
+          <article class="post bg-white">
+    
+    <header class="post-header">
+      <h1 class="post-title">Makefile 学习二：命令和变量</h1>
+      
+      <div class="post-meta">
+        <time datetime="2022-11-06" class="post-time">
+          2022-11-06
+        </time>
+        <div class="post-category">
+            <a href="https://lifelmy.github.io/categories/makefile/"> Makefile </a>
+            
+          </div>
+        <span class="more-meta"> 约 2769 字 </span>
+          <span class="more-meta"> 预计阅读 6 分钟 </span>
+
+        
+        
+          <span id="busuanzi_container_page_pv">
+            | 阅读 <span id="busuanzi_value_page_pv"></span>
+          </span>
+        
+
+        
+        
+      </div>
+    </header>
+
+    
+    
+<div class="post-toc" id="post-toc">
+  <h2 class="post-toc-title">文章目录</h2>
+  <div class="post-toc-content">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#前言">前言</a></li>
+    <li><a href="#命令">命令</a>
+      <ul>
+        <li><a href="#命令显示">命令显示</a></li>
+        <li><a href="#命令执行">命令执行</a></li>
+        <li><a href="#命令出错">命令出错</a></li>
+        <li><a href="#定义命令模板">定义命令模板</a></li>
+        <li><a href="#自动变量">自动变量</a></li>
+      </ul>
+    </li>
+    <li><a href="#变量">变量</a>
+      <ul>
+        <li><a href="#变量的声明和使用">变量的声明和使用</a></li>
+        <li><a href="#使用其他变量">使用其他变量</a></li>
+        <li><a href="#懒加载">懒加载</a></li>
+        <li><a href="#追加变量值">追加变量值</a></li>
+      </ul>
+    </li>
+    <li><a href="#总结">总结</a></li>
+    <li><a href="#更多">更多</a></li>
+  </ul>
+</nav>
+  </div>
+</div>
+
+    
+    <div class="post-content">
+      <h2 id="前言">前言</h2>
+<p>在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告；我们希望能够一键编译、打包、发布项目，这就需要使用到 <a href="https://en.wikipedia.org/wiki/Make_%28software%29">Make</a>。Make 有很多种，我们常用的就是 <a href="https://www.gnu.org/software/make/manual/html_node/index.html#SEC_Contents">GUN Make</a>，有了 Make，我们将极大的提高项目开发、测试、发布的效率。</p>
+<p>Make 最初是为 C、C++项目的编译、构建服务的，因此有很多为C、C++的特性，但是这些特性在 Go 开发中使用不到。毕竟每个人的时间有限，我们就只学习Go 开发中 Make 使用所必需的知识。</p>
+<p>Make 的规则都在 Makefile 文件编写上，本篇文章，我们来学习 Makefile 命令和变量相关知识。</p>
+<blockquote>
+<p>make 命令在 Windows 下不支持运行，需要在 Linux 或 Mac 环境下运行</p>
+</blockquote>
+<h2 id="命令">命令</h2>
+<h3 id="命令显示">命令显示</h3>
+<p>运行 target 时，执行命令的同时，默认会输出命令到控制台</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">echo_test</span>
+<span class="nf">echo_test</span><span class="o">:</span>
+	<span class="nb">echo</span> <span class="s2">&#34;hello&#34;</span>
+	<span class="nb">echo</span> <span class="s2">&#34;world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make echo_test   
+<span class="nb">echo</span> <span class="s2">&#34;hello&#34;</span>
+hello
+<span class="nb">echo</span> <span class="s2">&#34;world&#34;</span>
+world
+</code></pre></td></tr></table>
+</div>
+</div><p>如果在命令前加上一个 <code>@</code> 符号，则只执行命令，不显示命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">echo_test</span>
+<span class="nf">echo_test</span><span class="o">:</span>
+	@echo <span class="s2">&#34;hello&#34;</span> <span class="c1"># 这个命令不会显示</span>
+	<span class="nb">echo</span> <span class="s2">&#34;world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make echo_test
+hello
+<span class="nb">echo</span> <span class="s2">&#34;world&#34;</span>
+world
+</code></pre></td></tr></table>
+</div>
+</div><p><code>@</code>符号只对单个命令生效，如果想要对所有命令都生效，可以使用  <code>-s</code>  或者 <code>--silent</code> 参数，表示沉默：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make -s echo_test 
+hello
+world
+</code></pre></td></tr></table>
+</div>
+</div><p>如果想要只显示命令，不执行命令，使用如下参数：<strong>make -n</strong> 或者 <strong>make &ndash;just-print</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="c"># .PHONY 表示这是一个伪目标
+</span><span class="c"></span><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">echo_test</span>
+<span class="nf">echo_test</span><span class="o">:</span>
+	<span class="nb">echo</span> <span class="s2">&#34;hello&#34;</span>
+	@echo <span class="s2">&#34;world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make -n echo_test
+<span class="nb">echo</span> <span class="s2">&#34;hello&#34;</span>
+<span class="nb">echo</span> <span class="s2">&#34;world&#34;</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="命令执行">命令执行</h3>
+<p>如果想要后一个命令基于前一个命令，需要在命令之间加上分号；而命令写在两行是单独执行的:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">exec</span><span class="o">:</span>
+	<span class="nb">cd</span> /tmp
+	<span class="nb">pwd</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make -s <span class="nb">exec</span>
+/Users/admin/makefile_study
+</code></pre></td></tr></table>
+</div>
+</div><p>通过上面的例子，可以看到第二个命令执行时，并没有在 /tmp 目录，说明前一个命令并没有影响到后一个命令。</p>
+<p>我们把两个命令使用分号分隔</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">exec</span><span class="o">:</span>
+	<span class="nb">cd</span> /tmp<span class="p">;</span> <span class="nb">pwd</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make -s <span class="nb">exec</span>
+/tmp
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="命令出错">命令出错</h3>
+<p>在我们执行命令时，有可能命令会出错，影响后续命令的执行。对于有些错误，我们可以忽略，让命令继续执行下去。比如我们想新建个文件夹，如果文件夹本来就存在，新建就会出错，但我们需要的就是文件夹存在，这种错误可以忽略。</p>
+<p>当前目录 test 文件夹不存在，新建文件夹和文件，并显示文件列表</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">exec</span><span class="o">:</span>
+	@mkdir test<span class="p">;</span> <span class="nb">cd</span> test<span class="p">;</span> touch a.txt<span class="p">;</span> ls
+</code></pre></td></tr></table>
+</div>
+</div><p>第一次运行正常</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make <span class="nb">exec</span>
+a.txt
+
+</code></pre></td></tr></table>
+</div>
+</div><p>第二次运行就会提示错误，但是<strong>同一行的命令会继续执行下去</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make <span class="nb">exec</span>
+mkdir: test: File exists
+a.txt
+
+</code></pre></td></tr></table>
+</div>
+</div><p>如果存在多行命令的话，前面一行的命令报错，后面的命令就不会继续执行了</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">exec</span><span class="o">:</span>
+	@mkdir <span class="nb">test</span>
+	@echo <span class="s2">&#34;hello world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make <span class="nb">exec</span>
+mkdir: test: File exists
+make: *** <span class="o">[</span>exec<span class="o">]</span> Error <span class="m">1</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果我们想忽略这个报错的话，可以有多种方式：</p>
+<ol>
+<li>在命令前面加上一个减号 &lsquo;-&rsquo; ，表示忽略这个错误，继续执行下面的命令</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">exec</span><span class="o">:</span>
+	-@mkdir <span class="nb">test</span>
+	@echo <span class="s2">&#34;hello world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make <span class="nb">exec</span>
+mkdir: test: File exists
+make: <span class="o">[</span>exec<span class="o">]</span> Error <span class="m">1</span> <span class="o">(</span>ignored<span class="o">)</span>
+hello world
+</code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>对规则 加上 .IGNORE 标记，会忽略该规则中所有命令的错误</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.IGNORE</span><span class="o">:</span> <span class="n">exec</span>
+<span class="nf">exec</span><span class="o">:</span>
+	@mkdir <span class="nb">test</span>
+	@echo <span class="s2">&#34;hello world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make <span class="nb">exec</span>
+mkdir: test: File exists
+make: <span class="o">[</span>exec<span class="o">]</span> Error <span class="m">1</span> <span class="o">(</span>ignored<span class="o">)</span>
+hello world
+</code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>make 中加上 <code>-i</code>  或者 <code>--ignore-errors</code> 参数，那么此次运行的所有命令都会忽略错误</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">exec</span><span class="o">:</span>
+	@mkdir <span class="nb">test</span>
+	@echo <span class="s2">&#34;hello world&#34;</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make -i <span class="nb">exec</span>
+mkdir: test: File exists
+make: <span class="o">[</span>exec<span class="o">]</span> Error <span class="m">1</span> <span class="o">(</span>ignored<span class="o">)</span>
+hello world
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="定义命令模板">定义命令模板</h3>
+<p>有时候可能有一些常用的功能，我们可以将其抽出来做成一个模板，供其他command 调用。定义模板的语法为：<code>define</code> ，接模板的名字；中间是命令，最后以 <code>endef</code> 结尾。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">define</span> <span class="err">template-name</span>
+<span class="err">...commands...</span>
+<span class="err">endef</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>使用命令模板，就像使用普通变量一样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">define</span> <span class="err">my_template</span>
+<span class="err">@echo</span> <span class="s2">&#34;this is a template&#34;</span>
+<span class="err">endef</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">test</span>
+<span class="nf">test</span><span class="o">:</span> 
+   <span class="k">$(</span>my_template<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make <span class="nb">test</span> 
+this is a template
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="自动变量">自动变量</h3>
+<p>使用命令模板，经常需要使用自动常量，这种变量和 shell 中的 <a href="https://lifelmy.github.io/post/2021_11_17_linux_variables_2/">位置参数变量</a> 类似，常用的有这几个：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="k">$@</span>  <span class="err">表示目标文件</span>
+<span class="err">$^</span>  <span class="err">表示所有的依赖文件</span>
+<span class="k">$&lt;</span>  <span class="err">表示第一个依赖文件</span>
+<span class="k">$?</span>  <span class="err">表示比目标还要新的依赖文件列表</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nf">.PHONY</span><span class="o">:</span> <span class="n">test</span>
+<span class="nf">test</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span> <span class="n">world</span>.<span class="n">go</span>
+	@echo <span class="nv">$@</span> <span class="c1"># test</span>
+	@echo $^ <span class="c1"># hello.go world.go</span>
+	@echo $&lt; <span class="c1"># hello.go</span>
+	@echo <span class="nv">$?</span> <span class="c1"># hello.go world.go</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>我们就定义一个模板，输出 target 和 所有的 prerequisites，然后再使用这个模板：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="err">define</span> <span class="err">my_template</span>
+<span class="err">@echo</span> <span class="k">$@</span> <span class="err">$^</span>
+<span class="err">endef</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">hello</span>
+<span class="nf">hello</span><span class="o">:</span> <span class="n">hello</span>.<span class="n">go</span>
+	<span class="k">$(</span>my_template<span class="k">)</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">world</span>
+<span class="nf">world</span><span class="o">:</span> <span class="n">world</span>.<span class="n">go</span>
+	<span class="k">$(</span>my_template<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make hello
+hello hello.go
+➜  make world
+world world.go
+
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="变量">变量</h2>
+<h3 id="变量的声明和使用">变量的声明和使用</h3>
+<p>和其他编程语言一样，Makefile 也可以定义变量，在 target、prerequisites、command中都可以使用。变量名由字母、数字和下划线组成（可以是数字开头），大小写敏感。</p>
+<p>定义变量时，变量名 和 值 之间使用 &ldquo;=&rdquo; 连接，&quot;=&quot; 两侧空格不敏感；使用变量时，可以使用 <code>$+变量名</code>的形式，更推荐的方式还是使用 <code>$(变量名)</code> 将变量包裹起来。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span><span class="o">=</span> tom
+<span class="nv">age</span> <span class="o">=</span> <span class="m">18</span>
+<span class="nf">info</span><span class="o">:</span>
+	<span class="nb">echo</span> <span class="nv">$name</span>
+	<span class="nb">echo</span> <span class="k">$(</span>age<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜   make info
+<span class="nb">echo</span> tom
+tom
+<span class="nb">echo</span> <span class="m">18</span>
+<span class="m">18</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>可以将变量使用在 <strong>target</strong> 中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">MyTarget</span> <span class="o">=</span> info
+<span class="nf">$(MyTarget)</span><span class="o">:</span>
+	go build hello.go
+	go build world.go
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+go build hello.go
+go build world.go
+</code></pre></td></tr></table>
+</div>
+</div><p>也可以将变量使用在 <strong>prerequisite</strong> 中：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">files</span> <span class="o">=</span> hello.go
+<span class="nf">info</span><span class="o">:</span> <span class="k">$(</span><span class="nv">files</span><span class="k">)</span>
+	go build <span class="k">$(</span>files<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make info
+go build hello.go
+</code></pre></td></tr></table>
+</div>
+</div><p>Makefile 中的变量，会在使用的时候 <strong>展开</strong>，直接使用你定义的值来替代，你完全可以这样使用这样的骚操作，但是并不推荐：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">type</span> <span class="o">=</span> go
+<span class="nf">build</span><span class="o">:</span><span class="n">clean</span>
+	go build hello.<span class="k">$(</span><span class="nb">type</span><span class="k">)</span>
+	go build world.<span class="k">$(</span><span class="nb">type</span><span class="k">)</span>
+
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">clean</span>
+<span class="nf">clean</span><span class="o">:</span>
+	-@rm -f hello world
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make build
+go build hello.go
+go build world.go
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="使用其他变量">使用其他变量</h3>
+<p>我们可以一个变量中使用其他变量</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+<span class="nv">age</span> <span class="o">=</span> <span class="m">18</span>
+<span class="nv">detail</span> <span class="o">=</span> <span class="k">$(</span>name<span class="k">)</span> <span class="k">$(</span>age<span class="k">)</span>
+
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>detail<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+tom <span class="m">18</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>在我们平常编程过程中，被引用的变量，一定要定义在前面，但是在 Makefile 中没有这个限制，你可以引用后面定义的变量（也可以理解为懒加载，只有用到时才会展开，此时整个文件已经都加载完了，因此不在乎使用的变量定义在前或者在后）：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">detail</span> <span class="o">=</span> <span class="k">$(</span>name<span class="k">)</span> <span class="k">$(</span>age<span class="k">)</span>
+<span class="nv">name</span> <span class="o">=</span> tom
+<span class="nv">age</span> <span class="o">=</span> <span class="m">18</span>
+
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>detail<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+tom <span class="m">18</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果可以引用之后的变量，就可能出现递归的情况，比如下面的示例，a 引用 b，b 引用 a，当然 makefile 是会检测到这种递归的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">a</span> <span class="o">=</span> <span class="k">$(</span>b<span class="k">)</span>
+<span class="nv">b</span> <span class="o">=</span> <span class="k">$(</span>a<span class="k">)</span>
+
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>b<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+Makefile:4: *** Recursive variable <span class="sb">`</span>b<span class="err">&#39;</span> references itself <span class="o">(</span>eventually<span class="o">)</span>.  Stop.
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="懒加载">懒加载</h3>
+<p>上面也提到过，Makefile 中的变量是<strong>懒加载</strong>的，只有在使用的时候，才会将变量的值展开，也就是说后面定义的变量值会将之前的覆盖：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+<span class="nv">age</span> <span class="o">=</span> <span class="m">18</span>
+<span class="nv">detail</span> <span class="o">=</span> <span class="k">$(</span>name<span class="k">)</span> <span class="k">$(</span>age<span class="k">)</span>
+
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>detail<span class="k">)</span>
+<span class="nv">age</span> <span class="o">=</span> <span class="m">22</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+tom <span class="m">22</span>  <span class="c1"># 被后面的值覆盖了</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>当然，我们可以强制指定当前的变量值，即使用 &quot; <strong>:=</strong> &quot; 来定义变量：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+<span class="nv">age</span> <span class="o">=</span> <span class="m">18</span>
+<span class="nv">detail</span> <span class="o">:=</span> <span class="k">$(</span>name<span class="k">)</span> <span class="k">$(</span>age<span class="k">)</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">info</span>
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>detail<span class="k">)</span>
+
+<span class="nv">age</span> <span class="o">=</span> <span class="m">22</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜ make info
+tom <span class="m">18</span> <span class="c1"># 使用的是定义detail 时 age 的值</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>如果当前没有变量值，展开就是空值：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+
+<span class="c"># 此时还没有定义 age 变量
+</span><span class="c"></span><span class="nv">detail</span> <span class="o">:=</span> <span class="k">$(</span>name<span class="k">)</span> <span class="k">$(</span>age<span class="k">)</span>  
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">info</span>
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>detail<span class="k">)</span>
+
+<span class="nv">age</span> <span class="o">=</span> <span class="m">22</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+tom <span class="c1"># age 是空值</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="追加变量值">追加变量值</h3>
+<p>我们可以对已有的变量进行修改，重新赋值或者追加，我们可以使用 <strong>+=</strong> 来追加：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+<span class="nv">name</span> <span class="o">+=</span> john
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">info</span>
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>name<span class="k">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell">➜  make info
+tom john
+
+</code></pre></td></tr></table>
+</div>
+</div><p>需要注意的是，追加时，变量的赋值方式会延续初次定义的符号，使用 <strong>=</strong> 或者 <strong>:=</strong> 来保持是否需要懒加载</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+<span class="nv">name</span> <span class="o">+=</span> john  <span class="c1"># 等同于 name = tom john</span>
+</code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">:=</span> tom
+<span class="nv">name</span> <span class="o">+=</span> john  <span class="c1"># 等同于 name := tom john</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>因此在引用其他变量时就需要注意：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">=</span> tom
+
+<span class="c"># 等同于 name = tom $(a_name)
+</span><span class="c"></span><span class="nv">name</span> <span class="o">+=</span> <span class="k">$(</span>a_name<span class="k">)</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">info</span>
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>name<span class="k">)</span>  <span class="c1"># tom john</span>
+
+<span class="nv">a_name</span> <span class="o">=</span> john
+</code></pre></td></tr></table>
+</div>
+</div><p>上述例子保持了懒加载，而下面这个则不会使用懒加载：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-makefile" data-lang="makefile"><span class="nv">name</span> <span class="o">:=</span> tom
+
+<span class="c"># 等同于 name := tom $(a_name)
+</span><span class="c"></span><span class="nv">name</span> <span class="o">+=</span> <span class="k">$(</span>a_name<span class="k">)</span>
+
+<span class="nf">.PHONY</span><span class="o">:</span> <span class="n">info</span>
+<span class="nf">info</span><span class="o">:</span>
+	@echo <span class="k">$(</span>name<span class="k">)</span> <span class="c1"># tom</span>
+
+<span class="nv">a_name</span> <span class="o">=</span> john
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="总结">总结</h2>
+<p>本篇文章我们一起学习了Makefile 命令和变量相关的知识点，主要有：</p>
+<ul>
+<li>命令显示：使用 <code>@</code> 符号控制命令是否打印</li>
+<li>命令执行：使用 <code>；</code>符号使得后一个命令基于前一个命令执行</li>
+<li>命令出错：使用 <code>-</code> 符号来忽略命令执行中产生的错误</li>
+<li>位置变量：可以获取命令中的参数，结合命令模板使用会更加易用</li>
+<li>变量使用：包括变量的声明、使用以及懒加载机制</li>
+</ul>
+<h2 id="更多">更多</h2>
+<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
+<p>微信公众号：漫漫Coding路</p>
+<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+
+    </div>
+
+    
+    
+<div class="post-copyright">
+  <p class="copyright-item">
+    <span class="item-title">文章作者</span>
+    <span class="item-content">漫漫Coding路</span>
+  </p>
+  <p class="copyright-item">
+    <span class="item-title">上次更新</span>
+    <span class="item-content">
+      2022-11-06
+      
+    </span>
+  </p>
+  
+  <p class="copyright-item">
+    <span class="item-title">许可协议</span>
+    <span class="item-content"><a rel="license noopener" href="https://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a></span>
+  </p>
+</div>
+
+
+    
+    
+
+    <footer class="post-footer">
+      <div class="post-tags">
+          <a href="https://lifelmy.github.io/tags/makefile/">Makefile</a>
+          
+        </div>
+
+      
+      <nav class="post-nav">
+        
+        
+          <a class="next" href="/post/2022_10_30_makefile_1/">
+            <span class="next-text nav-default">Makefile 学习一：运行机制</span>
+            <span class="prev-text nav-mobile">下一篇</span>
+            
+            <i class="iconfont">
+              <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="18" height="18">
+  <path d="M332.091514 74.487481l-75.369571 89.491197c-10.963703 12.998035-10.285251 32.864502 1.499144 44.378743l286.278095 300.375162L266.565125 819.058374c-11.338233 12.190647-11.035334 32.285311 0.638543 44.850487l80.46666 86.564541c11.680017 12.583596 30.356378 12.893658 41.662889 0.716314l377.434212-421.426145c11.332093-12.183484 11.041474-32.266891-0.657986-44.844348l-80.46666-86.564541c-1.772366-1.910513-3.706415-3.533476-5.750981-4.877077L373.270379 71.774697C361.493148 60.273758 343.054193 61.470003 332.091514 74.487481z"></path>
+</svg>
+
+            </i>
+          </a>
+      </nav>
+    </footer>
+  </article>
+
+  
+  
+
+  
+  
+
+  
+
+  
+  
+    <div class="post bg-white">
+      <script src="https://utteranc.es/client.js"
+            repo= "lifelmy/zero_to_hero_comment"
+            issue-term="pathname"
+            theme="github-light"
+            crossorigin="anonymous"
+            async>
+      </script>
+    </div>
+  
+
+  
+
+  
+
+  
+
+    
+
+  
+
+        </div>
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      
+
+<div class="icon-links">
+  
+  
+    <a href="https://lifelmy.github.io" rel="me noopener" class="iconfont"
+      title="github"  target="_blank"
+      >
+      <svg class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="36" height="36">
+  <path d="M512 12.672c-282.88 0-512 229.248-512 512 0 226.261333 146.688 418.133333 350.08 485.76 25.6 4.821333 34.986667-11.008 34.986667-24.618667 0-12.16-0.426667-44.373333-0.64-87.04-142.421333 30.890667-172.458667-68.693333-172.458667-68.693333C188.672 770.986667 155.008 755.2 155.008 755.2c-46.378667-31.744 3.584-31.104 3.584-31.104 51.413333 3.584 78.421333 52.736 78.421333 52.736 45.653333 78.293333 119.850667 55.68 149.12 42.581333 4.608-33.109333 17.792-55.68 32.426667-68.48-113.706667-12.8-233.216-56.832-233.216-253.013333 0-55.893333 19.84-101.546667 52.693333-137.386667-5.76-12.928-23.04-64.981333 4.48-135.509333 0 0 42.88-13.738667 140.8 52.48 40.96-11.392 84.48-17.024 128-17.28 43.52 0.256 87.04 5.888 128 17.28 97.28-66.218667 140.16-52.48 140.16-52.48 27.52 70.528 10.24 122.581333 5.12 135.509333 32.64 35.84 52.48 81.493333 52.48 137.386667 0 196.693333-119.68 240-233.6 252.586667 17.92 15.36 34.56 46.762667 34.56 94.72 0 68.522667-0.64 123.562667-0.64 140.202666 0 13.44 8.96 29.44 35.2 24.32C877.44 942.592 1024 750.592 1024 524.672c0-282.752-229.248-512-512-512"></path>
+</svg>
+
+    </a>
+
+
+<a href="https://lifelmy.github.io/index.xml" rel="noopener alternate" type="application/rss&#43;xml"
+    class="iconfont" title="rss" target="_blank">
+    <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="30" height="30">
+  <path d="M819.157333 1024C819.157333 574.592 449.408 204.8 0 204.8V0c561.706667 0 1024 462.293333 1024 1024h-204.842667zM140.416 743.04a140.8 140.8 0 0 1 140.501333 140.586667A140.928 140.928 0 0 1 140.074667 1024C62.72 1024 0 961.109333 0 883.626667s62.933333-140.544 140.416-140.586667zM678.784 1024h-199.04c0-263.210667-216.533333-479.786667-479.744-479.786667V345.173333c372.352 0 678.784 306.517333 678.784 678.826667z"></path>
+</svg>
+
+  </a>
+   
+</div>
+
+<div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://gohugo.io">Hugo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - <a class="theme-link" href="https://github.com/xianmin/hugo-theme-jane">Jane</a>
+  </span>
+
+  <span class="copyright-year">
+    &copy;
+    
+      2021 -
+    2022
+    <span class="heart">
+      
+      <i class="iconfont">
+        <svg class="icon" viewBox="0 0 1025 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="14" height="14">
+  <path d="M1000.1 247.9c-15.5-37.3-37.6-70.6-65.7-98.9-54.4-54.8-125.8-85-201-85-85.7 0-166 39-221.4 107.4C456.6 103 376.3 64 290.6 64c-75.1 0-146.5 30.4-201.1 85.6-28.2 28.5-50.4 61.9-65.8 99.3-16 38.8-24 79.9-23.6 122.2 0.7 91.7 40.1 177.2 108.1 234.8 3.1 2.6 6 5.1 8.9 7.8 14.9 13.4 58 52.8 112.6 102.7 93.5 85.5 209.9 191.9 257.5 234.2 7 6.1 15.8 9.5 24.9 9.5 9.2 0 18.1-3.4 24.9-9.5 34.5-30.7 105.8-95.9 181.4-165 74.2-67.8 150.9-138 195.8-178.2 69.5-57.9 109.6-144.4 109.9-237.3 0.1-42.5-8-83.6-24-122.2z"
+   fill="#8a8a8a"></path>
+</svg>
+
+      </i>
+    </span><span class="author">
+        漫漫Coding路
+        
+      </span></span>
+
+  
+  
+    <span id="busuanzi_container">
+      访客数/访问量：<span id="busuanzi_value_site_uv"></span>/<span id="busuanzi_value_site_pv"></span>
+    </span>
+  
+
+  
+</div>
+
+    </footer>
+
+    <div class="back-to-top" id="back-to-top">
+      <i class="iconfont">
+        
+        <svg class="icon" viewBox="0 0 1024 1024" version="1.1"
+  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+  width="35" height="35">
+  <path d="M510.866688 227.694839 95.449397 629.218702l235.761562 0-2.057869 328.796468 362.40389 0L691.55698 628.188232l241.942331-3.089361L510.866688 227.694839zM63.840492 63.962777l894.052392 0 0 131.813095L63.840492 195.775872 63.840492 63.962777 63.840492 63.962777zM63.840492 63.962777"></path>
+</svg>
+
+      </i>
+    </div>
+  </div>
+  
+<script type="text/javascript" src="/lib/jquery/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout-1.0.1.min.js"></script>
+
+
+
+
+<script type="text/javascript" src="/js/main.638251f4230630f0335d8c6748e53a96f94b72670920b60c09a56fdc8bece214.js" integrity="sha256-Y4JR9CMGMPAzXYxnSOU6lvlLcmcJILYMCaVv3Ivs4hQ=" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/javascript">
+    window.MathJax = {
+      showProcessingMessages: false,
+      messageStyle: 'none'
+    };
+  </script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+
+
+
+
+
+
+
+
+  
+    <script type="text/javascript" src="/js/load-photoswipe.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe.min.js"></script>
+    <script type="text/javascript" src="/lib/photoswipe/photoswipe-ui-default.min.js"></script>
+  
+
+
+
+
+  <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
