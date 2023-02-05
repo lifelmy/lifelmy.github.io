@@ -516,9 +516,9 @@
 </li>
 </ol>
 <p>假设每次访问的步长为4个字节，如果未经过内存对齐，获取b的数据需要进行两次内存访问，最后再进行数据整理得到b的完整数据：</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h08nopcl6sj21940k8myd.jpg" alt="image-20220313230839425"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h08nopcl6sj21940k8myd.jpg" alt="image-20220313230839425"></p>
 <p>如果经过内存对齐，一次内存访问就能得到b的完整数据，减少了一次内存访问：</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h08nrw3mtgj216a0dmdgf.jpg" alt="image-20220313231143302"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h08nrw3mtgj216a0dmdgf.jpg" alt="image-20220313231143302"></p>
 <h2 id="unsafealignof">unsafe.AlignOf()</h2>
 <p>unsafe.AlignOf(x) 方法的返回值是 m，当变量进行内存对齐时，需要保证分配到 x 的内存地址能够整除 <code>m</code>。因此可以通过这个方法，确定变量x 在内存对齐时的地址：</p>
 <ul>
@@ -589,19 +589,19 @@
 </div><ol>
 <li>第一个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，我们假设地址从0开始，0可以被4整除：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0gebl4qouj21ib06eaak.jpg" alt="成员变量1内存对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0gebl4qouj21ib06eaak.jpg" alt="成员变量1内存对齐"></p>
 <ol start="2">
 <li>第二个字段是 int64 类型，unsafe.Sizeof(int64(1)) = 8，内存占用为 8 个字节，同时unsafe.Alignof(int64(1)) = 8，需保证变量放置首地址可以被8整除，当前地址为4，距离4最近的且可以被8整除的地址为8，因此需要添加四个空白字节，从8开始放置：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0gea4od5gj21ib06ewf2.jpg" alt="成员变量2内存对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0gea4od5gj21ib06ewf2.jpg" alt="成员变量2内存对齐"></p>
 <ol start="3">
 <li>第三个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，当前地址为16，16可以被4整除：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0ge7ydhdlj21ib06egm8.jpg" alt="成员变量3内存对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0ge7ydhdlj21ib06egm8.jpg" alt="成员变量3内存对齐"></p>
 <ol start="4">
 <li>所有成员对齐都已经完成，现在我们需要看一下整体对齐规则：unsafe.Alignof(A{}) = 8，即三个变量成员的最大值，内存对齐需要保证该结构体的内存占用是 8 的整数倍，当前内存占用是 20个字节，因此需要再补充4个字节：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0ge7qsrpoj21ib06edgg.jpg" alt="整体对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0ge7qsrpoj21ib06edgg.jpg" alt="整体对齐"></p>
 <ol start="5">
 <li>最终该结构体的内存占用为 24字节。</li>
 </ol>
@@ -633,15 +633,15 @@
 </div><ol>
 <li>第一个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，我们假设地址从0开始，0可以被4整除：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0geiows6yj210j06e0sz.jpg" alt="成员变量1内存对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0geiows6yj210j06e0sz.jpg" alt="成员变量1内存对齐"></p>
 <ol start="2">
 <li>第二个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，当前地址为4，4可以被4整除：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0gekgd6dlj210j06emxg.jpg" alt="成员变量2内存对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0gekgd6dlj210j06emxg.jpg" alt="成员变量2内存对齐"></p>
 <ol start="3">
 <li>第三个字段是 int64 类型，unsafe.Sizeof(int64(1))=8，内存占用为8个字节，同时unsafe.Alignof(int64(1)) = 8，内存对齐需保证变量首地址可以被8整除，当前地址为8，8可以被8整除：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h0geo1cfrhj210j06emxi.jpg" alt="成员变量3内存对齐"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h0geo1cfrhj210j06emxi.jpg" alt="成员变量3内存对齐"></p>
 <ol start="4">
 <li>所有成员对齐都已经完成，现在我们需要看一下整体对齐规则：unsafe.Alignof(B{}) = 8，即三个变量成员的最大值，内存对齐需要保证该结构体的内存占用是 8 的整数倍，当前内存占用是 16个字节，已经符合规则，最终该结构体的内存占用为 16个字节。</li>
 </ol>
@@ -725,7 +725,7 @@
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt="img"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172420475.jpg" alt="img"></p>
 
     </div>
 
@@ -872,7 +872,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

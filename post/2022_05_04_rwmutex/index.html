@@ -385,13 +385,13 @@
 <li>writer 执行完写操作后，让 <code>后面的reader</code> 执行读操作，再<code>唤醒队列B</code> 的一个 <code>writer</code> 到 队列A 后面排队。</li>
 </ol>
 <p><strong>初始时刻</strong> 队列A 中 writer <code>W1</code> 前面有三个 reader，后面有两个 reader，队列B中有两个 writer</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1wefan9hkj21900rsgmi.jpg" alt="RWMutex运行示例：初始时刻"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h1wefan9hkj21900rsgmi.jpg" alt="RWMutex运行示例：初始时刻"></p>
 <p><strong>并发读</strong> 多个 reader 可以同时获取到读锁，进入临界区进行读操作；writer <code>W1</code> 在 <code>队列A</code> 中等待，同时又来了两个 reader，直接在 <code>队列A</code> 后面排队</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1we60aatqj21980s8my7.jpg" alt="RWMutex运行示例：并发读"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h1we60aatqj21980s8my7.jpg" alt="RWMutex运行示例：并发读"></p>
 <p><strong>写操作</strong> <code>W1</code> 前面所有的 reader 完成后，<code>W1</code> 获得锁，进入临界区操作</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1we9s0crnj218w0skaaz.jpg" alt="RWMutex运行示例：写操作"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h1we9s0crnj218w0skaaz.jpg" alt="RWMutex运行示例：写操作"></p>
 <p><strong>获得准入权</strong> <code>W1</code> 完成写操作退出，先让后面排队的 reader 进行读操作，然后从 队列B 中唤醒 <code>W2</code> 到 <code>队列A</code> 排队。<code>W2</code> 从 <code>队列B</code> 到 <code>队列A</code> 的过程中，<code>R8</code> 先到了 <code>队列A</code>，因此 <code>R8</code> 可以执行读操作。<code>R9</code>、<code>R10</code>、<code>R11</code> 在 <code>W2</code> 之后到的，所以在后面排队；新来的 <code>W4</code> 直接在队列B 排队。</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1werj4f63j21900s4gmo.jpg" alt="RWMutex运行示例：获得准入权"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h1werj4f63j21900s4gmo.jpg" alt="RWMutex运行示例：获得准入权"></p>
 <p>从上面的示例可以看出，<code>RWMutex</code> 可以看作是没有优先级，按照先来先到的顺序去执行，只不过是 <code>多个reader</code> 可以 <code>并行 </code>去执行罢了。</p>
 <h2 id="深入源码">深入源码</h2>
 <h3 id="数据结构">数据结构</h3>
@@ -752,7 +752,7 @@
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172601268.jpg" alt=""></p>
 
     </div>
 
@@ -899,7 +899,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

@@ -478,7 +478,7 @@
 <p><code>ReadSlice方法</code> 用于查找分隔符，然后返回查找过程中遍历到的数据。比如我们想一行一行的处理数据，那么我们的入参可以是换行符，ReadSlice 就会每次返回一行数据。</p>
 <p>ReadSlice方法会先在其缓冲区的未读部分中寻找分隔符，如果未找到，并且缓冲区未满，那么该方法会先调用 fill 方法对缓冲区进行填充，然后再次寻找，如此往复。一旦ReadSlice方法找到了分隔符，它就会在缓冲区上切出相应的、包含分隔符的字节切片，并把该切片作为结果值返回。即使最终没有找到分隔符，或者查找过程中遇到了error，ReadSlice 方法会也返回寻找过程中遍历的所有数据，并更新已读计数。可见ReadSlice是一个半途而废的方法，如果缓冲区满了，就不会继续寻找了。</p>
 <p>由于 ReadSlice 返回的是针对缓冲切片的切片，存在数据泄露的风险；其次数据存在有效期，下次的读操作会覆盖这些数据，因此应当尽量使用 ReadBytes 或 ReadString 代替该方法。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gz5eegmc5xj31i00qajsx.jpg" alt="image-20220208001023779"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gz5eegmc5xj31i00qajsx.jpg" alt="image-20220208001023779"></p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre class="chroma"><code><span class="lnt"> 1
@@ -999,7 +999,7 @@
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt="img"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172341490.jpg" alt="img"></p>
 
     </div>
 
@@ -1146,7 +1146,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

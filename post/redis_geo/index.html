@@ -347,10 +347,10 @@
     
     <div class="post-content">
       <p>关注不迷路，一起 From Zero To Hero !</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205165629984.jpg" alt=""></p>
 <h2 id="前言">前言</h2>
 <p>相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-Based Service，LBS）的应用。此类应用都是基于经纬度来查询附近的目标，Redis GEO就适用于此类场景。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtvqwtj3t9j61ee0lyk0b02.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtvqwtj3t9j61ee0lyk0b02.jpg" alt=""></p>
 <h2 id="原理介绍">原理介绍</h2>
 <p><code>Redis GEO</code>并不是一种新的数据结构，而是基于<code>Sorted Set</code>实现的。我们在之前的文章中学过<code>Sorted Set</code>结构，该结构保存的数据形式是<code>key-score</code>，即一个元素对应一个分值，默认是根据分值排序的，且可以进行范围查询。但是经纬度是一个数据对，比如（117.25，40.60），那么Redis是如何将经纬度转换成<code>score</code>值的呢？转换成<code>score</code>值之后，是如何保证分值相邻的元素距离也相近的呢？这一切就依赖于<code>GeoHash</code>编码。</p>
 <p>经度的范围是[-180,180]，纬度的范围是[-90,90]，当我们对经纬度进行编码时，先对经度和纬度分别进行GeoHash编码，然后再合并为一个编码值。下面我们就来介绍GeoHash的编码方法。</p>
@@ -467,13 +467,13 @@
 </tbody>
 </table>
 <p>分别得到了经度和纬度的N位编码值后，是如何合并为一个编码值的呢？规则就是：最终编码值的长度是2N，其中偶数位上依次是经度的编码值，奇数位上依次是纬度的编码值（从0开始计数，0为偶数），示意图如下：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtwxmhb9t7j613o0is75502.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtwxmhb9t7j613o0is75502.jpg" alt=""></p>
 <p>使用了GeoHash编码后，经纬度[120,40]就被编码成了1110011101，这个值就可以作为key对应的score值。</p>
 <p>从上面的过程可以看出，在划分区间的过程中，我们其实是把整个空间划分成了一个一个的小方格。对经度和纬度分别做一次二分区的话，就会得到四个分区。这 4 个分区对应了 4 个方格，每个方格覆盖了一定范围内的经纬度值，分区越多，每个方格能覆盖到的地理空间就越小，也就越精准。我们把所有方格的编码值映射到一维空间时，相邻方格的 GeoHash 编码值基本也是接近的，如下图所示：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtwyad1nhuj61eg0u0jtc02.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtwyad1nhuj61eg0u0jtc02.jpg" alt=""></p>
 <p>因此我们使用 Sorted Set 范围查询得到的相近编码值，在实际的地理空间上，也是相邻的方格，这就可以实现 LBS 应用“搜索附近的人或物”的功能了。</p>
 <p>不过，有的编码值虽然在大小上接近，但实际对应的方格却距离比较远。例如，我们用 4 位来做 GeoHash 编码，把经度区间[-180,180]和纬度区间[-90,90]各分成了 4 个分区，一共 16 个分区，对应了 16 个方格。编码值为 0111 和 1000 的两个方格就离得比较远，如下图所示：</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtwyawvzyyj61db0u0whp02.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtwyawvzyyj61db0u0whp02.jpg" alt=""></p>
 <p>所以，为了避免查询不准确问题，我们可以同时查询给定经纬度所在的方格周围的 4 个或 8 个方格。</p>
 <p>到这里我们就了解了Redis GEO的原理，通过GeoHash编码，将元素对应的经纬度编码，然后将该元素id作为key，编码值作为score值存入Sorted Set中，最后通过Sorted Set的范围查询就可以完成我们最初的需求。下面我们来看下Redis GEO相关的指令吧！</p>
 <h2 id="geoadd">GEOADD</h2>
@@ -645,7 +645,7 @@
 <li>GEOADD命令会将经纬度编码为52bit，该命令返回GeoHash编码转换后的<code>11</code>位字符串表示形式，该字符串形式，与 <a href="https://en.wikipedia.org/wiki/Geohash">维基百科</a>描述一致，兼容 <a href="http://geohash.org/">geohash.org</a>规范</li>
 <li>使用该URL： <a href="http://geohash.org/">http://geohash.org/</a><!-- raw HTML omitted -->，可以反向解析出命令返回的11位字符串对应的经纬度，例如http://geohash.org/sqdtr74hy01。页面中显示对应的纬度和经度</li>
 </ul>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtx0l9f0spj61hq0bq0tp02.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtx0l9f0spj61hq0bq0tp02.jpg" alt=""></p>
 <p><strong>返回值</strong></p>
 <p>数组：返回给定元素,GeoHash编码值对应的字符串表示</p>
 <p><strong>示例</strong></p>
@@ -666,7 +666,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>根据示例返回的字符串“sqdtr74hvb0”，去页面查询，得到的经纬度和添加的经纬度只有很小差异。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtx0ti5dtlj61aw0bagmj02.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtx0ti5dtlj61aw0bagmj02.jpg" alt=""></p>
 <h2 id="georadius">GEORADIUS</h2>
 <blockquote>
 <p>可用版本：&gt;= 3.2.0</p>
@@ -1211,7 +1211,7 @@
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205165629984.jpg" alt=""></p>
 
     </div>
 
@@ -1358,7 +1358,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

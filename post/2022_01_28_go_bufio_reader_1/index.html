@@ -360,7 +360,7 @@
 <p>有这样一个缓冲区的好处是，可以在大多数的时候降低读取方法的执行时间。虽然，读取方法有时还要负责填充缓冲区，但从总体来看，读取方法的平均执行时间一般都会因此有大幅度的缩短。</p>
 <p>bufio.Reader 的结构如下：</p>
 <p>bufio.Reader中的 r、w 分别代表当前读取和写入的位置，读写都是针对缓存切片 buf 来说的，io.Reader rd 是用来写入数据到 buf 的，因此当写入了部分字节，w 会增大相应的写入字节数；而当从 buf 中读出数据后，r 会增大，被读取过的数据就是无用数据了。始终 w&gt;=r，当 w==r 时，说明写入的数据都被读取完毕了，没有数据可读了。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gytpefjdh7j319y0jm74u.jpg" alt="bufio.Reader结构"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gytpefjdh7j319y0jm74u.jpg" alt="bufio.Reader结构"></p>
 <ul>
 <li>buf：用作缓冲区的字节切片，虽然是切片类型，但是一旦初始化完成之后，长度不会改变</li>
 <li>rd：初始化时传入的io.Reader，用于读取底层文件数据，然后写入到缓冲区 buf 中</li>
@@ -559,9 +559,9 @@
 <ol>
 <li>方法首先会压缩缓存数组buf。如果已读计数 r&gt;0，说明 r 之前有数据被读过，那么这些无效数据是可以丢弃的，而 b.r 和 b.w 之间的数据还没有被读取，是有意义的。因此利用数据平移的方式，将 b.buf[b.r:b.w] 这段数据移动到缓冲区最顶端，相当于整段数据向前移动b.r个位置，然后更新 r 和 w 的值。</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gynw7alrmkj319y0h4gm7.jpg" alt="有效数据大于等于无效数据长度"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gynw7alrmkj319y0h4gm7.jpg" alt="有效数据大于等于无效数据长度"></p>
 <p>平移过程会有两种情况：有效数据长度大于等于无效数据，或者有效数据小于无效数据。上图属于第一种情况，平移过后会覆盖无效数据；对于第二种情况，有效数据不能完全覆盖当前的无效数据，但是因为我们划定有效数据的范围是根据 r 和 w 值，即b.buf[b.r:b.w]，不在乎未覆盖的无效数据，在我们后续写入数据的过程中，这些无效数据就会被覆盖了。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gynw5wzc2tj319c0isaao.jpg" alt="有效数据小于无效数据长度"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gynw5wzc2tj319c0isaao.jpg" alt="有效数据小于无效数据长度"></p>
 <ol start="2">
 <li>尝试从底层数据读取器 rd 中读取数据来填充缓冲区 buf。如果读取到数据或者产生 error，就会直接返回；但是如果底层数据还没准备好，既没有读取到数据，也没有产生 error，会重试读取，最多重试 100 次。</li>
 </ol>
@@ -1135,7 +1135,7 @@
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt="img"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172313912.jpg" alt="img"></p>
 
     </div>
 
@@ -1282,7 +1282,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

@@ -357,7 +357,7 @@
 <p>这个模式和我们平时使用的编辑器是一样的，用户输入的任何字符都被 <code>Vim</code> 当做文件内容保存起来，并将其显示在屏幕上。在文本输入过程中，若想回到普通模式，按 <code>ESC</code> 键即可。</p>
 <p><strong>命令行模式</strong></p>
 <p>在普通模式下按下 <code>:</code>、<code>/</code> 或者 <code>！</code> 字符，这时你会看到窗口的左下角出现了相应的字符 ，代表你已经进入命令行模式可以进行命令的输入，输入的命令会出现在字符后面，按回车就会执行相应的命令。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqnr472xzj61c80luabe02.jpg" alt="三种基本模式转化示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqnr472xzj61c80luabe02.jpg" alt="三种基本模式转化示意图"></p>
 <h2 id="插入命令">插入命令</h2>
 <p>在普通模式下，输入下述命令，会进入插入模式，然后就可以进行文本的输入。</p>
 <table>
@@ -431,7 +431,7 @@
 </tbody>
 </table>
 <p>如下动图首先新建了一个文件，然后通过vim打开，按下 <code>i</code> 键进行输入文本，然后按下<code>ESC</code>键进入普通模式，最后输入<code>:wq</code>保存退出。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqoob0y4ig60s00jse8402.gif" alt="插入和保存退出示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqoob0y4ig60s00jse8402.gif" alt="插入和保存退出示意图"></p>
 <h2 id="定位命令">定位命令</h2>
 <p>在普通模式下，分别执行如下命令，可以做到快速定位。</p>
 <table>
@@ -477,7 +477,7 @@
 </tbody>
 </table>
 <p>动图中（注意光标的位置），首先打开了一个文件，然后输入 <code>:set nu</code> 显示行号，然后键盘按下<code>G</code>（shift+g）命令到最后一行，然后按<code>gg</code>到第一行，输入<code>:3</code> 到第三行，按 <code>$</code> 到行尾，按下 <code>0</code> 到行首，然后输入 <code>:set nonu </code>取消行号，最后输入 <code>:q</code> 退出。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqoz5fushg60s00jse8s02.gif" alt="定位命令示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqoz5fushg60s00jse8s02.gif" alt="定位命令示意图"></p>
 <h2 id="替换和取消命令">替换和取消命令</h2>
 <p>在普通模式下，可以执行如下命令，实现替换和取消。</p>
 <table>
@@ -503,7 +503,7 @@
 </tbody>
 </table>
 <p>动图中，打开了一个文本文件，然后键盘按下 <code>r </code> 键，然后输入 <code>0</code> 替换了文本文件中的 <code>i</code> 字符。按下 <code>R</code> 键（shift+r），可以从光标处连续替换字符。最后按下了 <code>ESC</code> 键，进入普通模式，最后连续按 <code>u</code> 键，取消上一步操作。最后输入 <code>:q</code>，退出vim。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqpdltpi9g60s00jsb2b02.gif" alt="替换取消命令示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqpdltpi9g60s00jsb2b02.gif" alt="替换取消命令示意图"></p>
 <h2 id="复制和剪切命令">复制和剪切命令</h2>
 <p>普通模式下，按下如下命令，即可实现快速的复制粘贴。</p>
 <table>
@@ -537,7 +537,7 @@
 </tbody>
 </table>
 <p>如下动图中，首先打开了一个文件，按 <code>↑键</code> 将光标移动到第一行，键盘按下 <code>yy</code> 命令，复制第一行内容，然后将光标移动到最后一行，按了三次 <code>p</code>命令，进行粘贴，最后输入 <code>:wq</code> 退出。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqpknmwuzg60s00jsqv702.gif" alt="复制剪切命令示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqpknmwuzg60s00jsqv702.gif" alt="复制剪切命令示意图"></p>
 <h2 id="删除命令">删除命令</h2>
 <p>在普通模式下，输入如下命令，即可实现快速的文本删除。</p>
 <table>
@@ -575,7 +575,7 @@
 </tbody>
 </table>
 <p>如下动图中，首先通过vim打开一个文件，然后按下 <code>x</code> 键删除光标处内容，然后按下 <code>dd</code> 删除三行内容，再按下 <code>2dd</code> 删除两行内容。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqprvwcc3g60s00jshdv02.gif" alt="删除命令示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqprvwcc3g60s00jshdv02.gif" alt="删除命令示意图"></p>
 <h2 id="搜索和替换命令">搜索和替换命令</h2>
 <p>普通模式下，输入如下命令，可以快速完成文档中的内容搜索和替换操作。</p>
 <table>
@@ -605,7 +605,7 @@
 </tbody>
 </table>
 <p>如下动图中，首先打开了一个文件，然后输入了 <code>/love</code> 进行查找，然后输入了 <code>:%s/hate/love/g</code> 进行全文替换。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gvqq4kdz6bg60s00jshdx02.gif" alt="搜索替换命令示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gvqq4kdz6bg60s00jshdx02.gif" alt="搜索替换命令示意图"></p>
 <h2 id="总结">总结</h2>
 <p>本文介绍了Linux中vim相关的操作，主要包含以下内容：</p>
 <ul>
@@ -620,7 +620,7 @@
 <p>命令比较多，不需要死记硬背，使用的多了，也便记住了。</p>
 <h2 id="更多">更多</h2>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205171404300.jpg" alt=""></p>
 
     </div>
 
@@ -767,7 +767,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

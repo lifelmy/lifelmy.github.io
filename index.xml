@@ -894,7 +894,7 @@ tom john
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172735021.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -1272,7 +1272,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172708438.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -2580,7 +2580,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172649271.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -2675,7 +2675,7 @@ rm hello world
 &lt;li&gt;&lt;code&gt;Wait&lt;/code&gt; 方法用于阻塞调用者，直到 WaitGroup 的计数值为0，即所有子任务都完成&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;正常来说，我们使用的时候，需要先确定子任务的数量，然后调用 Add() 方法传入相应的数量，在每个子任务的协程中，调用 Done()，需要等待的协程调用 Wait() 方法，状态流转如下图：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24egy1h2eyhztyipj22420u00vw.jpg&#34; alt=&#34;WaitGroup流程图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24egy1h2eyhztyipj22420u00vw.jpg&#34; alt=&#34;WaitGroup流程图&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;底层实现&#34;&gt;底层实现&lt;/h2&gt;
 &lt;h3 id=&#34;结构体&#34;&gt;结构体&lt;/h3&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
@@ -3177,7 +3177,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172625371.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -3225,13 +3225,13 @@ rm hello world
 &lt;li&gt;writer 执行完写操作后，让 &lt;code&gt;后面的reader&lt;/code&gt; 执行读操作，再&lt;code&gt;唤醒队列B&lt;/code&gt; 的一个 &lt;code&gt;writer&lt;/code&gt; 到 队列A 后面排队。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;strong&gt;初始时刻&lt;/strong&gt; 队列A 中 writer &lt;code&gt;W1&lt;/code&gt; 前面有三个 reader，后面有两个 reader，队列B中有两个 writer&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h1wefan9hkj21900rsgmi.jpg&#34; alt=&#34;RWMutex运行示例：初始时刻&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h1wefan9hkj21900rsgmi.jpg&#34; alt=&#34;RWMutex运行示例：初始时刻&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;并发读&lt;/strong&gt; 多个 reader 可以同时获取到读锁，进入临界区进行读操作；writer &lt;code&gt;W1&lt;/code&gt; 在 &lt;code&gt;队列A&lt;/code&gt; 中等待，同时又来了两个 reader，直接在 &lt;code&gt;队列A&lt;/code&gt; 后面排队&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h1we60aatqj21980s8my7.jpg&#34; alt=&#34;RWMutex运行示例：并发读&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h1we60aatqj21980s8my7.jpg&#34; alt=&#34;RWMutex运行示例：并发读&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;写操作&lt;/strong&gt; &lt;code&gt;W1&lt;/code&gt; 前面所有的 reader 完成后，&lt;code&gt;W1&lt;/code&gt; 获得锁，进入临界区操作&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h1we9s0crnj218w0skaaz.jpg&#34; alt=&#34;RWMutex运行示例：写操作&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h1we9s0crnj218w0skaaz.jpg&#34; alt=&#34;RWMutex运行示例：写操作&#34;&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;获得准入权&lt;/strong&gt; &lt;code&gt;W1&lt;/code&gt; 完成写操作退出，先让后面排队的 reader 进行读操作，然后从 队列B 中唤醒 &lt;code&gt;W2&lt;/code&gt; 到 &lt;code&gt;队列A&lt;/code&gt; 排队。&lt;code&gt;W2&lt;/code&gt; 从 &lt;code&gt;队列B&lt;/code&gt; 到 &lt;code&gt;队列A&lt;/code&gt; 的过程中，&lt;code&gt;R8&lt;/code&gt; 先到了 &lt;code&gt;队列A&lt;/code&gt;，因此 &lt;code&gt;R8&lt;/code&gt; 可以执行读操作。&lt;code&gt;R9&lt;/code&gt;、&lt;code&gt;R10&lt;/code&gt;、&lt;code&gt;R11&lt;/code&gt; 在 &lt;code&gt;W2&lt;/code&gt; 之后到的，所以在后面排队；新来的 &lt;code&gt;W4&lt;/code&gt; 直接在队列B 排队。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h1werj4f63j21900s4gmo.jpg&#34; alt=&#34;RWMutex运行示例：获得准入权&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h1werj4f63j21900s4gmo.jpg&#34; alt=&#34;RWMutex运行示例：获得准入权&#34;&gt;&lt;/p&gt;
 &lt;p&gt;从上面的示例可以看出，&lt;code&gt;RWMutex&lt;/code&gt; 可以看作是没有优先级，按照先来先到的顺序去执行，只不过是 &lt;code&gt;多个reader&lt;/code&gt; 可以 &lt;code&gt;并行 &lt;/code&gt;去执行罢了。&lt;/p&gt;
 &lt;h2 id=&#34;深入源码&#34;&gt;深入源码&lt;/h2&gt;
 &lt;h3 id=&#34;数据结构&#34;&gt;数据结构&lt;/h3&gt;
@@ -3592,7 +3592,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172601268.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -3675,7 +3675,7 @@ rm hello world
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;信号量 sema 就相当于我们说的令牌，state 是 int32 类型，一共 32位，通过每个位记录了当前的状态：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h1v8iyi030j21s20li3zs.jpg&#34; alt=&#34;state字段&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h1v8iyi030j21s20li3zs.jpg&#34; alt=&#34;state字段&#34;&gt;&lt;/p&gt;
 &lt;p&gt;mutexLocked：当前是否已经上锁，&lt;code&gt;state &amp;amp; mutexLocked = 1&lt;/code&gt; 表示已经上锁；&lt;/p&gt;
 &lt;p&gt;mutexWoken：标记当前是否有唤醒的 goroutine，&lt;code&gt;state &amp;amp; mutexWoken = 1&lt;/code&gt; 表示有唤醒的goroutine；&lt;/p&gt;
 &lt;p&gt;mutexStarving：当前是否为饥饿状态，&lt;code&gt;state &amp;amp; mutexWoken = 1&lt;/code&gt; 表示处于饥饿状态；&lt;/p&gt;
@@ -4207,7 +4207,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172541803.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -4281,7 +4281,7 @@ rm hello world
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;p&gt;我们如果使用了互斥锁，可以保证每次进入临界区的只有一个 &lt;code&gt;goroutine&lt;/code&gt;，一个 &lt;code&gt;goroutine&lt;/code&gt; 执行完后，另一个 &lt;code&gt;goroutine&lt;/code&gt; 才能进入临界区执行，最终就实现了并发控制。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h1osg324l8j219w0tsta3.jpg&#34; alt=&#34;并发获取锁示意图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h1osg324l8j219w0tsta3.jpg&#34; alt=&#34;并发获取锁示意图&#34;&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -4760,7 +4760,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172524302.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -5448,7 +5448,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172502857.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -6403,7 +6403,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172445629.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -6586,9 +6586,9 @@ rm hello world
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;假设每次访问的步长为4个字节，如果未经过内存对齐，获取b的数据需要进行两次内存访问，最后再进行数据整理得到b的完整数据：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h08nopcl6sj21940k8myd.jpg&#34; alt=&#34;image-20220313230839425&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h08nopcl6sj21940k8myd.jpg&#34; alt=&#34;image-20220313230839425&#34;&gt;&lt;/p&gt;
 &lt;p&gt;如果经过内存对齐，一次内存访问就能得到b的完整数据，减少了一次内存访问：&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h08nrw3mtgj216a0dmdgf.jpg&#34; alt=&#34;image-20220313231143302&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h08nrw3mtgj216a0dmdgf.jpg&#34; alt=&#34;image-20220313231143302&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;unsafealignof&#34;&gt;unsafe.AlignOf()&lt;/h2&gt;
 &lt;p&gt;unsafe.AlignOf(x) 方法的返回值是 m，当变量进行内存对齐时，需要保证分配到 x 的内存地址能够整除 &lt;code&gt;m&lt;/code&gt;。因此可以通过这个方法，确定变量x 在内存对齐时的地址：&lt;/p&gt;
 &lt;ul&gt;
@@ -6659,19 +6659,19 @@ rm hello world
 &lt;/div&gt;&lt;ol&gt;
 &lt;li&gt;第一个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，我们假设地址从0开始，0可以被4整除：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0gebl4qouj21ib06eaak.jpg&#34; alt=&#34;成员变量1内存对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0gebl4qouj21ib06eaak.jpg&#34; alt=&#34;成员变量1内存对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;第二个字段是 int64 类型，unsafe.Sizeof(int64(1)) = 8，内存占用为 8 个字节，同时unsafe.Alignof(int64(1)) = 8，需保证变量放置首地址可以被8整除，当前地址为4，距离4最近的且可以被8整除的地址为8，因此需要添加四个空白字节，从8开始放置：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0gea4od5gj21ib06ewf2.jpg&#34; alt=&#34;成员变量2内存对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0gea4od5gj21ib06ewf2.jpg&#34; alt=&#34;成员变量2内存对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;3&#34;&gt;
 &lt;li&gt;第三个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，当前地址为16，16可以被4整除：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0ge7ydhdlj21ib06egm8.jpg&#34; alt=&#34;成员变量3内存对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0ge7ydhdlj21ib06egm8.jpg&#34; alt=&#34;成员变量3内存对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;4&#34;&gt;
 &lt;li&gt;所有成员对齐都已经完成，现在我们需要看一下整体对齐规则：unsafe.Alignof(A{}) = 8，即三个变量成员的最大值，内存对齐需要保证该结构体的内存占用是 8 的整数倍，当前内存占用是 20个字节，因此需要再补充4个字节：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0ge7qsrpoj21ib06edgg.jpg&#34; alt=&#34;整体对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0ge7qsrpoj21ib06edgg.jpg&#34; alt=&#34;整体对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;5&#34;&gt;
 &lt;li&gt;最终该结构体的内存占用为 24字节。&lt;/li&gt;
 &lt;/ol&gt;
@@ -6703,15 +6703,15 @@ rm hello world
 &lt;/div&gt;&lt;ol&gt;
 &lt;li&gt;第一个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，我们假设地址从0开始，0可以被4整除：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0geiows6yj210j06e0sz.jpg&#34; alt=&#34;成员变量1内存对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0geiows6yj210j06e0sz.jpg&#34; alt=&#34;成员变量1内存对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;第二个字段是 int32 类型，unsafe.Sizeof(int32(1))=4，内存占用为4个字节，同时unsafe.Alignof(int32(1)) = 4，内存对齐需保证变量首地址可以被4整除，当前地址为4，4可以被4整除：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0gekgd6dlj210j06emxg.jpg&#34; alt=&#34;成员变量2内存对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0gekgd6dlj210j06emxg.jpg&#34; alt=&#34;成员变量2内存对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;3&#34;&gt;
 &lt;li&gt;第三个字段是 int64 类型，unsafe.Sizeof(int64(1))=8，内存占用为8个字节，同时unsafe.Alignof(int64(1)) = 8，内存对齐需保证变量首地址可以被8整除，当前地址为8，8可以被8整除：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/e6c9d24ely1h0geo1cfrhj210j06emxi.jpg&#34; alt=&#34;成员变量3内存对齐&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/e6c9d24ely1h0geo1cfrhj210j06emxi.jpg&#34; alt=&#34;成员变量3内存对齐&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;4&#34;&gt;
 &lt;li&gt;所有成员对齐都已经完成，现在我们需要看一下整体对齐规则：unsafe.Alignof(B{}) = 8，即三个变量成员的最大值，内存对齐需要保证该结构体的内存占用是 8 的整数倍，当前内存占用是 16个字节，已经符合规则，最终该结构体的内存占用为 16个字节。&lt;/li&gt;
 &lt;/ol&gt;
@@ -6795,7 +6795,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172420475.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -7348,7 +7348,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172359903.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -7494,7 +7494,7 @@ rm hello world
 &lt;p&gt;&lt;code&gt;ReadSlice方法&lt;/code&gt; 用于查找分隔符，然后返回查找过程中遍历到的数据。比如我们想一行一行的处理数据，那么我们的入参可以是换行符，ReadSlice 就会每次返回一行数据。&lt;/p&gt;
 &lt;p&gt;ReadSlice方法会先在其缓冲区的未读部分中寻找分隔符，如果未找到，并且缓冲区未满，那么该方法会先调用 fill 方法对缓冲区进行填充，然后再次寻找，如此往复。一旦ReadSlice方法找到了分隔符，它就会在缓冲区上切出相应的、包含分隔符的字节切片，并把该切片作为结果值返回。即使最终没有找到分隔符，或者查找过程中遇到了error，ReadSlice 方法会也返回寻找过程中遍历的所有数据，并更新已读计数。可见ReadSlice是一个半途而废的方法，如果缓冲区满了，就不会继续寻找了。&lt;/p&gt;
 &lt;p&gt;由于 ReadSlice 返回的是针对缓冲切片的切片，存在数据泄露的风险；其次数据存在有效期，下次的读操作会覆盖这些数据，因此应当尽量使用 ReadBytes 或 ReadString 代替该方法。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gz5eegmc5xj31i00qajsx.jpg&#34; alt=&#34;image-20220208001023779&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gz5eegmc5xj31i00qajsx.jpg&#34; alt=&#34;image-20220208001023779&#34;&gt;&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
@@ -8015,7 +8015,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172341490.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -8036,7 +8036,7 @@ rm hello world
 &lt;p&gt;有这样一个缓冲区的好处是，可以在大多数的时候降低读取方法的执行时间。虽然，读取方法有时还要负责填充缓冲区，但从总体来看，读取方法的平均执行时间一般都会因此有大幅度的缩短。&lt;/p&gt;
 &lt;p&gt;bufio.Reader 的结构如下：&lt;/p&gt;
 &lt;p&gt;bufio.Reader中的 r、w 分别代表当前读取和写入的位置，读写都是针对缓存切片 buf 来说的，io.Reader rd 是用来写入数据到 buf 的，因此当写入了部分字节，w 会增大相应的写入字节数；而当从 buf 中读出数据后，r 会增大，被读取过的数据就是无用数据了。始终 w&amp;gt;=r，当 w==r 时，说明写入的数据都被读取完毕了，没有数据可读了。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gytpefjdh7j319y0jm74u.jpg&#34; alt=&#34;bufio.Reader结构&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gytpefjdh7j319y0jm74u.jpg&#34; alt=&#34;bufio.Reader结构&#34;&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;buf：用作缓冲区的字节切片，虽然是切片类型，但是一旦初始化完成之后，长度不会改变&lt;/li&gt;
 &lt;li&gt;rd：初始化时传入的io.Reader，用于读取底层文件数据，然后写入到缓冲区 buf 中&lt;/li&gt;
@@ -8235,9 +8235,9 @@ rm hello world
 &lt;ol&gt;
 &lt;li&gt;方法首先会压缩缓存数组buf。如果已读计数 r&amp;gt;0，说明 r 之前有数据被读过，那么这些无效数据是可以丢弃的，而 b.r 和 b.w 之间的数据还没有被读取，是有意义的。因此利用数据平移的方式，将 b.buf[b.r:b.w] 这段数据移动到缓冲区最顶端，相当于整段数据向前移动b.r个位置，然后更新 r 和 w 的值。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gynw7alrmkj319y0h4gm7.jpg&#34; alt=&#34;有效数据大于等于无效数据长度&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gynw7alrmkj319y0h4gm7.jpg&#34; alt=&#34;有效数据大于等于无效数据长度&#34;&gt;&lt;/p&gt;
 &lt;p&gt;平移过程会有两种情况：有效数据长度大于等于无效数据，或者有效数据小于无效数据。上图属于第一种情况，平移过后会覆盖无效数据；对于第二种情况，有效数据不能完全覆盖当前的无效数据，但是因为我们划定有效数据的范围是根据 r 和 w 值，即b.buf[b.r:b.w]，不在乎未覆盖的无效数据，在我们后续写入数据的过程中，这些无效数据就会被覆盖了。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gynw5wzc2tj319c0isaao.jpg&#34; alt=&#34;有效数据小于无效数据长度&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gynw5wzc2tj319c0isaao.jpg&#34; alt=&#34;有效数据小于无效数据长度&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;尝试从底层数据读取器 rd 中读取数据来填充缓冲区 buf。如果读取到数据或者产生 error，就会直接返回；但是如果底层数据还没准备好，既没有读取到数据，也没有产生 error，会重试读取，最多重试 100 次。&lt;/li&gt;
 &lt;/ol&gt;
@@ -8811,7 +8811,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172313912.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -9264,7 +9264,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172254798.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -9342,7 +9342,7 @@ rm hello world
 &lt;p&gt;对于现在的协议来说，都针对二进制文件做了处理，但我们无法保证文件在网络传输过程中不出现问题。当包含不可打印字符的文件在网络中传输时，往往要经过多个路由设备，由于不同的设备（特指老的路由设备）对字节流的处理方式有一些不同，这样那些不可打印字节就有可能被错误处理，不利于数据传输的。所以就先把数据先做一个编码，统统变成可见字节，确保数据可靠传输。&lt;/p&gt;
 &lt;h2 id=&#34;base64编码原理&#34;&gt;Base64编码原理&lt;/h2&gt;
 &lt;p&gt;Base64之所以叫做Base64，是因为它是基于64个可打印字符设计的，这64个字符是 ASCII 编码中可打印字符的子集，包含26个字母的大小写、10个阿拉伯数字、&#39;+&amp;lsquo;号 和 &amp;lsquo;/&amp;lsquo;号。（其实还有一个 &amp;lsquo;=&amp;rsquo; 号用于后缀）&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyenx53j10j31ag0u0mzq.jpg&#34; alt=&#34;Base64字符表&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gyenx53j10j31ag0u0mzq.jpg&#34; alt=&#34;Base64字符表&#34;&gt;&lt;/p&gt;
 &lt;h3 id=&#34;编码步骤&#34;&gt;编码步骤&lt;/h3&gt;
 &lt;p&gt;由于一共有 64 个字符，那么使用 6 个比特位就足够表示了(2的6次方=64)，而 ASCII码 使用 8 个比特位表示一个字符，6 和 8 的最小公倍数为 24，3个 ASCII码 字符可以编码为 4 个 Base64 字符。因此Base64的编码过程如下：&lt;/p&gt;
 &lt;ol&gt;
@@ -9357,14 +9357,14 @@ rm hello world
 &lt;li&gt;6个一组，分为4组&lt;/li&gt;
 &lt;li&gt;计算每组的十进制值分别为 19、22、5、46，对照Base64编码表，得到可打印字符串为 &amp;lsquo;TWFu&amp;rsquo;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyeoms5hnpj31co0ekdi1.jpg&#34; alt=&#34;编码示例&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gyeoms5hnpj31co0ekdi1.jpg&#34; alt=&#34;编码示例&#34;&gt;&lt;/p&gt;
 &lt;p&gt;需要注意的是，使用Base64编码后，3个字节会转为4个字节，编码后的需要传输的数据比编码前多了 1/3。&lt;/p&gt;
 &lt;h3 id=&#34;位数不足情况&#34;&gt;位数不足情况&lt;/h3&gt;
 &lt;p&gt;位数不足会有两种情况：两个字节或者一个字节的数据。&lt;/p&gt;
 &lt;p&gt;如果是两个字节，也就是16个比特，需要补两个0，得到三个Base64编码字符，最后添加一个&amp;rsquo;=&amp;lsquo;用于补充&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyepe7lp5mj31dy0ecq51.jpg&#34; alt=&#34;位数不足：剩余两个字符&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gyepe7lp5mj31dy0ecq51.jpg&#34; alt=&#34;位数不足：剩余两个字符&#34;&gt;&lt;/p&gt;
 &lt;p&gt;如果是一个字节，也就是8个比特，需要补4个0，得到两个Base64编码字符，最后添加两个&amp;rsquo;=&amp;lsquo;用于补充&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gyetzq7b0rj31dw0eijtg.jpg&#34; alt=&#34;位数不足，剩余一个字符&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gyetzq7b0rj31dw0eijtg.jpg&#34; alt=&#34;位数不足，剩余一个字符&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;base64解码原理&#34;&gt;Base64解码原理&lt;/h2&gt;
 &lt;p&gt;解码就是编码的逆向操作：&lt;/p&gt;
 &lt;ol&gt;
@@ -9396,7 +9396,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172233998.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -9410,7 +9410,7 @@ rm hello world
       
         <description>&lt;h2 id=&#34;前言&#34;&gt;前言&lt;/h2&gt;
 &lt;p&gt;前面一篇文章 &lt;a href=&#34;https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/&#34;&gt;Go 语言 bytes.Buffer 源码详解之1&lt;/a&gt;，我们学习了 bytes.Buffer 的结构和基础方法，了解了缓冲区的运行机制，其中最重要的是要理解整个结构被分为了三段：已读数据、未读数据、空闲部分，忘记的小伙伴再复习下哦。缓冲区的存在，就是为读写服务的，那么本篇文章我们就一起来学习下读写方法是如何利用缓冲区实现的吧！&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;源码分析&#34;&gt;源码分析&lt;/h2&gt;
 &lt;h3 id=&#34;write&#34;&gt;Write()&lt;/h3&gt;
 &lt;p&gt;Write 方法将字节切片 p 中的数据写入到 缓冲切片中，返回写入的字节长度和产生的error&lt;/p&gt;
@@ -10199,7 +10199,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172215652.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -10271,7 +10271,7 @@ rm hello world
 &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0gzlbqx9j31q60jg75o-20230205172942084.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
 &lt;p&gt;下面是bytes.Buffer 中定义的一些常量：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
@@ -10464,7 +10464,7 @@ rm hello world
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id=&#34;trygrowbyreslice&#34;&gt;tryGrowByReslice()&lt;/h3&gt;
 &lt;p&gt;在向缓冲切片中写 n 个字节之前，我们要确保至少有n个空白位置可以存放数据。从下图可以看出，在 &lt;code&gt;len(buf)&lt;/code&gt; 到 &lt;code&gt;cap(buf)&lt;/code&gt; 之间本身就有空闲部分，如果 &lt;code&gt;cap(buf) - len(buf) &amp;gt;= n&lt;/code&gt;，说明空闲部分可以写入n个字节，那么我们就可以将len(buf) 后移n位，将新增数据保存在这n个位置中。否则的话，就需要进行数据平移甚至扩容了，这些工作是下一个要介绍的 grow() 方法要做的事情，因此我们可以说 tryGrowByReslice() 是 grow() 的快速情况（fase-case），在成本最低的情况下满足需求。在后续介绍相关的写方法中我们会看到，调用 grow() 方法前都会先尝试调用下 tryGrowByReslice()，不成功的话才会调用 grow()。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0iybp10hj31z60scdid.jpg&#34; alt=&#34;tryGrowByReslice 示意图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0iybp10hj31z60scdid-20230205172941369.jpg&#34; alt=&#34;tryGrowByReslice 示意图&#34;&gt;&lt;/p&gt;
 &lt;p&gt;需要注意的是，如果本次操作成功，字节切片 buf 的长度被增大了，但是新增的 n 个字节还没有数据，只是空出来了，用于调用者直接填充数据。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;入参 n:表示要增长的字节长度&lt;/li&gt;
@@ -10503,15 +10503,15 @@ rm hello world
 &lt;ol&gt;
 &lt;li&gt;先进行数据整理，如果 buf 中没有未读数据，且已读计数大于0，重置，此时的整个缓冲切片都是空闲的，如下图：&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0q3ahuu4j31nc0u0myt.jpg&#34; alt=&#34;重置情况示意图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0q3ahuu4j31nc0u0myt-20230205172941301.jpg&#34; alt=&#34;重置情况示意图&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;调用 tryGrowByReslice，判断通过 fast-case 是否满足需求，如果满足直接返回了，不满足再进行下一步。&lt;/li&gt;
 &lt;li&gt;当前的 buf 可能还没有初始化（声明变量后，直接调用Grow()方法，手动扩容），如果 buf == nil，判断最小缓冲大小是否满足需求，满足需求的话，创建一个字节切片返回即可。&lt;/li&gt;
 &lt;li&gt;数据平移。考虑下面这种情况，如果 &lt;code&gt;未读数据的长度 + 所需字节数 n &amp;lt;= 缓冲切片容量 cap(buf)&lt;/code&gt;，可以将未读数据平移到 buf 的顶端，覆盖已读数据，这样就可以至少留出来 n 个字节了。&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0qhzel72j31rs0u0tau.jpg&#34; alt=&#34;数据平移示意图1&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0qhzel72j31rs0u0tau-20230205172941369.jpg&#34; alt=&#34;数据平移示意图1&#34;&gt;&lt;/p&gt;
 &lt;p&gt;可是在实际的源码实现中，条件更加严苛点，要求 &lt;code&gt;未读数据的长度 + 所需字节数 n &amp;lt;= cap(buf)/2&lt;/code&gt;，即两者加起来要小于一半的容量，这样做的原因是为了防止频繁的数据复制。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0qnrgwjaj31v10u0gnz.jpg&#34; alt=&#34;数据平移示意图2&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0qnrgwjaj31v10u0gnz-20230205172941318.jpg&#34; alt=&#34;数据平移示意图2&#34;&gt;&lt;/p&gt;
 &lt;ol start=&#34;5&#34;&gt;
 &lt;li&gt;
 &lt;p&gt;扩容。上面的条件都不满足，只能扩容， &lt;code&gt;新容器的容量 = 2 * 原有容量 + 所需字节数&lt;/code&gt;。然后将原缓冲切片中的未读数据，拷贝到新的缓冲切片头部。&lt;/p&gt;
@@ -10674,11 +10674,11 @@ rm hello world
 &lt;/div&gt;
 &lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;本篇文章我们学习了 bytes.Buffer 的结构定义和基础方法源码实现，其中最重要的是要记住 off 表示已读计数。通过下图，就能够更容易理解相关方法的实现原理。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0gzlbqx9j31q60jg75o-20230205172942084.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172154696-20230205172941369.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -11285,7 +11285,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172133466.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -12089,7 +12089,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172111098.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -12346,7 +12346,7 @@ rm hello world
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
 &lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172038207.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>

@@ -345,7 +345,7 @@
     <div class="post-content">
       <h2 id="前言">前言</h2>
 <p>Bitmap，即位图，是一串连续的二进制数组（0和1），可以通过偏移量（offset）定位元素。BitMap通过最小的单位bit来进行<code>0|1</code>的设置，表示某个元素的值或者状态，时间复杂度为O(1)。由于bit是计算机中最小的单位，使用它进行储存将非常节省空间，特别适合一些数据量大且使用二值统计的场景。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gtjyy5qv5nj619c068t9302.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gtjyy5qv5nj619c068t9302.jpg" alt=""></p>
 <p>这里的二值状态就是指集合元素的取值就只有 0 和 1 两种。例如在签到打卡的场景中，我们只用记录签到（1）或未签到（0），所以它就是非常典型的二值状态。在签到统计时，每个用户一天的签到用 1 个 bit 位就能表示，一个月（假设是 31 天）的签到情况用 31 个 bit 位就可以，而一年的签到也只需要用 365 个 bit 位，根本不用太复杂的集合类型。这个时候，我们就可以选择 Bitmap。</p>
 <p>Bitmap不属于Redis的基本数据类型，而是基于String类型进行的位操作。而Redis中字符串的最大长度是 512M，所以 BitMap 的 offset 值也是有上限的，其最大值是：</p>
 <div class="highlight"><div class="chroma">
@@ -1140,7 +1140,7 @@ OK
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205165413942.jpg" alt=""></p>
 
     </div>
 
@@ -1287,7 +1287,7 @@ OK
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

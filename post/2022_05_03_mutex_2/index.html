@@ -412,7 +412,7 @@
 </code></pre></td></tr></table>
 </div>
 </div><p>信号量 sema 就相当于我们说的令牌，state 是 int32 类型，一共 32位，通过每个位记录了当前的状态：</p>
-<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1v8iyi030j21s20li3zs.jpg" alt="state字段"></p>
+<p><img src="http://image.lifelmy.cn/blog/e6c9d24ely1h1v8iyi030j21s20li3zs.jpg" alt="state字段"></p>
 <p>mutexLocked：当前是否已经上锁，<code>state &amp; mutexLocked = 1</code> 表示已经上锁；</p>
 <p>mutexWoken：标记当前是否有唤醒的 goroutine，<code>state &amp; mutexWoken = 1</code> 表示有唤醒的goroutine；</p>
 <p>mutexStarving：当前是否为饥饿状态，<code>state &amp; mutexWoken = 1</code> 表示处于饥饿状态；</p>
@@ -944,7 +944,7 @@
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172541803.jpg" alt=""></p>
 
     </div>
 
@@ -1091,7 +1091,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">

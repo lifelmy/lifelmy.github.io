@@ -414,7 +414,7 @@
 <span class="p">}</span>
 </code></pre></td></tr></table>
 </div>
-</div><p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg" alt="Buffer结构示意图"></p>
+</div><p><img src="http://image.lifelmy.cn/blog/008i3skNly1gy0gzlbqx9j31q60jg75o-20230205172942084.jpg" alt="Buffer结构示意图"></p>
 <p>下面是bytes.Buffer 中定义的一些常量：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -607,7 +607,7 @@
 </div>
 </div><h3 id="trygrowbyreslice">tryGrowByReslice()</h3>
 <p>在向缓冲切片中写 n 个字节之前，我们要确保至少有n个空白位置可以存放数据。从下图可以看出，在 <code>len(buf)</code> 到 <code>cap(buf)</code> 之间本身就有空闲部分，如果 <code>cap(buf) - len(buf) &gt;= n</code>，说明空闲部分可以写入n个字节，那么我们就可以将len(buf) 后移n位，将新增数据保存在这n个位置中。否则的话，就需要进行数据平移甚至扩容了，这些工作是下一个要介绍的 grow() 方法要做的事情，因此我们可以说 tryGrowByReslice() 是 grow() 的快速情况（fase-case），在成本最低的情况下满足需求。在后续介绍相关的写方法中我们会看到，调用 grow() 方法前都会先尝试调用下 tryGrowByReslice()，不成功的话才会调用 grow()。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0iybp10hj31z60scdid.jpg" alt="tryGrowByReslice 示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gy0iybp10hj31z60scdid-20230205172941369.jpg" alt="tryGrowByReslice 示意图"></p>
 <p>需要注意的是，如果本次操作成功，字节切片 buf 的长度被增大了，但是新增的 n 个字节还没有数据，只是空出来了，用于调用者直接填充数据。</p>
 <ul>
 <li>入参 n:表示要增长的字节长度</li>
@@ -646,15 +646,15 @@
 <ol>
 <li>先进行数据整理，如果 buf 中没有未读数据，且已读计数大于0，重置，此时的整个缓冲切片都是空闲的，如下图：</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0q3ahuu4j31nc0u0myt.jpg" alt="重置情况示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gy0q3ahuu4j31nc0u0myt-20230205172941301.jpg" alt="重置情况示意图"></p>
 <ol start="2">
 <li>调用 tryGrowByReslice，判断通过 fast-case 是否满足需求，如果满足直接返回了，不满足再进行下一步。</li>
 <li>当前的 buf 可能还没有初始化（声明变量后，直接调用Grow()方法，手动扩容），如果 buf == nil，判断最小缓冲大小是否满足需求，满足需求的话，创建一个字节切片返回即可。</li>
 <li>数据平移。考虑下面这种情况，如果 <code>未读数据的长度 + 所需字节数 n &lt;= 缓冲切片容量 cap(buf)</code>，可以将未读数据平移到 buf 的顶端，覆盖已读数据，这样就可以至少留出来 n 个字节了。</li>
 </ol>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0qhzel72j31rs0u0tau.jpg" alt="数据平移示意图1"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gy0qhzel72j31rs0u0tau-20230205172941369.jpg" alt="数据平移示意图1"></p>
 <p>可是在实际的源码实现中，条件更加严苛点，要求 <code>未读数据的长度 + 所需字节数 n &lt;= cap(buf)/2</code>，即两者加起来要小于一半的容量，这样做的原因是为了防止频繁的数据复制。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0qnrgwjaj31v10u0gnz.jpg" alt="数据平移示意图2"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gy0qnrgwjaj31v10u0gnz-20230205172941318.jpg" alt="数据平移示意图2"></p>
 <ol start="5">
 <li>
 <p>扩容。上面的条件都不满足，只能扩容， <code>新容器的容量 = 2 * 原有容量 + 所需字节数</code>。然后将原缓冲切片中的未读数据，拷贝到新的缓冲切片头部。</p>
@@ -817,11 +817,11 @@
 </div>
 </div><h2 id="总结">总结</h2>
 <p>本篇文章我们学习了 bytes.Buffer 的结构定义和基础方法源码实现，其中最重要的是要记住 off 表示已读计数。通过下图，就能够更容易理解相关方法的实现原理。</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNly1gy0gzlbqx9j31q60jg75o.jpg" alt="Buffer结构示意图"></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNly1gy0gzlbqx9j31q60jg75o-20230205172942084.jpg" alt="Buffer结构示意图"></p>
 <h2 id="更多">更多</h2>
 <p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
 <p>微信公众号：漫漫Coding路</p>
-<p><img src="https://tva1.sinaimg.cn/large/008i3skNgy1gs5tm1gw3wj31ia0hcwhi.jpg" alt=""></p>
+<p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172154696-20230205172941369.jpg" alt=""></p>
 
     </div>
 
@@ -968,7 +968,7 @@
     &copy;
     
       2021 -
-    2022
+    2023
     <span class="heart">
       
       <i class="iconfont">
