@@ -2,52 +2,52 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on lifelmy的博客</title>
-    <link>https://lifelmy.cn/tags/</link>
+    <link>http://lifelmy.cn/tags/</link>
     <description>Recent content in Tags on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 06 Nov 2022 15:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 06 Nov 2022 15:00:43 +0800</lastBuildDate><atom:link href="http://lifelmy.cn/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Makefile</title>
-      <link>https://lifelmy.cn/tags/makefile/</link>
+      <link>http://lifelmy.cn/tags/makefile/</link>
       <pubDate>Sun, 06 Nov 2022 15:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/tags/makefile/</guid>
+      <guid>http://lifelmy.cn/tags/makefile/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Go</title>
-      <link>https://lifelmy.cn/tags/go/</link>
+      <link>http://lifelmy.cn/tags/go/</link>
       <pubDate>Sun, 14 Aug 2022 14:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/tags/go/</guid>
+      <guid>http://lifelmy.cn/tags/go/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Linux</title>
-      <link>https://lifelmy.cn/tags/linux/</link>
+      <link>http://lifelmy.cn/tags/linux/</link>
       <pubDate>Sun, 28 Nov 2021 21:15:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/tags/linux/</guid>
+      <guid>http://lifelmy.cn/tags/linux/</guid>
       <description></description>
     </item>
     
     <item>
       <title>HTTP</title>
-      <link>https://lifelmy.cn/tags/http/</link>
+      <link>http://lifelmy.cn/tags/http/</link>
       <pubDate>Sun, 31 Oct 2021 21:42:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/tags/http/</guid>
+      <guid>http://lifelmy.cn/tags/http/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Redis</title>
-      <link>https://lifelmy.cn/tags/redis/</link>
+      <link>http://lifelmy.cn/tags/redis/</link>
       <pubDate>Mon, 20 Sep 2021 11:15:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/tags/redis/</guid>
+      <guid>http://lifelmy.cn/tags/redis/</guid>
       <description></description>
     </item>
     

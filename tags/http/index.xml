@@ -2,16 +2,16 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>HTTP on lifelmy的博客</title>
-    <link>https://lifelmy.cn/tags/http/</link>
+    <link>http://lifelmy.cn/tags/http/</link>
     <description>Recent content in HTTP on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 31 Oct 2021 21:42:23 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/tags/http/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 31 Oct 2021 21:42:23 +0800</lastBuildDate><atom:link href="http://lifelmy.cn/tags/http/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>RESTful API 设计规范</title>
-      <link>https://lifelmy.cn/post/2021_10_31_restful/</link>
+      <link>http://lifelmy.cn/post/2021_10_31_restful/</link>
       <pubDate>Sun, 31 Oct 2021 21:42:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2021_10_31_restful/</guid>
+      <guid>http://lifelmy.cn/post/2021_10_31_restful/</guid>
       <description>前言 需求开发中设计了几个API接口，组长说我的设计不规范（手动狗头），那周末必须学习一波，防止下次被嘲讽。 简介 在主流公司的程序开发中，为了提</description>
     </item>
     

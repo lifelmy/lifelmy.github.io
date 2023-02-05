@@ -2,187 +2,187 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Go on lifelmy的博客</title>
-    <link>https://lifelmy.cn/categories/go/</link>
+    <link>http://lifelmy.cn/categories/go/</link>
     <description>Recent content in Go on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 14 Aug 2022 14:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 14 Aug 2022 14:00:43 +0800</lastBuildDate><atom:link href="http://lifelmy.cn/categories/go/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Go语言 context包源码学习</title>
-      <link>https://lifelmy.cn/post/2022_08_14_context/</link>
+      <link>http://lifelmy.cn/post/2022_08_14_context/</link>
       <pubDate>Sun, 14 Aug 2022 14:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_08_14_context/</guid>
+      <guid>http://lifelmy.cn/post/2022_08_14_context/</guid>
       <description>前言 日常 Go 开发中，Context 包是用的最多的一个了，几乎所有函数的第一个参数都是 ctx，那么我们为什么要传递 Context 呢，Context 又有哪些用</description>
     </item>
     
     <item>
       <title>Go语言 WaitGroup 详解</title>
-      <link>https://lifelmy.cn/post/2022_06_10_waitgroup/</link>
+      <link>http://lifelmy.cn/post/2022_06_10_waitgroup/</link>
       <pubDate>Fri, 10 Jun 2022 22:30:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_06_10_waitgroup/</guid>
+      <guid>http://lifelmy.cn/post/2022_06_10_waitgroup/</guid>
       <description>前言 在前面的文章中，我们使用过 WaitGroup 进行任务编排，Go语言中的 WaitGroup 和 Java 中的 CyclicBarrier、CountDownLatch 非常类似。比如我</description>
     </item>
     
     <item>
       <title>Go语言读写锁 RWMutex 详解</title>
-      <link>https://lifelmy.cn/post/2022_05_04_rwmutex/</link>
+      <link>http://lifelmy.cn/post/2022_05_04_rwmutex/</link>
       <pubDate>Wed, 04 May 2022 23:58:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_05_04_rwmutex/</guid>
+      <guid>http://lifelmy.cn/post/2022_05_04_rwmutex/</guid>
       <description>前言 前面两篇文章 初见 Go Mutex、 Go Mutex 源码详解 ，我们学习了 Go语言 中的 Mutex，它是一把互斥锁，每次只允许一个 goroutine 进入临界区，这种可以保证临</description>
     </item>
     
     <item>
       <title>Go Mutex 源码详解</title>
-      <link>https://lifelmy.cn/post/2022_05_03_mutex_2/</link>
+      <link>http://lifelmy.cn/post/2022_05_03_mutex_2/</link>
       <pubDate>Tue, 03 May 2022 16:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_05_03_mutex_2/</guid>
+      <guid>http://lifelmy.cn/post/2022_05_03_mutex_2/</guid>
       <description>前言 在上一篇文章中，我们一起学习了如何使用 Go 中的互斥锁 Mutex，那么本篇文章，我们就一起来探究下 Mutex 底层是如何实现的，知其然，更要知其所以然</description>
     </item>
     
     <item>
       <title>初见 Go Mutex </title>
-      <link>https://lifelmy.cn/post/2022_04_28_mutex_1/</link>
+      <link>http://lifelmy.cn/post/2022_04_28_mutex_1/</link>
       <pubDate>Thu, 28 Apr 2022 02:15:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_04_28_mutex_1/</guid>
+      <guid>http://lifelmy.cn/post/2022_04_28_mutex_1/</guid>
       <description>前言 在学习操作系统的时候，我们应该都学习过临界区、互斥锁这些概念，用于在并发环境下保证状态的正确性。比如在秒杀时，100 个用户同时抢 10 个电脑</description>
     </item>
     
     <item>
       <title>Go语言实现 ssh &amp; scp</title>
-      <link>https://lifelmy.cn/post/2022_04_11_go_ssh_scp/</link>
+      <link>http://lifelmy.cn/post/2022_04_11_go_ssh_scp/</link>
       <pubDate>Mon, 11 Apr 2022 11:30:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_04_11_go_ssh_scp/</guid>
+      <guid>http://lifelmy.cn/post/2022_04_11_go_ssh_scp/</guid>
       <description>前言 最近遇到一个临时需求，需要将客户环境中一个服务每天的日志进行一系列复杂处理，并生成数据报表。由于数据处理逻辑复杂，且需要存入数据库，在客</description>
     </item>
     
     <item>
       <title>Go语言 unsafe.Pointer 浅析</title>
-      <link>https://lifelmy.cn/post/2022_04_07_unsafe/</link>
+      <link>http://lifelmy.cn/post/2022_04_07_unsafe/</link>
       <pubDate>Thu, 07 Apr 2022 21:40:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_04_07_unsafe/</guid>
+      <guid>http://lifelmy.cn/post/2022_04_07_unsafe/</guid>
       <description>前言 在写 Go 的过程中，我们不免会使用指针，但是大多数情况下使用的是类型安全的指针，类型安全的指针有助于我们写出安全的代码，但是却有诸多限制，比</description>
     </item>
     
     <item>
       <title>Go语言内存对齐详解</title>
-      <link>https://lifelmy.cn/post/2022_03_22_memory_align/</link>
+      <link>http://lifelmy.cn/post/2022_03_22_memory_align/</link>
       <pubDate>Tue, 22 Mar 2022 16:20:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_03_22_memory_align/</guid>
+      <guid>http://lifelmy.cn/post/2022_03_22_memory_align/</guid>
       <description>前言 前面有篇文章我们学习了 Go语言空结构体，最近又在看 unsafe包 的知识，在查阅相关资料时不免会看到内存对齐相关的内容，虽然感觉这类知识比</description>
     </item>
     
     <item>
       <title>Go语言ioutil包详解</title>
-      <link>https://lifelmy.cn/post/2022_03_04_ioutil/</link>
+      <link>http://lifelmy.cn/post/2022_03_04_ioutil/</link>
       <pubDate>Fri, 04 Mar 2022 01:10:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_03_04_ioutil/</guid>
+      <guid>http://lifelmy.cn/post/2022_03_04_ioutil/</guid>
       <description>前言 Go语言 ioutil包中提供了一些常用、方便的IO操作函数，我们在平时的时候中可以直接拿来使用。对于IO读操作来说，比较适用于读小文件，</description>
     </item>
     
     <item>
       <title>Go bufio.Reader 结构&#43;源码详解 II</title>
-      <link>https://lifelmy.cn/post/2022_02_11_go_bufio_reader_2/</link>
+      <link>http://lifelmy.cn/post/2022_02_11_go_bufio_reader_2/</link>
       <pubDate>Fri, 11 Feb 2022 00:30:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_02_11_go_bufio_reader_2/</guid>
+      <guid>http://lifelmy.cn/post/2022_02_11_go_bufio_reader_2/</guid>
       <description>前言 上一篇文章 Go bufio.Reader 结构+源码详解 I，我们介绍了 bufio.Reader 的基本结构和运行原理，并介绍了如下几个重要方法： reset： 重置整个结构，相当于丢弃缓冲区的</description>
     </item>
     
     <item>
       <title>Go bufio.Reader 结构&#43;源码详解 I</title>
-      <link>https://lifelmy.cn/post/2022_01_28_go_bufio_reader_1/</link>
+      <link>http://lifelmy.cn/post/2022_01_28_go_bufio_reader_1/</link>
       <pubDate>Fri, 28 Jan 2022 22:20:43 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_01_28_go_bufio_reader_1/</guid>
+      <guid>http://lifelmy.cn/post/2022_01_28_go_bufio_reader_1/</guid>
       <description>前言 前面的两篇文章 Go 语言 bytes.Buffer 源码详解之1、Go 语言 bytes.Buffer 源码详解 2，我们介绍了 bytes.buffer，它是一个字节缓冲区，我们可以将数据先写到到</description>
     </item>
     
     <item>
       <title>Go语言 空结构体详解</title>
-      <link>https://lifelmy.cn/post/2022_01_22_go_empty_struct/</link>
+      <link>http://lifelmy.cn/post/2022_01_22_go_empty_struct/</link>
       <pubDate>Sat, 22 Jan 2022 16:20:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_01_22_go_empty_struct/</guid>
+      <guid>http://lifelmy.cn/post/2022_01_22_go_empty_struct/</guid>
       <description>前言 在使用 Go 语言开发过程中，我们不免会定义结构体，但是我们定义的结构体都是有字段的，基本不会定义不包含字段的 空结构体。你可能会反过来问，没有</description>
     </item>
     
     <item>
       <title>Go语言 Base64编码原理及使用</title>
-      <link>https://lifelmy.cn/post/2022_01_16_go_base64/</link>
+      <link>http://lifelmy.cn/post/2022_01_16_go_base64/</link>
       <pubDate>Sun, 16 Jan 2022 14:20:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_01_16_go_base64/</guid>
+      <guid>http://lifelmy.cn/post/2022_01_16_go_base64/</guid>
       <description>前言 在网络中传递参数时，我们经常会对参数进行Base64编码，那么Go 语言中如何进行Base64编码呢？Base64编码的原理是怎样的呢？通</description>
     </item>
     
     <item>
       <title>Go 语言 bytes.Buffer 源码详解 2</title>
-      <link>https://lifelmy.cn/post/2022_01_06_go_bytes_buffer_2/</link>
+      <link>http://lifelmy.cn/post/2022_01_06_go_bytes_buffer_2/</link>
       <pubDate>Thu, 06 Jan 2022 00:50:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_01_06_go_bytes_buffer_2/</guid>
+      <guid>http://lifelmy.cn/post/2022_01_06_go_bytes_buffer_2/</guid>
       <description>前言 前面一篇文章 Go 语言 bytes.Buffer 源码详解之1，我们学习了 bytes.Buffer 的结构和基础方法，了解了缓冲区的运行机制，其中最重要的是要理解整个结构被分为了三段：已读数</description>
     </item>
     
     <item>
       <title>Go 语言 bytes.Buffer 源码详解之1</title>
-      <link>https://lifelmy.cn/post/2022_01_04_go_bytes_buffer_1/</link>
+      <link>http://lifelmy.cn/post/2022_01_04_go_bytes_buffer_1/</link>
       <pubDate>Tue, 04 Jan 2022 00:50:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2022_01_04_go_bytes_buffer_1/</guid>
+      <guid>http://lifelmy.cn/post/2022_01_04_go_bytes_buffer_1/</guid>
       <description>前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string</description>
     </item>
     
     <item>
       <title>Go语言 strings.Reader源码详解</title>
-      <link>https://lifelmy.cn/post/2021_12_28_go_strings_reader/</link>
+      <link>http://lifelmy.cn/post/2021_12_28_go_strings_reader/</link>
       <pubDate>Tue, 28 Dec 2021 08:30:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2021_12_28_go_strings_reader/</guid>
+      <guid>http://lifelmy.cn/post/2021_12_28_go_strings_reader/</guid>
       <description>前言 前面三篇文章 Go语言 io包核心接口详解 、 Go语言 io包基本接口详解 、Go语言 io包源码解读，我们学习了Go语言 io 包中的接口和方法，本篇文</description>
     </item>
     
     <item>
       <title>Go语言 io包源码解读</title>
-      <link>https://lifelmy.cn/post/2021_12_25_go_io_source/</link>
+      <link>http://lifelmy.cn/post/2021_12_25_go_io_source/</link>
       <pubDate>Sat, 25 Dec 2021 12:50:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2021_12_25_go_io_source/</guid>
+      <guid>http://lifelmy.cn/post/2021_12_25_go_io_source/</guid>
       <description>前言 前两篇文章 Go语言 io包核心接口详解、Go语言 io包基本接口详解，我们已经学习了 io包 中的核心接口、基本接口 和 组合接口，这些都是基本的接</description>
     </item>
     
     <item>
       <title>Go语言 io包基本接口详解</title>
-      <link>https://lifelmy.cn/post/2021_12_22_go_io_2_basic/</link>
+      <link>http://lifelmy.cn/post/2021_12_22_go_io_2_basic/</link>
       <pubDate>Wed, 22 Dec 2021 09:30:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2021_12_22_go_io_2_basic/</guid>
+      <guid>http://lifelmy.cn/post/2021_12_22_go_io_2_basic/</guid>
       <description>前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现</description>
     </item>
     
     <item>
       <title>Go语言 io包核心接口详解</title>
-      <link>https://lifelmy.cn/post/2021_12_14_go_io_core/</link>
+      <link>http://lifelmy.cn/post/2021_12_14_go_io_core/</link>
       <pubDate>Tue, 14 Dec 2021 23:16:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2021_12_14_go_io_core/</guid>
+      <guid>http://lifelmy.cn/post/2021_12_14_go_io_core/</guid>
       <description>前言 IO 操作是我们在编程中不可避免会遇到的，例如读写文件，Go语言的 io 包中提供了相关的接口，定义了相应的规范，不同的数据类型可以根据规范去实现</description>
     </item>
     
     <item>
       <title>Go语言 int、float、string相互转换</title>
-      <link>https://lifelmy.cn/post/2021_12_07_go_type_transfer/</link>
+      <link>http://lifelmy.cn/post/2021_12_07_go_type_transfer/</link>
       <pubDate>Tue, 07 Dec 2021 00:16:23 +0800</pubDate>
       
-      <guid>https://lifelmy.cn/post/2021_12_07_go_type_transfer/</guid>
+      <guid>http://lifelmy.cn/post/2021_12_07_go_type_transfer/</guid>
       <description>前言 Go 开发中经常设计到类型转换，本文就重点记录下 整形、浮点型和字符串类型互相转换的方法。 整形转字符串 fmt.Sprintf 将整数转为字符串，字符串可以是2进制、</description>
     </item>
     
