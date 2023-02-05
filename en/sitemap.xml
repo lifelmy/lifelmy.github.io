@@ -1,20 +1,20 @@
-<?xml-stylesheet type="text/xsl" href="http://lifelmy.cn/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="http://www.lifelmy.cn/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://lifelmy.cn/en/categories/</loc>
+    <loc>http://www.lifelmy.cn/en/categories/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://lifelmy.cn/en/</loc>
+    <loc>http://www.lifelmy.cn/en/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>http://lifelmy.cn/en/tags/</loc>
+    <loc>http://www.lifelmy.cn/en/tags/</loc>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

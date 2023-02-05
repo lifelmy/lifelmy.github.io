@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: http://lifelmy.cn/sitemap.xml
+Sitemap: http://www.lifelmy.cn/sitemap.xml
