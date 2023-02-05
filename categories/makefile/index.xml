@@ -2,25 +2,25 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Makefile on lifelmy的博客</title>
-    <link>https://lifelmy.github.io/categories/makefile/</link>
+    <link>https://lifelmy.cn/categories/makefile/</link>
     <description>Recent content in Makefile on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 06 Nov 2022 15:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/makefile/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 06 Nov 2022 15:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/categories/makefile/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Makefile 学习二：命令和变量</title>
-      <link>https://lifelmy.github.io/post/2022_11_06_makefile2/</link>
+      <link>https://lifelmy.cn/post/2022_11_06_makefile2/</link>
       <pubDate>Sun, 06 Nov 2022 15:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2022_11_06_makefile2/</guid>
+      <guid>https://lifelmy.cn/post/2022_11_06_makefile2/</guid>
       <description>前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告</description>
     </item>
     
     <item>
       <title>Makefile 学习一：运行机制</title>
-      <link>https://lifelmy.github.io/post/2022_10_30_makefile_1/</link>
+      <link>https://lifelmy.cn/post/2022_10_30_makefile_1/</link>
       <pubDate>Sun, 30 Oct 2022 16:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2022_10_30_makefile_1/</guid>
+      <guid>https://lifelmy.cn/post/2022_10_30_makefile_1/</guid>
       <description>前言 在 Go 语言开发中，我们希望能够规范代码风格，每个成员在提交时可以一键格式化，同时检查是否有语法错误；我们希望能够一键运行单测，生成单测报告</description>
     </item>
     

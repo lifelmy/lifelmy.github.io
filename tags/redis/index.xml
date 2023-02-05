@@ -2,151 +2,151 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Redis on lifelmy的博客</title>
-    <link>https://lifelmy.github.io/tags/redis/</link>
+    <link>https://lifelmy.cn/tags/redis/</link>
     <description>Recent content in Redis on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 20 Sep 2021 11:15:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 20 Sep 2021 11:15:23 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Redis 如何设置过期时间，你学会了吗？</title>
-      <link>https://lifelmy.github.io/post/redis_expire/</link>
+      <link>https://lifelmy.cn/post/redis_expire/</link>
       <pubDate>Mon, 20 Sep 2021 11:15:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_expire/</guid>
+      <guid>https://lifelmy.cn/post/redis_expire/</guid>
       <description>前言 本篇文章我们来学习下Redis 过期时间的相关命令！ EXPIRE 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(1) 命令格式 1 EXPIRE key seconds [NX|XX|GT|LT] 命令描述 给key设定一个</description>
     </item>
     
     <item>
       <title>Redis 数据库相关命令学习（2）</title>
-      <link>https://lifelmy.github.io/post/redis_db_2/</link>
+      <link>https://lifelmy.cn/post/redis_db_2/</link>
       <pubDate>Sun, 12 Sep 2021 22:40:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_db_2/</guid>
+      <guid>https://lifelmy.cn/post/redis_db_2/</guid>
       <description>前言 上篇文章介绍了Redis 数据库的部分命令，本篇文章介绍剩余相关命令。 EXISTS 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(N)，N为数据库key的数量</description>
     </item>
     
     <item>
       <title>Redis 数据库相关命令学习（1）</title>
-      <link>https://lifelmy.github.io/post/redis_db/</link>
+      <link>https://lifelmy.cn/post/redis_db/</link>
       <pubDate>Sun, 12 Sep 2021 22:38:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_db/</guid>
+      <guid>https://lifelmy.cn/post/redis_db/</guid>
       <description>前言 前面我们介绍了 Redis 基本数据结构以及相关的衍生结构，本篇文章我们简单介绍下数据库的相关操作。 DBSIZE 可用版本：&amp;gt;= 1.0.0 时间复杂度：O(1) 命令</description>
     </item>
     
     <item>
       <title>Redis GEO 命令学习及原理浅析</title>
-      <link>https://lifelmy.github.io/post/redis_geo/</link>
+      <link>https://lifelmy.cn/post/redis_geo/</link>
       <pubDate>Thu, 02 Sep 2021 00:24:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_geo/</guid>
+      <guid>https://lifelmy.cn/post/redis_geo/</guid>
       <description>关注不迷路，一起 From Zero To Hero ! 前言 相信大家都用过打车软件、或者使用软件搜索过附近的人、附近的店等等，这种都离不开基于位置服务（Location-</description>
     </item>
     
     <item>
       <title>Redis HyperLogLog 命令学习及原理浅析</title>
-      <link>https://lifelmy.github.io/post/redis_hpll/</link>
+      <link>https://lifelmy.cn/post/redis_hpll/</link>
       <pubDate>Fri, 27 Aug 2021 00:14:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_hpll/</guid>
+      <guid>https://lifelmy.cn/post/redis_hpll/</guid>
       <description>关注不迷路，一起 From Zero To Hero ! 前言 考虑一个场景：计算一个App的日活用户个数，或者统计一个页面每天访问的用户个数。这种需求都是需要对用户去重后统</description>
     </item>
     
     <item>
       <title>Redis Bitmap 学习和使用</title>
-      <link>https://lifelmy.github.io/post/redis_bitmap/</link>
+      <link>https://lifelmy.cn/post/redis_bitmap/</link>
       <pubDate>Fri, 20 Aug 2021 11:38:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_bitmap/</guid>
+      <guid>https://lifelmy.cn/post/redis_bitmap/</guid>
       <description>前言 Bitmap，即位图，是一串连续的二进制数组（0和1），可以通过偏移量（offset）定位元素。BitMap通过最小的单位bit来进行0</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之Sorted Set(3)</title>
-      <link>https://lifelmy.github.io/post/redis_sorted_set_3/</link>
+      <link>https://lifelmy.cn/post/redis_sorted_set_3/</link>
       <pubDate>Tue, 17 Aug 2021 14:39:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_sorted_set_3/</guid>
+      <guid>https://lifelmy.cn/post/redis_sorted_set_3/</guid>
       <description>前言 本篇是有序集合的最后一篇命令学习，主要是针对多个集合之间的操作。话不多说，直接上手搞起！ ZUNIONSTORE 可用版本：&amp;gt;= 2.0.0 时间复杂度： O(N)+O</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之Sorted Set(2)</title>
-      <link>https://lifelmy.github.io/post/redis_sorted_set_2/</link>
+      <link>https://lifelmy.cn/post/redis_sorted_set_2/</link>
       <pubDate>Sun, 15 Aug 2021 22:45:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_sorted_set_2/</guid>
+      <guid>https://lifelmy.cn/post/redis_sorted_set_2/</guid>
       <description>前言 在上篇文章中，我们学习了Redis Sorted Set的基本概念和部分命令。这部分命令较多，预计还需要两篇文章才能学完，每篇文章在10个命令左右。对</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之Sorted Set(1)</title>
-      <link>https://lifelmy.github.io/post/redis_sorted_set/</link>
+      <link>https://lifelmy.cn/post/redis_sorted_set/</link>
       <pubDate>Tue, 10 Aug 2021 21:45:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_sorted_set/</guid>
+      <guid>https://lifelmy.cn/post/redis_sorted_set/</guid>
       <description>前言 Sorted Set，即有序集合，是一种类似于List(集合)和 Hash(哈希)的混合数据类型。与集合一样，有序集合由唯一的、不重复的字符串元素组成</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之Set</title>
-      <link>https://lifelmy.github.io/post/redis_set/</link>
+      <link>https://lifelmy.cn/post/redis_set/</link>
       <pubDate>Sat, 31 Jul 2021 22:32:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_set/</guid>
+      <guid>https://lifelmy.cn/post/redis_set/</guid>
       <description>前言 Set，即集合，与数学中的集合概念一致，不过Redis Set中包含的元素类型是string。Set中元素值是唯一的，不能出现重复的数据。</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之List(2)</title>
-      <link>https://lifelmy.github.io/post/redis_list_02/</link>
+      <link>https://lifelmy.cn/post/redis_list_02/</link>
       <pubDate>Sun, 25 Jul 2021 16:32:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_list_02/</guid>
+      <guid>https://lifelmy.cn/post/redis_list_02/</guid>
       <description>前言 上篇文章中，我们介绍了Redis的部分命令，本篇文章我们继续学习剩余命令，如果对上次命令淡忘的小伙伴可以先复习下哟。 LLEN 可用版本：&amp;gt;</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之List(1)</title>
-      <link>https://lifelmy.github.io/post/redis_list_01/</link>
+      <link>https://lifelmy.cn/post/redis_list_01/</link>
       <pubDate>Thu, 15 Jul 2021 23:24:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_list_01/</guid>
+      <guid>https://lifelmy.cn/post/redis_list_01/</guid>
       <description>你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 Redis 中的列表（List）类型，底层是由双端队</description>
     </item>
     
     <item>
       <title>Redis基本数据类型学习之Hash</title>
-      <link>https://lifelmy.github.io/post/redis_hash/</link>
+      <link>https://lifelmy.cn/post/redis_hash/</link>
       <pubDate>Sun, 11 Jul 2021 16:01:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_hash/</guid>
+      <guid>https://lifelmy.cn/post/redis_hash/</guid>
       <description>前言 Redis Hash是 键-值 类型，值类型类似map结构，即 key-{{field1,value1},...,{fieldN，valueN}}，更适</description>
     </item>
     
     <item>
       <title>Redis基本类型学习之String</title>
-      <link>https://lifelmy.github.io/post/redis_string/</link>
+      <link>https://lifelmy.cn/post/redis_string/</link>
       <pubDate>Tue, 06 Jul 2021 08:46:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_string/</guid>
+      <guid>https://lifelmy.cn/post/redis_string/</guid>
       <description>前言 String类型是Redis最基本的数据类型，也是Memcached唯一支持的类型，对于刚接触Redis的同学也可以轻松上手。Redis</description>
     </item>
     
     <item>
       <title>Redis配置文件详解</title>
-      <link>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</link>
+      <link>https://lifelmy.cn/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</link>
       <pubDate>Sat, 26 Jun 2021 21:31:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</guid>
+      <guid>https://lifelmy.cn/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</guid>
       <description>前言 当我们买来一台机器时，首先需要看说明书，了解使用方式。同样对于Redis来说，通过查看配置文件，我们也可以大体了解Redis的组成部分和</description>
     </item>
     
     <item>
       <title>双月计划之Redis 01--- 概述与安装</title>
-      <link>https://lifelmy.github.io/post/redis_01/</link>
+      <link>https://lifelmy.cn/post/redis_01/</link>
       <pubDate>Sun, 20 Jun 2021 16:01:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/redis_01/</guid>
+      <guid>https://lifelmy.cn/post/redis_01/</guid>
       <description>Redis概述 Redis是什么 Redis（Remote Dictionary Server )，即远程字典服务，是一个开源的使用ANSI C语言编写、支持网络、可基于内存亦可持</description>
     </item>
     

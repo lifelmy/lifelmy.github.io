@@ -2,133 +2,133 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Linux on lifelmy的博客</title>
-    <link>https://lifelmy.github.io/tags/linux/</link>
+    <link>https://lifelmy.cn/tags/linux/</link>
     <description>Recent content in Linux on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 28 Nov 2021 21:15:23 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 28 Nov 2021 21:15:23 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Shell 脚本之流程控制</title>
-      <link>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</link>
+      <link>https://lifelmy.cn/post/2021_11_28_linux_flow_control/</link>
       <pubDate>Sun, 28 Nov 2021 21:15:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_28_linux_flow_control/</guid>
       <description>前言 上一篇文章，我们一起学习了 Shell 脚本中的 if 条件控制，以及多种条件判断，本篇文章我们一起来学习下剩余的流程控制语句。 流程控制语句 我们先来看下 Shell</description>
     </item>
     
     <item>
       <title>Shell 脚本中的 if 条件判断</title>
-      <link>https://lifelmy.github.io/post/2021_11_25_linux_if/</link>
+      <link>https://lifelmy.cn/post/2021_11_25_linux_if/</link>
       <pubDate>Thu, 25 Nov 2021 00:20:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_25_linux_if/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_25_linux_if/</guid>
       <description>前言 if&amp;hellip;else&amp;hellip; 可以说是我们在编程中最常见的条件判断语句了，那么在 Shell 中如何使用呢？如何判断两个数值相等？如何判断一个文件是否存在？跟随这篇文章，一起来</description>
     </item>
     
     <item>
       <title>Shell编程之文本处理</title>
-      <link>https://lifelmy.github.io/post/2021_11_22_linux_text_process/</link>
+      <link>https://lifelmy.cn/post/2021_11_22_linux_text_process/</link>
       <pubDate>Mon, 22 Nov 2021 17:00:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_22_linux_text_process/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_22_linux_text_process/</guid>
       <description>前言 在日常工作学习中，不免经常要对文本文件（例如日志文件）进行处理工作，包括但不限于分割、查找、替换、删除等操作，Shell 中有没有相应的命</description>
     </item>
     
     <item>
       <title>Bash中的变量类型，还有这两种！</title>
-      <link>https://lifelmy.github.io/post/2021_11_17_linux_variables_2/</link>
+      <link>https://lifelmy.cn/post/2021_11_17_linux_variables_2/</link>
       <pubDate>Wed, 17 Nov 2021 22:25:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_17_linux_variables_2/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_17_linux_variables_2/</guid>
       <description>前言 上一篇文章Bash 中的变量类型，你知道几种？，我们一起学习了 Bash 中自定义变量和环境变量的使用，本篇文章来学习后面两种：位置参数变量和预定义</description>
     </item>
     
     <item>
       <title>Bash中的变量类型，你知道几种？</title>
-      <link>https://lifelmy.github.io/post/2021_11_14_linux_variables_1/</link>
+      <link>https://lifelmy.cn/post/2021_11_14_linux_variables_1/</link>
       <pubDate>Sun, 14 Nov 2021 20:25:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_14_linux_variables_1/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_14_linux_variables_1/</guid>
       <description>前言 与 Java、Go 等编程语言类似，Bash 中也可以自定义变量，那么如何自定义变量呢？除了自定义变量之外，Bash中还有没有其他类型的变量供</description>
     </item>
     
     <item>
       <title>Bash的基本功能-2</title>
-      <link>https://lifelmy.github.io/post/2021_11_09_linux_bash_02/</link>
+      <link>https://lifelmy.cn/post/2021_11_09_linux_bash_02/</link>
       <pubDate>Wed, 10 Nov 2021 00:00:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_09_linux_bash_02/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_09_linux_bash_02/</guid>
       <description>前言 上篇文章我们学习了部分 Bash 的基本功能，本篇文章我们继续学习其他基本功能！ 输出重定向 在 Bash 中，执行命令默认会输出到屏幕上，但是很多时候我们是通</description>
     </item>
     
     <item>
       <title>Bash的基本功能-1</title>
-      <link>https://lifelmy.github.io/post/2021_11_09_linux_bash_01/</link>
+      <link>https://lifelmy.cn/post/2021_11_09_linux_bash_01/</link>
       <pubDate>Tue, 09 Nov 2021 00:37:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_09_linux_bash_01/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_09_linux_bash_01/</guid>
       <description>前言 上篇文章我们学习了什么是 Shell，并了解到 Bash 是我们最常使用的 Shell，那么本篇文章我们就来一起学习下Bash的基本功能。 历史命令与命</description>
     </item>
     
     <item>
       <title>Shell 编程初体验</title>
-      <link>https://lifelmy.github.io/post/2021_11_08_linux_shell/</link>
+      <link>https://lifelmy.cn/post/2021_11_08_linux_shell/</link>
       <pubDate>Mon, 08 Nov 2021 00:37:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_11_08_linux_shell/</guid>
+      <guid>https://lifelmy.cn/post/2021_11_08_linux_shell/</guid>
       <description>前言 经常听到 &amp;ldquo;Shell脚本&amp;rdquo;、&amp;ldquo;Shell编程&amp;rdquo;、&amp;ldquo;Bash命令&amp;rdquo;</description>
     </item>
     
     <item>
       <title>Vim 基础&#43;进阶，看这篇就够了！</title>
-      <link>https://lifelmy.github.io/post/2021_10_27_linux_vim/</link>
+      <link>https://lifelmy.cn/post/2021_10_27_linux_vim/</link>
       <pubDate>Wed, 27 Oct 2021 00:25:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_10_27_linux_vim/</guid>
+      <guid>https://lifelmy.cn/post/2021_10_27_linux_vim/</guid>
       <description>前言 vim 是从vi发展出来的一个文本编辑器。其代码补全、编译及错误跳转等方便编程的功能特别丰富，在程序员中被广泛使用。 Vim的第一个版本由布莱姆</description>
     </item>
     
     <item>
       <title>zip、gzip、bzip2、tar 傻傻分不清楚</title>
-      <link>https://lifelmy.github.io/post/2021_10_24_linux_zip/</link>
+      <link>https://lifelmy.cn/post/2021_10_24_linux_zip/</link>
       <pubDate>Sun, 24 Oct 2021 00:16:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/2021_10_24_linux_zip/</guid>
+      <guid>https://lifelmy.cn/post/2021_10_24_linux_zip/</guid>
       <description>前言 文件压缩与解压缩是我们常见的操作，文件压缩在不影响文件内容的情况下，可以大大提高文件传输的速度，常见的压缩文件格式有.zip、 .gz、 .</description>
     </item>
     
     <item>
       <title>Linux文件搜索命令学习</title>
-      <link>https://lifelmy.github.io/post/linux_find/</link>
+      <link>https://lifelmy.cn/post/linux_find/</link>
       <pubDate>Tue, 19 Oct 2021 00:16:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/linux_find/</guid>
+      <guid>https://lifelmy.cn/post/linux_find/</guid>
       <description>关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论</description>
     </item>
     
     <item>
       <title>Linux文件权限管理命令学习</title>
-      <link>https://lifelmy.github.io/post/linux_authority/</link>
+      <link>https://lifelmy.cn/post/linux_authority/</link>
       <pubDate>Tue, 12 Oct 2021 23:20:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/linux_authority/</guid>
+      <guid>https://lifelmy.cn/post/linux_authority/</guid>
       <description>关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论</description>
     </item>
     
     <item>
       <title>Linux软硬链接及用户管理命令学习</title>
-      <link>https://lifelmy.github.io/post/linux_ln_user/</link>
+      <link>https://lifelmy.cn/post/linux_ln_user/</link>
       <pubDate>Tue, 12 Oct 2021 00:11:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/linux_ln_user/</guid>
+      <guid>https://lifelmy.cn/post/linux_ln_user/</guid>
       <description>你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论Linux中的软硬链接，以</description>
     </item>
     
     <item>
       <title>Linux常用文件操作命令学习</title>
-      <link>https://lifelmy.github.io/post/linux_file/</link>
+      <link>https://lifelmy.cn/post/linux_file/</link>
       <pubDate>Thu, 23 Sep 2021 00:16:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/post/linux_file/</guid>
+      <guid>https://lifelmy.cn/post/linux_file/</guid>
       <description>前言 Linux系列，主要是学习在工作中所必须的 Linux 命令及shell编程，只涉及常用命令及参数。如果有对Linux不熟悉的同学，或者想要更加深入</description>
     </item>
     

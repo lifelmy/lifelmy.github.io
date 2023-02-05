@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://lifelmy.github.io/sitemap.xml
+Sitemap: https://lifelmy.cn/sitemap.xml

@@ -2,52 +2,52 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Categories on lifelmy的博客</title>
-    <link>https://lifelmy.github.io/categories/</link>
+    <link>https://lifelmy.cn/categories/</link>
     <description>Recent content in Categories on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 06 Nov 2022 15:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 06 Nov 2022 15:00:43 +0800</lastBuildDate><atom:link href="https://lifelmy.cn/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Makefile</title>
-      <link>https://lifelmy.github.io/categories/makefile/</link>
+      <link>https://lifelmy.cn/categories/makefile/</link>
       <pubDate>Sun, 06 Nov 2022 15:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/categories/makefile/</guid>
+      <guid>https://lifelmy.cn/categories/makefile/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Go</title>
-      <link>https://lifelmy.github.io/categories/go/</link>
+      <link>https://lifelmy.cn/categories/go/</link>
       <pubDate>Sun, 14 Aug 2022 14:00:43 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/categories/go/</guid>
+      <guid>https://lifelmy.cn/categories/go/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Linux</title>
-      <link>https://lifelmy.github.io/categories/linux/</link>
+      <link>https://lifelmy.cn/categories/linux/</link>
       <pubDate>Sun, 28 Nov 2021 21:15:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/categories/linux/</guid>
+      <guid>https://lifelmy.cn/categories/linux/</guid>
       <description></description>
     </item>
     
     <item>
       <title>HTTP</title>
-      <link>https://lifelmy.github.io/categories/http/</link>
+      <link>https://lifelmy.cn/categories/http/</link>
       <pubDate>Sun, 31 Oct 2021 21:42:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/categories/http/</guid>
+      <guid>https://lifelmy.cn/categories/http/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Redis</title>
-      <link>https://lifelmy.github.io/categories/redis/</link>
+      <link>https://lifelmy.cn/categories/redis/</link>
       <pubDate>Mon, 20 Sep 2021 11:15:23 +0800</pubDate>
       
-      <guid>https://lifelmy.github.io/categories/redis/</guid>
+      <guid>https://lifelmy.cn/categories/redis/</guid>
       <description></description>
     </item>
     

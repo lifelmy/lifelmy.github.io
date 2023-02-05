@@ -1,477 +1,477 @@
-<?xml-stylesheet type="text/xsl" href="https://lifelmy.github.io/sitemap.xsl"?>
+<?xml-stylesheet type="text/xsl" href="https://lifelmy.cn/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_11_06_makefile2/</loc>
+    <loc>https://lifelmy.cn/post/2022_11_06_makefile2/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_10_30_makefile_1/</loc>
+    <loc>https://lifelmy.cn/post/2022_10_30_makefile_1/</loc>
     <lastmod>2022-10-30T16:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_08_14_context/</loc>
+    <loc>https://lifelmy.cn/post/2022_08_14_context/</loc>
     <lastmod>2022-08-14T14:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_06_10_waitgroup/</loc>
+    <loc>https://lifelmy.cn/post/2022_06_10_waitgroup/</loc>
     <lastmod>2022-06-10T22:30:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_05_04_rwmutex/</loc>
+    <loc>https://lifelmy.cn/post/2022_05_04_rwmutex/</loc>
     <lastmod>2022-05-04T23:58:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_05_03_mutex_2/</loc>
+    <loc>https://lifelmy.cn/post/2022_05_03_mutex_2/</loc>
     <lastmod>2022-05-03T16:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_04_28_mutex_1/</loc>
+    <loc>https://lifelmy.cn/post/2022_04_28_mutex_1/</loc>
     <lastmod>2022-04-28T02:15:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_04_11_go_ssh_scp/</loc>
+    <loc>https://lifelmy.cn/post/2022_04_11_go_ssh_scp/</loc>
     <lastmod>2022-04-11T11:30:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_04_07_unsafe/</loc>
+    <loc>https://lifelmy.cn/post/2022_04_07_unsafe/</loc>
     <lastmod>2022-04-07T21:40:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_03_22_memory_align/</loc>
+    <loc>https://lifelmy.cn/post/2022_03_22_memory_align/</loc>
     <lastmod>2022-03-22T16:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_03_04_ioutil/</loc>
+    <loc>https://lifelmy.cn/post/2022_03_04_ioutil/</loc>
     <lastmod>2022-03-04T01:10:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_02_11_go_bufio_reader_2/</loc>
+    <loc>https://lifelmy.cn/post/2022_02_11_go_bufio_reader_2/</loc>
     <lastmod>2022-02-11T00:30:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_01_28_go_bufio_reader_1/</loc>
+    <loc>https://lifelmy.cn/post/2022_01_28_go_bufio_reader_1/</loc>
     <lastmod>2022-01-28T22:20:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_01_22_go_empty_struct/</loc>
+    <loc>https://lifelmy.cn/post/2022_01_22_go_empty_struct/</loc>
     <lastmod>2022-01-22T16:20:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_01_16_go_base64/</loc>
+    <loc>https://lifelmy.cn/post/2022_01_16_go_base64/</loc>
     <lastmod>2022-01-16T14:20:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_01_06_go_bytes_buffer_2/</loc>
+    <loc>https://lifelmy.cn/post/2022_01_06_go_bytes_buffer_2/</loc>
     <lastmod>2022-01-06T00:50:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2022_01_04_go_bytes_buffer_1/</loc>
+    <loc>https://lifelmy.cn/post/2022_01_04_go_bytes_buffer_1/</loc>
     <lastmod>2022-01-04T00:50:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_12_28_go_strings_reader/</loc>
+    <loc>https://lifelmy.cn/post/2021_12_28_go_strings_reader/</loc>
     <lastmod>2021-12-28T08:30:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_12_25_go_io_source/</loc>
+    <loc>https://lifelmy.cn/post/2021_12_25_go_io_source/</loc>
     <lastmod>2021-12-25T12:50:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_12_22_go_io_2_basic/</loc>
+    <loc>https://lifelmy.cn/post/2021_12_22_go_io_2_basic/</loc>
     <lastmod>2021-12-22T09:30:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_12_14_go_io_core/</loc>
+    <loc>https://lifelmy.cn/post/2021_12_14_go_io_core/</loc>
     <lastmod>2021-12-14T23:16:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_12_07_go_type_transfer/</loc>
+    <loc>https://lifelmy.cn/post/2021_12_07_go_type_transfer/</loc>
     <lastmod>2021-12-07T00:16:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_28_linux_flow_control/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_28_linux_flow_control/</loc>
     <lastmod>2021-11-28T21:15:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_25_linux_if/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_25_linux_if/</loc>
     <lastmod>2021-11-25T00:20:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_22_linux_text_process/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_22_linux_text_process/</loc>
     <lastmod>2021-11-22T17:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_17_linux_variables_2/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_17_linux_variables_2/</loc>
     <lastmod>2021-11-17T22:25:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_14_linux_variables_1/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_14_linux_variables_1/</loc>
     <lastmod>2021-11-14T20:25:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_09_linux_bash_02/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_09_linux_bash_02/</loc>
     <lastmod>2021-11-10T00:00:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_09_linux_bash_01/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_09_linux_bash_01/</loc>
     <lastmod>2021-11-09T00:37:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_11_08_linux_shell/</loc>
+    <loc>https://lifelmy.cn/post/2021_11_08_linux_shell/</loc>
     <lastmod>2021-11-08T00:37:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_10_31_restful/</loc>
+    <loc>https://lifelmy.cn/post/2021_10_31_restful/</loc>
     <lastmod>2021-10-31T21:42:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_10_27_linux_vim/</loc>
+    <loc>https://lifelmy.cn/post/2021_10_27_linux_vim/</loc>
     <lastmod>2021-10-27T00:25:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/2021_10_24_linux_zip/</loc>
+    <loc>https://lifelmy.cn/post/2021_10_24_linux_zip/</loc>
     <lastmod>2021-10-24T00:16:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/linux_find/</loc>
+    <loc>https://lifelmy.cn/post/linux_find/</loc>
     <lastmod>2021-10-19T00:16:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/linux_authority/</loc>
+    <loc>https://lifelmy.cn/post/linux_authority/</loc>
     <lastmod>2021-10-12T23:20:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/linux_ln_user/</loc>
+    <loc>https://lifelmy.cn/post/linux_ln_user/</loc>
     <lastmod>2021-10-12T00:11:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/linux_file/</loc>
+    <loc>https://lifelmy.cn/post/linux_file/</loc>
     <lastmod>2021-09-23T00:16:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_expire/</loc>
+    <loc>https://lifelmy.cn/post/redis_expire/</loc>
     <lastmod>2021-09-20T11:15:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_db_2/</loc>
+    <loc>https://lifelmy.cn/post/redis_db_2/</loc>
     <lastmod>2021-09-12T22:40:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_db/</loc>
+    <loc>https://lifelmy.cn/post/redis_db/</loc>
     <lastmod>2021-09-12T22:38:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_geo/</loc>
+    <loc>https://lifelmy.cn/post/redis_geo/</loc>
     <lastmod>2021-09-02T00:24:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_hpll/</loc>
+    <loc>https://lifelmy.cn/post/redis_hpll/</loc>
     <lastmod>2021-08-27T00:14:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_bitmap/</loc>
+    <loc>https://lifelmy.cn/post/redis_bitmap/</loc>
     <lastmod>2021-08-20T11:38:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_sorted_set_3/</loc>
+    <loc>https://lifelmy.cn/post/redis_sorted_set_3/</loc>
     <lastmod>2021-08-17T14:39:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_sorted_set_2/</loc>
+    <loc>https://lifelmy.cn/post/redis_sorted_set_2/</loc>
     <lastmod>2021-08-15T22:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_sorted_set/</loc>
+    <loc>https://lifelmy.cn/post/redis_sorted_set/</loc>
     <lastmod>2021-08-10T21:45:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_set/</loc>
+    <loc>https://lifelmy.cn/post/redis_set/</loc>
     <lastmod>2021-07-31T22:32:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_list_02/</loc>
+    <loc>https://lifelmy.cn/post/redis_list_02/</loc>
     <lastmod>2021-07-25T16:32:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_list_01/</loc>
+    <loc>https://lifelmy.cn/post/redis_list_01/</loc>
     <lastmod>2021-07-15T23:24:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_hash/</loc>
+    <loc>https://lifelmy.cn/post/redis_hash/</loc>
     <lastmod>2021-07-11T16:01:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_string/</loc>
+    <loc>https://lifelmy.cn/post/redis_string/</loc>
     <lastmod>2021-07-06T08:46:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</loc>
+    <loc>https://lifelmy.cn/post/redis%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E8%AF%A6%E8%A7%A3/</loc>
     <lastmod>2021-06-26T21:31:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/redis_01/</loc>
+    <loc>https://lifelmy.cn/post/redis_01/</loc>
     <lastmod>2021-06-20T16:01:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/categories/</loc>
+    <loc>https://lifelmy.cn/categories/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/</loc>
+    <loc>https://lifelmy.cn/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/tags/makefile/</loc>
+    <loc>https://lifelmy.cn/tags/makefile/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/categories/makefile/</loc>
+    <loc>https://lifelmy.cn/categories/makefile/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/post/</loc>
+    <loc>https://lifelmy.cn/post/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/tags/</loc>
+    <loc>https://lifelmy.cn/tags/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/tags/go/</loc>
+    <loc>https://lifelmy.cn/tags/go/</loc>
     <lastmod>2022-08-14T14:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/categories/go/</loc>
+    <loc>https://lifelmy.cn/categories/go/</loc>
     <lastmod>2022-08-14T14:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/tags/linux/</loc>
+    <loc>https://lifelmy.cn/tags/linux/</loc>
     <lastmod>2021-11-28T21:15:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/categories/linux/</loc>
+    <loc>https://lifelmy.cn/categories/linux/</loc>
     <lastmod>2021-11-28T21:15:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/tags/http/</loc>
+    <loc>https://lifelmy.cn/tags/http/</loc>
     <lastmod>2021-10-31T21:42:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/categories/http/</loc>
+    <loc>https://lifelmy.cn/categories/http/</loc>
     <lastmod>2021-10-31T21:42:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/tags/redis/</loc>
+    <loc>https://lifelmy.cn/tags/redis/</loc>
     <lastmod>2021-09-20T11:15:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/categories/redis/</loc>
+    <loc>https://lifelmy.cn/categories/redis/</loc>
     <lastmod>2021-09-20T11:15:23+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>https://lifelmy.github.io/about/</loc>
+    <loc>https://lifelmy.cn/about/</loc>
     <lastmod>2021-06-21T09:04:52+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
