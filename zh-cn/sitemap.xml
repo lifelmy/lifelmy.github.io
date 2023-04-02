@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://www.lifelmy.cn/post/2023_04_02_mysql_json/</loc>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>http://www.lifelmy.cn/post/2022_11_06_makefile2/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -374,14 +381,42 @@
   
   <url>
     <loc>http://www.lifelmy.cn/categories/</loc>
-    <lastmod>2022-11-06T15:00:43+08:00</lastmod>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
     <loc>http://www.lifelmy.cn/</loc>
-    <lastmod>2022-11-06T15:00:43+08:00</lastmod>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lifelmy.cn/tags/mysql/</loc>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lifelmy.cn/categories/mysql/</loc>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lifelmy.cn/post/</loc>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.lifelmy.cn/tags/</loc>
+    <lastmod>2023-04-02T20:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -395,20 +430,6 @@
   
   <url>
     <loc>http://www.lifelmy.cn/categories/makefile/</loc>
-    <lastmod>2022-11-06T15:00:43+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.lifelmy.cn/post/</loc>
-    <lastmod>2022-11-06T15:00:43+08:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.lifelmy.cn/tags/</loc>
     <lastmod>2022-11-06T15:00:43+08:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>

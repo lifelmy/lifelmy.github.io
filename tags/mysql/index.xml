@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>MySQL on lifelmy的博客</title>
+    <link>http://www.lifelmy.cn/tags/mysql/</link>
+    <description>Recent content in MySQL on lifelmy的博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sun, 02 Apr 2023 20:00:43 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL查询处理 JSON 数据</title>
+      <link>http://www.lifelmy.cn/post/2023_04_02_mysql_json/</link>
+      <pubDate>Sun, 02 Apr 2023 20:00:43 +0800</pubDate>
+      
+      <guid>http://www.lifelmy.cn/post/2023_04_02_mysql_json/</guid>
+      <description>前言 最近在做项目时，表 A 有多个字段，其中一个字段 info 把当前项目用不到的冗余的数据按照 JSON 格式都存了进来。随着项目的推进，有些冗余字段需要单独成一</description>
+    </item>
+    
+  </channel>
+</rss>
