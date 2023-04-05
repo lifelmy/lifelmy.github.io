@@ -5,7 +5,16 @@
     <link>http://www.lifelmy.cn/categories/mysql/</link>
     <description>Recent content in MySQL on lifelmy的博客</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 02 Apr 2023 20:00:43 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/categories/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 05 Apr 2023 16:00:43 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/categories/mysql/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL handler 的定义和使用</title>
+      <link>http://www.lifelmy.cn/post/2023_04_05_mysql_handler/</link>
+      <pubDate>Wed, 05 Apr 2023 16:00:43 +0800</pubDate>
+      
+      <guid>http://www.lifelmy.cn/post/2023_04_05_mysql_handler/</guid>
+      <description>前言 最近项目中需要迁移数据，对旧表A 的每一行记录处理后插入 新表B。 Google一下，发现 MySQL Cursor 适合这种场景，但是 Cursor 中使用到了 handler，因</description>
+    </item>
+    
     <item>
       <title>MySQL查询处理 JSON 数据</title>
       <link>http://www.lifelmy.cn/post/2023_04_02_mysql_json/</link>
