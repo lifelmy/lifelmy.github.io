@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Redis on lifelmy的博客</title>
+    <title>Redis on CodePlayer</title>
     <link>http://www.lifelmy.cn/tags/redis/</link>
-    <description>Recent content in Redis on lifelmy的博客</description>
+    <description>Recent content in Redis on CodePlayer</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Mon, 20 Sep 2021 11:15:23 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/tags/redis/index.xml" rel="self" type="application/rss+xml" />
     <item>
@@ -111,7 +111,7 @@
       <pubDate>Thu, 15 Jul 2021 23:24:23 +0800</pubDate>
       
       <guid>http://www.lifelmy.cn/post/redis_list_01/</guid>
-      <description>你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 Redis 中的列表（List）类型，底层是由双端队</description>
+      <description>你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ CodePlayer ]，一起From Zero To Hero ! 前言 Redis 中的列表（List）类型，底层是由双端队列实现，既可以作</description>
     </item>
     
     <item>

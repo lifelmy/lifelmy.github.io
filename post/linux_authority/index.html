@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Linux文件权限管理命令学习 - lifelmy的博客</title>
+  <title>Linux文件权限管理命令学习 - CodePlayer</title>
   
 
 <meta name="renderer" content="webkit" />
@@ -22,8 +22,8 @@
 
 <meta name="mobile-web-app-capable" content="yes">
 
-<meta name="author" content="漫漫Coding路" />
-  <meta name="description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论" />
+<meta name="author" content="CodePlayer" />
+  <meta name="description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ CodePlayer ]，一起From Zero To Hero ! 前言 本篇文章主要讨论Linux中的文" />
 
   <meta name="keywords" content="Hugo, theme, jane" />
 
@@ -60,19 +60,19 @@
 
 
 <meta property="og:title" content="Linux文件权限管理命令学习" />
-<meta property="og:description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论" />
+<meta property="og:description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ CodePlayer ]，一起From Zero To Hero ! 前言 本篇文章主要讨论Linux中的文" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="http://www.lifelmy.cn/post/linux_authority/" /><meta property="article:section" content="post" />
 <meta property="article:published_time" content="2021-10-12T23:20:23&#43;08:00" />
-<meta property="article:modified_time" content="2021-10-12T23:20:23&#43;08:00" /><meta property="og:site_name" content="lifelmy的博客" />
+<meta property="article:modified_time" content="2021-10-12T23:20:23&#43;08:00" /><meta property="og:site_name" content="CodePlayer" />
 
 <meta itemprop="name" content="Linux文件权限管理命令学习">
-<meta itemprop="description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论"><meta itemprop="datePublished" content="2021-10-12T23:20:23&#43;08:00" />
+<meta itemprop="description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ CodePlayer ]，一起From Zero To Hero ! 前言 本篇文章主要讨论Linux中的文"><meta itemprop="datePublished" content="2021-10-12T23:20:23&#43;08:00" />
 <meta itemprop="dateModified" content="2021-10-12T23:20:23&#43;08:00" />
-<meta itemprop="wordCount" content="2139">
+<meta itemprop="wordCount" content="2126">
 <meta itemprop="keywords" content="Linux," /><meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Linux文件权限管理命令学习"/>
-<meta name="twitter:description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero ! 前言 本篇文章主要讨论"/>
+<meta name="twitter:description" content="关注不迷路，一起 From Zero To Hero ! 你必须非常努力，才能看起来毫不费力！ 微信搜索公众号[ CodePlayer ]，一起From Zero To Hero ! 前言 本篇文章主要讨论Linux中的文"/>
 
 <!--[if lte IE 9]>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -93,7 +93,7 @@
 <body>
   <div id="mobile-navbar" class="mobile-navbar">
   <div class="mobile-header-logo">
-    <a href="/" class="logo">漫漫Coding路</a>
+    <a href="/" class="logo">CodePlayer</a>
   </div>
   <div class="mobile-navbar-icon">
     <span></span>
@@ -214,7 +214,7 @@
     <div class="logo-wrapper">
   <a href="/" class="logo">
     
-      漫漫Coding路
+      CodePlayer
     
   </a>
 </div>
@@ -305,7 +305,7 @@
             <a href="http://www.lifelmy.cn/categories/linux/"> Linux </a>
             
           </div>
-        <span class="more-meta"> 约 2139 字 </span>
+        <span class="more-meta"> 约 2126 字 </span>
           <span class="more-meta"> 预计阅读 5 分钟 </span>
 
         
@@ -345,7 +345,7 @@
 <p><img src="http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205164457426.jpg" alt=""></p>
 <blockquote>
 <p>你必须非常努力，才能看起来毫不费力！</p>
-<p>微信搜索公众号[ 漫漫Coding路 ]，一起From Zero To Hero !</p>
+<p>微信搜索公众号[ CodePlayer ]，一起From Zero To Hero !</p>
 </blockquote>
 <h2 id="前言">前言</h2>
 <p>本篇文章主要讨论Linux中的文件权限管理命令，包括更改文件权限、文件所有者、文件所有组和默认权限，大家一起来学习吧！</p>
@@ -763,9 +763,8 @@ drwx------ <span class="m">2</span> root root <span class="m">4096</span> Oct  <
 <li>umask：查看和修改默认文件权限</li>
 </ul>
 <h2 id="更多">更多</h2>
-<p>个人博客: <a href="https://lifelmy.github.io/">https://lifelmy.github.io/</a></p>
-<p>微信公众号：漫漫Coding路</p>
-<p><img src="/Users/admin/Desktop/blog-images/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205164423381-20230205164456537.jpg" alt=""></p>
+<p>微信公众号：CodePlayer</p>
+<p><img src="http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png" alt=""></p>
 
     </div>
 
@@ -774,7 +773,7 @@ drwx------ <span class="m">2</span> root root <span class="m">4096</span> Oct  <
 <div class="post-copyright">
   <p class="copyright-item">
     <span class="item-title">文章作者</span>
-    <span class="item-content">漫漫Coding路</span>
+    <span class="item-content">CodePlayer</span>
   </p>
   <p class="copyright-item">
     <span class="item-title">上次更新</span>
@@ -925,7 +924,7 @@ drwx------ <span class="m">2</span> root root <span class="m">4096</span> Oct  <
 
       </i>
     </span><span class="author">
-        漫漫Coding路
+        CodePlayer
         
       </span></span>
 

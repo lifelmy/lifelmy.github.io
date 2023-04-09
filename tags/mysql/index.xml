@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>MySQL on lifelmy的博客</title>
+    <title>MySQL on CodePlayer</title>
     <link>http://www.lifelmy.cn/tags/mysql/</link>
-    <description>Recent content in MySQL on lifelmy的博客</description>
+    <description>Recent content in MySQL on CodePlayer</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 05 Apr 2023 16:00:43 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
     <item>

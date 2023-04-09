@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>lifelmy的博客</title>
+    <title>CodePlayer</title>
     <link>http://www.lifelmy.cn/</link>
-    <description>Recent content on lifelmy的博客</description>
+    <description>Recent content on CodePlayer</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 05 Apr 2023 16:00:43 +0800</lastBuildDate>
     
@@ -378,13 +378,12 @@
 &lt;/div&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
-&lt;p&gt;本文首先介绍了 handler 的定义和参数详解，然后分析了在没有 handler时， condition 是如何被处理的，最后介绍了在 label 中 使用 handler 的注意点。&lt;/p&gt;
+&lt;p&gt;本文首先介绍了MySQL handler 的定义和参数详解，然后分析了在没有 handler时， condition 是如何被处理的，最后介绍了在 label 中 使用 handler 的注意点。&lt;/p&gt;
 &lt;p&gt;文章基本是按照官网内容进行翻译得来，并加入了一点自己的理解。写这篇文章，主要是希望之后需要使用 MySQL handler时，可以翻阅这篇笔记快速复习和使用，而不是再去翻阅官网和其他博客，增加了理解成本和学习时间。&lt;/p&gt;
 &lt;p&gt;本文是在使用 MySQL Cursor 时发现其中用到了 handler，学习并写下了这篇笔记，下篇文章我们就去学习 Cursor，并看看它是如何使用 handler 的。&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;http://www.lifelmy.cn/&#34;&gt;http://www.lifelmy.cn/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205164729472.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -1111,9 +1110,8 @@
 &lt;li&gt;MEMBEROF：判断一个值是否为一个 JSON 数组中的元素&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;http://www.lifelmy.cn/&#34;&gt;http://www.lifelmy.cn/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205164729472.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -2000,9 +1998,8 @@ tom john
 &lt;li&gt;变量使用：包括变量的声明、使用以及懒加载机制&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172735021.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -2378,9 +2375,8 @@ rm hello world
 &lt;li&gt;引用：引用其他 Makefile 文件&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172708438.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -3686,9 +3682,8 @@ rm hello world
 &lt;p&gt;cancelCtx：可以取消的Context，用于取消信号的传递&lt;/p&gt;
 &lt;p&gt;timerCtx：定时取消的 cancelCtx&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172649271.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -4283,9 +4278,8 @@ rm hello world
 &lt;li&gt;尽量不复用 WaigGroup，减少出问题的风险&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172625371.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -4698,9 +4692,8 @@ rm hello world
 &lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;本文以图文并茂的方式介绍了RWMutex的运行机制，对源码进行逐行分析，学习了 RWMutex 底层是如何实现的，同时列举了一些 RWMutex 的常见错误。如果本篇文章对有所帮助，点个关注 + 转发哦 ^_^&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172601268.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -5313,9 +5306,8 @@ rm hello world
 &lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;本篇文章首先通过餐厅的示例，形象的介绍了 Mutex 的运行特性，然后对源码进行逐行分析，学习了 Mutex 加锁 Lock() 以及 解锁 Unlock()是如何实现的。如果本篇文章对有所帮助，点个关注 + 转发哦 ^_^&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172541803.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -5866,9 +5858,8 @@ rm hello world
 &lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;本篇文章我们简单学习了下 &lt;code&gt;sync.Mutex&lt;/code&gt; 的使用方式，以及可能会踩坑的问题，先学着用起来，下篇文章我们一起看源码！&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172524302.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -6554,9 +6545,8 @@ rm hello world
 &lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;本篇文章记录了如何使用 &lt;code&gt;Go语言&lt;/code&gt;连接远程服务器（ssh），并将远程服务器的文件拷贝至本地（scp）的方法和过程。&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172502857.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -7509,9 +7499,8 @@ rm hello world
 &lt;/div&gt;&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
 &lt;p&gt;本篇文章从类型安全指针切入，介绍了如何获取指针、为什么需要使用指针以及类型安全指针的局限性，然后进一步介绍了 &lt;code&gt;unsafe&lt;/code&gt; 包中对于非类型安全指针类型 &lt;code&gt;Pointer&lt;/code&gt; 的定义以及使用方法，最后通过具体示例详细介绍了六种正确使用 &lt;code&gt;Pointer&lt;/code&gt; 的场景。&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172445629.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -7901,9 +7890,8 @@ rm hello world
 &lt;li&gt;在实际开发中，我们可以通过调整变量位置，优化内存占用（一般按照变量内存大小顺序排列，整体占用内存更小）&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172420475.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -8454,9 +8442,8 @@ rm hello world
 &lt;li&gt;Discard：用于丢弃数据&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172359903.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -9121,9 +9108,8 @@ rm hello world
 &lt;li&gt;WriteTo：将缓存buf中的数据 和 底层数据读取器rd 中的剩余数据，全部写入传入的Writer中&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172341490.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -9917,9 +9903,8 @@ rm hello world
 &lt;li&gt;ReadByte：读取一个字节&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172313912.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -10370,9 +10355,8 @@ rm hello world
 &lt;li&gt;由于空结构体不占用空间，从节省内存的角度出发，适用于实现Set结构、在 channel 中传输信号等&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172254798.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -10502,9 +10486,8 @@ rm hello world
 &lt;li&gt;Base64编码后的数据量是原数据大小的4/3左右&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172233998.jpg&#34; alt=&#34;img&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -11305,9 +11288,8 @@ rm hello world
 &lt;p&gt;本篇文章我们学习了 bytes.Buffer 中读写相关的源码实现。针对写操作，都会先确保有足够的可用空间，然后再将数据复制到缓冲区的未读数据部分；针对读操作，就是将未读部分的数据拷贝出去，然后更新已读计数。&lt;/p&gt;
 &lt;p&gt;到这里我们就把 bytes.Buffer 源码给过完了，俗话说知己知彼，百战不殆，了解了 bytes.Buffer 的原理后，相信你之后使用起来应该会更得心应手！&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172215652.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -11784,9 +11766,8 @@ rm hello world
 &lt;p&gt;本篇文章我们学习了 bytes.Buffer 的结构定义和基础方法源码实现，其中最重要的是要记住 off 表示已读计数。通过下图，就能够更容易理解相关方法的实现原理。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNly1gy0gzlbqx9j31q60jg75o-20230205172942084.jpg&#34; alt=&#34;Buffer结构示意图&#34;&gt;&lt;/p&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172154696-20230205172941369.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
@@ -12391,9 +12372,8 @@ rm hello world
 &lt;li&gt;Reader值的 Seek 方法也会更新该值的已读计数，实际上，这个Seek方法的主要作用正是设定下一次读取的起始索引位置&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;更多&#34;&gt;更多&lt;/h2&gt;
-&lt;p&gt;个人博客: &lt;a href=&#34;https://lifelmy.github.io/&#34;&gt;https://lifelmy.github.io/&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;微信公众号：漫漫Coding路&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/008i3skNgy1gs5tm1gw3wj31ia0hcwhi-20230205172133466.jpg&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;微信公众号：CodePlayer&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;http://image.lifelmy.cn/blog/%E6%89%AB%E7%A0%81_%E6%90%9C%E7%B4%A2%E8%81%94%E5%90%88%E4%BC%A0%E6%92%AD%E6%A0%B7%E5%BC%8F-%E7%99%BD%E8%89%B2%E7%89%88.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
 </description>
       
     </item>
