@@ -5,7 +5,16 @@
     <link>http://www.lifelmy.cn/post/</link>
     <description>Recent content in Posts on CodePlayer</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 05 Apr 2023 16:00:43 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 09 Apr 2023 17:00:43 +0800</lastBuildDate><atom:link href="http://www.lifelmy.cn/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>MySQL Cursor 的定义和使用</title>
+      <link>http://www.lifelmy.cn/post/2023_04_09_mysql_cursor/</link>
+      <pubDate>Sun, 09 Apr 2023 17:00:43 +0800</pubDate>
+      
+      <guid>http://www.lifelmy.cn/post/2023_04_09_mysql_cursor/</guid>
+      <description>前言 最近项目中需要迁移数据，对旧表A 的每一行记录处理后插入 新表B。 Google一下，发现 MySQL Cursor 适合这种场景，上篇文章介绍了 handler，那么</description>
+    </item>
+    
     <item>
       <title>MySQL handler 的定义和使用</title>
       <link>http://www.lifelmy.cn/post/2023_04_05_mysql_handler/</link>
@@ -175,15 +184,6 @@
       
       <guid>http://www.lifelmy.cn/post/2022_01_04_go_bytes_buffer_1/</guid>
       <description>前言 前面一篇文章 Go语言 strings.Reader 源码详解，我们对 strings 包中的 Reader 结构进行了详细的分析，今天我们来学习 bytes 包中的 Buffer结构。bytes包与string</description>
-    </item>
-    
-    <item>
-      <title>Go语言 strings.Reader源码详解</title>
-      <link>http://www.lifelmy.cn/post/2021_12_28_go_strings_reader/</link>
-      <pubDate>Tue, 28 Dec 2021 08:30:23 +0800</pubDate>
-      
-      <guid>http://www.lifelmy.cn/post/2021_12_28_go_strings_reader/</guid>
-      <description>前言 前面三篇文章 Go语言 io包核心接口详解 、 Go语言 io包基本接口详解 、Go语言 io包源码解读，我们学习了Go语言 io 包中的接口和方法，本篇文</description>
     </item>
     
   </channel>
